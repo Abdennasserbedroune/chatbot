@@ -2,9 +2,18 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import type { ChatLayoutProps } from '@/types/chat';
 
-export const ChatLayout: React.FC<ChatLayoutProps> = ({
+export interface ExtendedChatLayoutProps extends ChatLayoutProps {
+  title?: string;
+  subtitle?: string;
+  languageSwitcher?: React.ReactNode;
+}
+
+export const ChatLayout: React.FC<ExtendedChatLayoutProps> = ({
   children,
   className = '',
+  title = 'Chat Assistant',
+  subtitle = 'Always here to help',
+  languageSwitcher,
 }) => {
   return (
     <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 ${className}`}>
@@ -24,18 +33,21 @@ export const ChatLayout: React.FC<ChatLayoutProps> = ({
               
               <div>
                 <h1 className="text-lg font-semibold text-gray-900">
-                  Chat Assistant
+                  {title}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Always here to help
+                  {subtitle}
                 </p>
               </div>
             </div>
 
-            {/* Status indicator */}
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm text-gray-600">Online</span>
+            {/* Right side: Language switcher and status */}
+            <div className="flex items-center gap-4">
+              {languageSwitcher}
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <span className="text-sm text-gray-600">Online</span>
+              </div>
             </div>
           </div>
         </motion.header>

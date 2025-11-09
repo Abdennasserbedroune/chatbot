@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamChatResponse } from '@/lib/geminiClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
+import { buildChatMessages } from '@/lib/prompt';
 import type { ChatRequestPayload, ChatErrorResponse, ChatMessage } from '@/types/chat';
 
 // Create a singleton rate limiter (10 requests per minute per IP)
@@ -116,6 +117,26 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
       );
     }
 
+    // Extract language from conversation (optional, defaults to 'en')
+    const language = payload.language;
+
+    // Build enhanced messages with profile context
+    const lastUserMessage = payload.messages[payload.messages.length - 1].content;
+    const conversationHistory = payload.messages.slice(0, -1);
+
+    let enhancedMessages: ChatMessage[];
+    try {
+      enhancedMessages = await buildChatMessages(lastUserMessage, conversationHistory, {
+        language: language || 'en',
+      });
+    } catch (error) {
+      return createErrorResponse(
+        500,
+        'Failed to build chat context',
+        'CONTEXT_ERROR'
+      );
+    }
+
     // Create readable stream for streaming response
     const encoder = new TextEncoder();
     let isStreamActive = true;
@@ -123,7 +144,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     const readableStream = new ReadableStream({
       async start(controller) {
         try {
-          const generator = await streamChatResponse(payload.messages);
+          const generator = await streamChatResponse(enhancedMessages);
 
           // Stream each chunk from the generator
           for await (const chunk of generator) {

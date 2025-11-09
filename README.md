@@ -1,17 +1,20 @@
-# Profile Data Layer
+# Profile AI Chat Assistant
 
-A multilingual profile data system with TypeScript type safety, comprehensive validation, and flexible querying capabilities.
+A multilingual AI chatbot powered by Google Gemini with intelligent context orchestration, bilingual support, and a polished UI.
 
 ## Overview
 
-This project provides a structured, validated, and multilingual (English/French) profile Q&A database. It includes:
+This project provides an AI-powered chat assistant with:
 
 - **40+ Q&A entries** covering topics like about, education, skills, projects, experience, languages, vision, tools, values, CV, career goals, future plans, philosophy, portfolio, music, style, mindset, and contact information
-- **Bilingual content** with English (en) and French (fr) variants for each question and answer
+- **Intelligent Context Orchestration** - Automatically surfaces relevant profile information based on user queries
+- **Bilingual Support** - Automatic language detection and seamless switching between English and French
+- **Google Gemini Integration** - Streaming responses with rate limiting and error handling
+- **Polished UI** - Responsive design with smooth animations, typing indicators, and error states
 - **Strong TypeScript types** for compile-time safety
 - **Client/Server compatibility** using fetch on client-side and fs on server-side
 - **Comprehensive validation** ensuring data integrity
-- **Flexible filtering utilities** for querying by topic, tags, or search
+- **E2E Testing** with Playwright for full coverage
 
 ## Project Structure
 
@@ -395,15 +398,277 @@ See individual JSDoc comments in `lib/profile.ts` for detailed function signatur
 - Search and filter operations run in O(n) time
 - Use `getProfileEntry()` for ID lookups (O(n)) or cache results for repeated access
 
+## Chat Features
+
+### Context Orchestration
+
+The chat assistant uses intelligent context orchestration to provide relevant, accurate responses:
+
+- **Relevance Scoring** - Automatically scores profile entries based on query relevance
+- **Context Injection** - Injects top-scoring entries into the system prompt
+- **Rolling History** - Maintains conversation context with configurable history window
+- **Guardrails** - Detects insufficient context and asks clarifying questions instead of hallucinating
+
+Configuration options in `lib/prompt.ts`:
+```typescript
+{
+  maxContextEntries: 5,        // Max profile entries to include
+  contextRelevanceThreshold: 0.3, // Minimum relevance score
+  language: 'en',              // Response language
+  includeGuardrails: true,     // Enable hallucination prevention
+  maxHistoryTurns: 10          // Rolling window size
+}
+```
+
+### Language Support
+
+Automatic language detection and switching:
+
+- **Auto-detection** - Uses `franc-min` to detect user message language
+- **Manual Override** - Language switcher in header for explicit control
+- **Bilingual UI** - All UI elements localized via `lib/i18n.ts`
+- **Context Localization** - Profile context served in detected language
+- **Response Control** - System prompt instructs model to respond in target language
+
+### Error Handling
+
+Robust error handling with user-friendly fallbacks:
+
+- **Error Banner** - Displays errors with retry and dismiss actions
+- **Rate Limiting** - 10 requests per minute with graceful error messages
+- **Network Errors** - Detects offline/connection issues
+- **API Errors** - Handles Gemini API failures with fallback messages
+- **Validation Errors** - Profile data validated on load with detailed error reporting
+
+## Testing
+
+### Unit Tests
+
+Run Jest unit tests:
+```bash
+npm test                # Run all unit tests
+npm run test:watch      # Watch mode for development
+```
+
+Test coverage:
+- Profile data validation (`__tests__/profile.test.ts`)
+- Prompt builder logic (`__tests__/prompt.test.ts`)
+- Language detection (`__tests__/languageDetection.test.ts`)
+- Gemini client (`__tests__/geminiClient.test.ts`)
+- Rate limiter (`__tests__/rateLimiter.test.ts`)
+- Chat API route (`__tests__/chat-route.test.ts`)
+
+### End-to-End Tests
+
+Run Playwright E2E tests:
+```bash
+npm run test:e2e        # Run E2E tests
+npm run test:e2e:ui     # Run with UI inspector
+npm run test:all        # Run unit + E2E tests
+```
+
+E2E test coverage:
+- Chat interface rendering
+- Message sending and receiving
+- Language switching
+- Typing indicators
+- Error states
+- Responsive design
+- Keyboard navigation
+- Accessibility
+
+## Deployment
+
+### Environment Variables
+
+Required environment variables for production:
+
+```bash
+# .env.local
+GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Production Considerations
+
+1. **API Key Security**
+   - Never commit API keys to version control
+   - Use environment variables or secret management
+   - Rotate keys regularly
+
+2. **Rate Limiting**
+   - Default: 10 requests/minute per IP
+   - Adjust in `app/api/chat/route.ts` as needed
+   - Consider Redis for distributed rate limiting
+
+3. **Caching**
+   - Profile data cached in memory after first load
+   - Consider CDN caching for `/data/profile.json`
+   - API responses not cached (streaming)
+
+4. **Monitoring**
+   - Log chat errors to monitoring service
+   - Track API usage and costs
+   - Monitor rate limit violations
+
+5. **Performance**
+   - Profile context kept under 5 entries (configurable)
+   - Conversation history limited to 10 turns (configurable)
+   - Streaming responses for better perceived performance
+
+### Build and Deploy
+
+```bash
+# Production build
+npm run build
+
+# Start production server
+npm start
+
+# Validate everything before deploy
+npm run lint
+npm run type-check
+npm run validate
+npm test
+npm run test:e2e
+npm run build
+```
+
+## Troubleshooting
+
+### "GOOGLE_GEMINI_API_KEY not set"
+
+**Solution**: Create `.env.local` with your API key:
+```bash
+echo "GOOGLE_GEMINI_API_KEY=your_key_here" > .env.local
+```
+
+### "Rate limit exceeded"
+
+**Solution**: 
+- Wait 1 minute and try again
+- Adjust rate limit in `app/api/chat/route.ts`
+- Implement user authentication for higher limits
+
+### "Failed to build chat context"
+
+**Solution**:
+- Check profile data is valid: `npm run validate`
+- Ensure `public/data/profile.json` exists
+- Verify JSON syntax
+
+### Language detection not accurate
+
+**Solution**:
+- Provide more context in messages (10+ characters work best)
+- Use language switcher for manual override
+- Check message is clearly in English or French
+
+### E2E tests failing
+
+**Solution**:
+- Ensure dev server is running: `npm run dev`
+- Check port 3000 is available
+- Install Playwright browsers: `npx playwright install`
+
+## Architecture
+
+### Request Flow
+
+1. User types message in chat UI
+2. Frontend detects language using `franc-min`
+3. Message sent to `/api/chat` with conversation history
+4. API route builds enhanced messages with profile context
+5. System prompt + history + user message sent to Gemini
+6. Streaming response parsed and sent to frontend
+7. Frontend displays response with typing animation
+
+### Prompt Assembly
+
+```
+[System Message]
+- Role instructions
+- Language directive
+- Relevant profile context (top 5 entries)
+- Guardrails for hallucination prevention
+
+[Conversation History]
+- Last 10 turns (20 messages)
+- User and assistant messages
+
+[User Message]
+- Latest user query
+```
+
+### File Organization
+
+```
+lib/
+├── profile.ts              # Profile data loader
+├── prompt.ts               # Context orchestration
+├── languageDetection.ts    # Language detection
+├── i18n.ts                 # UI translations
+├── chatStore.ts            # Zustand state
+├── geminiClient.ts         # Gemini API client
+└── rateLimiter.ts          # Rate limiting
+
+components/chat/
+├── ChatLayout.tsx          # Main layout with header
+├── MessageList.tsx         # Scrollable message container
+├── MessageBubble.tsx       # Individual message
+├── ChatComposer.tsx        # Input area
+├── TypingIndicator.tsx     # Typing animation
+├── ErrorBanner.tsx         # Error display
+└── LanguageSwitcher.tsx    # Language toggle
+
+app/api/chat/
+└── route.ts                # Chat API endpoint
+
+pages/
+└── index.tsx               # Main chat page
+```
+
+## Customization
+
+### Tuning Prompt Parameters
+
+Edit `lib/prompt.ts` to adjust:
+- `maxContextEntries` - More entries = more context, longer prompts
+- `contextRelevanceThreshold` - Higher = fewer but more relevant entries
+- `maxHistoryTurns` - Longer memory vs shorter prompts
+
+### Adding UI Translations
+
+Edit `lib/i18n.ts` to add new UI copy or languages.
+
+### Styling
+
+All styles use Tailwind CSS. Key files:
+- `styles/globals.css` - Global styles and custom components
+- `tailwind.config.js` - Theme configuration
+- Individual components use inline Tailwind classes
+
+### Rate Limiting
+
+Adjust in `app/api/chat/route.ts`:
+```typescript
+const rateLimiter = createRateLimiter({
+  maxTokens: 20,        // Increase limit
+  refillRate: 20 / 60,  // 20 per minute
+});
+```
+
 ## Future Enhancements
 
 Possible improvements:
-- Add pagination support for large datasets
-- Implement fuzzy search
-- Add entry creation/update/delete endpoints
-- Add revision history tracking
-- Support for additional languages
-- Add rich text/markdown support in answers
+- Voice input/output
+- Markdown rendering in messages
+- Export conversation feature
+- User authentication and history persistence
+- Advanced context retrieval (semantic search, embeddings)
+- Multi-turn clarification flows
+- Custom prompt templates per topic
+- Analytics dashboard
+- Support for additional languages (Spanish, German, etc.)
 
 ## License
 
