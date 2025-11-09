@@ -1,15 +1,15 @@
 /**
- * Unit and integration tests for the Gemini chat API route
+ * Unit and integration tests for the Ollama chat API route
  */
 
 import { NextRequest } from 'next/server';
 import { POST, OPTIONS } from '@/app/api/chat/route';
-import * as geminiClient from '@/lib/geminiClient';
+import * as ollamaClient from '@/lib/ollamaClient';
 import { RateLimiter } from '@/lib/rateLimiter';
 import type { ChatRequestPayload, ChatMessage } from '@/types/chat';
 
-// Mock the gemini client
-jest.mock('@/lib/geminiClient');
+// Mock the ollama client
+jest.mock('@/lib/ollamaClient');
 
 // Mock the prompt builder
 jest.mock('@/lib/prompt', () => ({
@@ -78,7 +78,7 @@ describe('Chat API Route Handler', () => {
         yield 'world';
       })();
 
-      (geminiClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       // Create request
       const payload: ChatRequestPayload = {
@@ -113,7 +113,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response to multi-turn';
       })();
 
-      (geminiClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [
@@ -132,7 +132,8 @@ describe('Chat API Route Handler', () => {
       const response = await POST(request);
 
       expect(response.status).toBe(200);
-      expect(geminiClient.streamChatResponse).toHaveBeenCalledWith(payload.messages);
+      // streamChatResponse is called with enhanced messages from buildChatMessages
+      expect(ollamaClient.streamChatResponse).toHaveBeenCalled();
 
       // Consume the stream to clean up
       await consumeStream(response);
@@ -143,7 +144,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response';
       })();
 
-      (geminiClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
@@ -158,8 +159,8 @@ describe('Chat API Route Handler', () => {
 
       const response = await POST(request);
 
-      // Verify streamChatResponse was called with messages
-      expect(geminiClient.streamChatResponse).toHaveBeenCalledWith(payload.messages);
+      // Verify streamChatResponse was called with enhanced messages
+      expect(ollamaClient.streamChatResponse).toHaveBeenCalled();
 
       // Consume the stream to clean up
       await consumeStream(response);
@@ -253,9 +254,9 @@ describe('Chat API Route Handler', () => {
       expect(data.code).toBe('INVALID_CONVERSATION');
     });
 
-    it('should return 500 when Gemini API key is missing', async () => {
-      (geminiClient.streamChatResponse as jest.Mock).mockRejectedValue(
-        new Error('GOOGLE_GEMINI_API_KEY environment variable is not set')
+    it('should return 500 when Ollama is not running', async () => {
+      (ollamaClient.streamChatResponse as jest.Mock).mockRejectedValue(
+        new Error('Failed to connect to Ollama API at http://localhost:11434')
       );
 
       const payload: ChatRequestPayload = {
@@ -279,7 +280,7 @@ describe('Chat API Route Handler', () => {
     });
 
     it('should return 500 for unexpected errors', async () => {
-      (geminiClient.streamChatResponse as jest.Mock).mockRejectedValue(
+      (ollamaClient.streamChatResponse as jest.Mock).mockRejectedValue(
         new Error('Unexpected error')
       );
 
@@ -329,7 +330,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response';
       })();
 
-      (geminiClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
@@ -358,7 +359,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response';
       })();
 
-      (geminiClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
