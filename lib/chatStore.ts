@@ -9,6 +9,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   pendingMessage: '',
   streamingText: '',
   isStreaming: false,
+  language: 'en',
+  error: null,
 
   // Actions
   addMessage: (messageData) => {
@@ -61,5 +63,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       streamingText: '',
       isStreaming: false,
     });
+  },
+
+  setLanguage: (language) => {
+    set({ language });
+  },
+
+  setError: (error) => {
+    set({ error });
   },
 }));

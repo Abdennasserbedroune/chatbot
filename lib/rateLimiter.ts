@@ -19,7 +19,7 @@ class RateLimiter {
   private maxTokens: number;
   private refillRate: number;
   private windowMs: number;
-  private cleanupInterval?: NodeJS.Timeout;
+  private cleanupInterval?: ReturnType<typeof setInterval>;
 
   constructor(options: RateLimiterOptions) {
     this.maxTokens = options.maxTokens;

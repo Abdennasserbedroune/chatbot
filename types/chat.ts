@@ -14,6 +14,7 @@ export interface ChatMessage {
 export interface ChatRequestPayload {
   messages: ChatMessage[];
   conversationId?: string;
+  language?: 'en' | 'fr';
 }
 
 export interface ChatErrorResponse {
@@ -29,6 +30,8 @@ export interface ChatState {
   pendingMessage: string;
   streamingText: string;
   isStreaming: boolean;
+  language: 'en' | 'fr';
+  error: string | null;
 }
 
 export interface ChatActions {
@@ -38,6 +41,8 @@ export interface ChatActions {
   startStreaming: (text: string) => void;
   stopStreaming: () => void;
   clearMessages: () => void;
+  setLanguage: (language: 'en' | 'fr') => void;
+  setError: (error: string | null) => void;
 }
 
 export type ChatStore = ChatState & ChatActions;

@@ -6,10 +6,21 @@ import { NextRequest } from 'next/server';
 import { POST, OPTIONS } from '@/app/api/chat/route';
 import * as geminiClient from '@/lib/geminiClient';
 import { RateLimiter } from '@/lib/rateLimiter';
-import type { ChatRequestPayload } from '@/types/chat';
+import type { ChatRequestPayload, ChatMessage } from '@/types/chat';
 
 // Mock the gemini client
 jest.mock('@/lib/geminiClient');
+
+// Mock the prompt builder
+jest.mock('@/lib/prompt', () => ({
+  buildChatMessages: jest.fn().mockImplementation(async (userMessage: string, history: ChatMessage[]) => {
+    return [
+      { role: 'assistant' as const, content: 'System prompt' },
+      ...history,
+      { role: 'user' as const, content: userMessage },
+    ];
+  }),
+}));
 
 // Helper function to safely consume a readable stream (with timeout)
 async function consumeStream(response: Response): Promise<string> {
