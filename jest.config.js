@@ -11,6 +11,7 @@ const config = {
   collectCoverageFrom: [
     'lib/**/*.ts',
     'types/**/*.ts',
+    'app/**/*.ts',
     '!**/*.d.ts'
   ],
   setupFilesAfterEnv: [],
