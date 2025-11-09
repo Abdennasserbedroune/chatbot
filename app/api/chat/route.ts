@@ -1,10 +1,10 @@
 /**
  * API Route: POST /api/chat
- * Streams Gemini responses with rate limiting and error handling
+ * Streams Ollama responses with rate limiting and error handling
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { streamChatResponse } from '@/lib/geminiClient';
+import { streamChatResponse } from '@/lib/ollamaClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
 import { buildChatMessages } from '@/lib/prompt';
 import type { ChatRequestPayload, ChatErrorResponse, ChatMessage } from '@/types/chat';
@@ -173,13 +173,16 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
           let errorCode = 'INTERNAL_ERROR';
 
           if (error instanceof Error) {
-            if (error.message.includes('GOOGLE_GEMINI_API_KEY')) {
+            if (
+              error.message.includes('Failed to connect to Ollama') ||
+              error.message.includes('localhost:11434')
+            ) {
               errorMessage =
-                'AI service is not available. Please contact support if the problem persists.';
-              errorCode = 'API_KEY_ERROR';
-            } else if (error.message.includes('API error')) {
+                'AI service is not available. Please make sure Ollama is running locally on port 11434.';
+              errorCode = 'OLLAMA_CONNECTION_ERROR';
+            } else if (error.message.includes('Ollama API returned')) {
               errorMessage = 'The AI service returned an error. Please try again later.';
-              errorCode = 'API_ERROR';
+              errorCode = 'OLLAMA_API_ERROR';
             }
           }
 
