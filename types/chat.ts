@@ -6,6 +6,22 @@ export interface Message {
   isTyping?: boolean;
 }
 
+export interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatRequestPayload {
+  messages: ChatMessage[];
+  conversationId?: string;
+}
+
+export interface ChatErrorResponse {
+  error: string;
+  code?: string;
+  details?: Record<string, unknown>;
+}
+
 export interface ChatState {
   messages: Message[];
   isTyping: boolean;
