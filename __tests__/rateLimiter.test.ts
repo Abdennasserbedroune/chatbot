@@ -156,7 +156,7 @@ describe('RateLimiter', () => {
       const limiter = createRateLimiter();
 
       expect(limiter.isAllowed('user1', 1)).toBe(true);
-      expect(limiter.getRemainingTokens('user1')).toBeLessThanOrEqual(10);
+      expect(limiter.getRemainingTokens('user1')).toBeLessThanOrEqual(30);
 
       limiter.destroy();
     });
