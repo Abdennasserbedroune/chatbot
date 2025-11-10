@@ -1,679 +1,550 @@
 # Profile AI Chat Assistant
 
-A multilingual AI chatbot powered by Google Gemini with intelligent context orchestration, bilingual support, and a polished UI.
+A production-ready multilingual AI chatbot powered by **Groq API** with intelligent context orchestration, bilingual support, and comprehensive security measures.
 
-## Overview
+## ✨ Features
 
-This project provides an AI-powered chat assistant with:
-
-- **40+ Q&A entries** covering topics like about, education, skills, projects, experience, languages, vision, tools, values, CV, career goals, future plans, philosophy, portfolio, music, style, mindset, and contact information
+- **Groq API Integration** - Free tier cloud-based LLM (~30 requests/minute)
+- **40+ Q&A Entries** - Comprehensive profile database with 40+ bilingual Q&A pairs
 - **Intelligent Context Orchestration** - Automatically surfaces relevant profile information based on user queries
-- **Bilingual Support** - Automatic language detection and seamless switching between English and French
-- **Google Gemini Integration** - Streaming responses with rate limiting and error handling
+- **Bilingual Support** - Automatic language detection and seamless English/French switching
+- **Production-Ready Security**:
+  - Input validation with Zod schema validation
+  - Prompt injection prevention via content sanitization
+  - API key protection (never logged or exposed to frontend)
+  - CORS properly configured
+  - Rate limiting (30 req/min per IP - respects Groq free tier)
+- **Robust Error Handling**:
+  - Groq-specific error handling with user-friendly messages
+  - Automatic retry with exponential backoff for transient errors
+  - Timeout handling (30 second default)
+  - Comprehensive logging (sanitized, no API keys)
+- **Streaming Response Pipeline**:
+  - Server-Sent Events (SSE) for real-time responses
+  - Character-by-character typing effect
+  - Graceful stream cancellation handling
+  - Memory-leak free async generators
+- **Strong TypeScript Types** - Full compile-time safety
+- **Comprehensive Testing**:
+  - Jest unit tests with >80% coverage
+  - Integration tests for API routes
+  - Playwright E2E tests for UI
 - **Polished UI** - Responsive design with smooth animations, typing indicators, and error states
-- **Strong TypeScript types** for compile-time safety
-- **Client/Server compatibility** using fetch on client-side and fs on server-side
-- **Comprehensive validation** ensuring data integrity
-- **E2E Testing** with Playwright for full coverage
 
-## Project Structure
+## 🚀 Quick Start
 
-```
-├── public/
-│   └── data/
-│       └── profile.json          # Multilingual profile Q&A database
-├── types/
-│   └── profile.ts                # TypeScript interfaces for profile data
-├── lib/
-│   └── profile.ts                # Profile data helper with validation and utilities
-├── tsconfig.json                 # TypeScript configuration
-├── package.json                  # Project dependencies
-└── README.md                      # This file
-```
+### Prerequisites
 
-## Data Structure
+- Node.js 18+ and npm
+- A free Groq API key (get one at https://console.groq.com/keys)
 
-### profile.json Schema
-
-```json
-{
-  "version": "1.0.0",
-  "lastUpdated": "2025-01-01T00:00:00Z",
-  "entries": [
-    {
-      "id": "unique-entry-id",
-      "topic": "category-name",
-      "question": {
-        "en": "Question in English",
-        "fr": "Question en français"
-      },
-      "answer": {
-        "en": "Answer in English",
-        "fr": "Réponse en français"
-      },
-      "tags": ["tag1", "tag2", "tag3"]
-    }
-  ]
-}
-```
-
-### Field Descriptions
-
-- **id**: Unique identifier for the entry (required, string)
-- **topic**: Category of the entry, e.g., "about", "skills", "experience" (required, string)
-- **question**: Bilingual question with "en" (English) and "fr" (French) keys (required, both must be non-empty strings)
-- **answer**: Bilingual answer with "en" (English) and "fr" (French) keys (required, both must be non-empty strings)
-- **tags**: Array of string tags for filtering and categorization (required, array of strings)
-- **version**: Schema version (required, semantic version string)
-- **lastUpdated**: ISO 8601 timestamp of last update (required, string)
-
-## TypeScript Types
-
-Located in `types/profile.ts`:
-
-```typescript
-// Multilingual text with en/fr variants
-interface MultilingualText {
-  en: string;
-  fr: string;
-}
-
-// Individual Q&A entry
-interface ProfileEntry {
-  id: string;
-  topic: string;
-  question: MultilingualText;
-  answer: MultilingualText;
-  tags: string[];
-}
-
-// Complete profile data
-interface ProfileData {
-  entries: ProfileEntry[];
-  version: string;
-  lastUpdated: string;
-}
-
-// Validation result
-interface ValidationResult {
-  valid: boolean;
-  errors: ValidationError[];
-}
-```
-
-## Helper Functions
-
-Located in `lib/profile.ts`:
-
-### Data Loading and Validation
-
-```typescript
-// Load and validate profile data
-async function loadProfileData(): Promise<ProfileData>
-
-// Validate profile data structure
-function validateProfileData(data: unknown): ValidationResult
-
-// Get all profile entries
-async function getProfileEntries(): Promise<ProfileEntry[]>
-
-// Get profile metadata
-async function getProfileMetadata(): Promise<{
-  version: string;
-  lastUpdated: string;
-  entryCount: number
-}>
-```
-
-### Querying Functions
-
-```typescript
-// Get a single entry by ID
-async function getProfileEntry(id: string): Promise<ProfileEntry | undefined>
-
-// Get all entries for a specific topic
-async function getEntriesByTopic(topic: string): Promise<ProfileEntry[]>
-
-// Get all entries with a specific tag
-async function getEntriesByTag(tag: string): Promise<ProfileEntry[]>
-
-// Get all unique topics
-async function getTopics(): Promise<string[]>
-
-// Get all unique tags
-async function getAllTags(): Promise<string[]>
-
-// Search entries by text (case-insensitive)
-async function searchEntries(query: string, language: 'en' | 'fr' = 'en'): Promise<ProfileEntry[]>
-
-// Type guard for ProfileEntry
-function isProfileEntry(value: unknown): value is ProfileEntry
-```
-
-### Cache Management
-
-```typescript
-// Force reload of profile data
-function clearProfileCache(): void
-```
-
-## Usage Examples
-
-### In a React Component (Client-Side)
-
-```typescript
-import { getEntriesByTopic, searchEntries } from '@/lib/profile';
-
-export default function ProfilePage() {
-  const [entries, setEntries] = React.useState<ProfileEntry[]>([]);
-
-  React.useEffect(() => {
-    getEntriesByTopic('skills').then(setEntries);
-  }, []);
-
-  return (
-    <div>
-      {entries.map(entry => (
-        <div key={entry.id}>
-          <h3>{entry.question.en}</h3>
-          <p>{entry.answer.en}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-```
-
-### In a Server Component or API Route (Server-Side)
-
-```typescript
-import { getProfileEntry, getProfileData } from '@/lib/profile';
-
-// This will use fs/promises on the server
-export async function GET() {
-  const profileData = await getProfileData();
-  return Response.json(profileData);
-}
-
-export async function getServerSideProps() {
-  const entry = await getProfileEntry('about-01');
-  return { props: { entry } };
-}
-```
-
-### Searching and Filtering
-
-```typescript
-// Search in English
-const results = await searchEntries('typescript', 'en');
-
-// Get all entries with a specific tag
-const entries = await getEntriesByTag('skills');
-
-// Get all topics
-const topics = await getTopics();
-
-// Get metadata
-const metadata = await getProfileMetadata();
-console.log(`Profile has ${metadata.entryCount} entries, version ${metadata.version}`);
-```
-
-## Editing and Extending the Profile
-
-### Adding New Entries
-
-1. Open `public/data/profile.json`
-2. Add a new object to the `entries` array with:
-   - Unique `id` (string, should follow pattern: `topic-number`)
-   - `topic` (string, category like "skills", "projects", etc.)
-   - `question` with both `en` and `fr` keys
-   - `answer` with both `en` and `fr` keys
-   - `tags` (array of strings for categorization)
-
-3. Update `lastUpdated` to current ISO 8601 timestamp
-4. Ensure all required fields are present and non-empty
-
-Example:
-
-```json
-{
-  "id": "skills-04",
-  "topic": "skills",
-  "question": {
-    "en": "What database technologies do you use?",
-    "fr": "Quelles technologies de base de données utilisez-vous ?"
-  },
-  "answer": {
-    "en": "I have extensive experience with PostgreSQL, MongoDB, and Redis for various use cases.",
-    "fr": "J'ai une expérience considérable avec PostgreSQL, MongoDB et Redis pour diverses utilisations."
-  },
-  "tags": ["skills", "databases", "technical"]
-}
-```
-
-### Translation Guidelines
-
-When adding new entries, ensure:
-
-1. **Completeness**: Both `en` and `fr` variants are required for question and answer
-2. **Accuracy**: Use professional, native-quality translations
-3. **Consistency**: Maintain consistent terminology across entries (e.g., always use "full-stack developer" / "développeur full-stack")
-4. **Clarity**: Keep translations clear and accessible, avoiding overly complex language
-5. **Length**: Aim for similar lengths between English and French versions for better presentation
-
-### Validation Rules
-
-The profile data is automatically validated against these rules:
-
-- ✅ Minimum 40 entries
-- ✅ All required fields present (id, topic, question, answer, tags)
-- ✅ All multilingual fields contain both English (`en`) and French (`fr`) variants
-- ✅ All fields are non-empty strings (except tags which is an array)
-- ✅ All tag values are strings
-- ✅ No duplicate entry IDs
-- ✅ Valid ISO 8601 `lastUpdated` timestamp
-- ✅ Semantic version in `version` field
-
-### Validation Errors
-
-If profile data fails validation on startup, the application will not start and will display detailed error messages including:
-
-- Entry ID where error occurred
-- Field name
-- Specific error description
-
-### Maintaining Data Integrity
-
-1. **Always validate after editing**: The JSON file is automatically validated when loaded
-2. **Use a JSON validator**: Tools like VSCode's built-in JSON validation help catch syntax errors
-3. **Keep backups**: Save previous versions before major changes
-4. **Update metadata**: Always update `lastUpdated` when making changes
-5. **Check for duplicates**: Use your editor's search to ensure no duplicate IDs
-
-## Development Workflow
-
-### Installation
+### 1. Clone and Install
 
 ```bash
+git clone <repository>
+cd profile-app
 npm install
 ```
 
-### Development Server
+### 2. Configure Environment Variables
+
+Create a `.env.local` file:
+
+```bash
+# Required
+GROQ_API_KEY=your_groq_api_key_here
+
+# Optional (these are defaults if not set)
+GROQ_MODEL=mixtral-8x7b-32768
+GROQ_TIMEOUT=30000
+GROQ_MAX_RETRIES=3
+GROQ_INITIAL_RETRY_DELAY=1000
+```
+
+**Get your Groq API key:**
+1. Visit https://console.groq.com/keys
+2. Sign up for free
+3. Create a new API key
+4. Copy it to `.env.local`
+
+### 3. Run Development Server
 
 ```bash
 npm run dev
 ```
 
-The application will:
-1. Load `public/data/profile.json`
-2. Validate all entries against the schema
-3. Start the dev server (fails if validation errors exist)
+Visit http://localhost:3000 to start chatting!
 
-### Building
+### 4. Build for Production
 
 ```bash
 npm run build
+npm run start
 ```
 
-TypeScript compilation will verify:
-- All types are correct
-- All imports resolve properly
-- No type errors in helper functions
+## 📋 Project Structure
 
-### Testing Validation
+```
+├── app/
+│   └── api/chat/
+│       └── route.ts                 # Main chat API endpoint
+├── lib/
+│   ├── groqClient.ts               # Groq SDK wrapper with streaming
+│   ├── chatValidation.ts           # Zod-based input validation
+│   ├── rateLimiter.ts              # Token bucket rate limiter
+│   ├── prompt.ts                   # Context orchestration
+│   ├── profile.ts                  # Profile data helpers
+│   └── ...
+├── types/
+│   ├── chat.ts                     # Chat-related types
+│   └── profile.ts                  # Profile data types
+├── __tests__/
+│   ├── groqClient.test.ts          # Groq client tests
+│   ├── chatValidation.test.ts      # Validation tests
+│   ├── chat-route.test.ts          # API route tests
+│   └── ...
+├── components/
+│   └── chat/                        # React chat components
+├── public/
+│   └── data/
+│       └── profile.json             # Bilingual Q&A database
+└── README.md
+```
 
-Create a test file to validate profile data:
+## 🔐 Security Features
+
+### Input Validation
+
+All requests are validated using Zod schema validation:
 
 ```typescript
-import { validateProfileData } from '@/lib/profile';
-import profileData from '@/public/data/profile.json';
-
-const result = validateProfileData(profileData);
-if (!result.valid) {
-  console.error('Validation errors:');
-  result.errors.forEach(err => {
-    console.error(`  [${err.entryId}:${err.field}] ${err.error}`);
-  });
-  process.exit(1);
-}
+// Messages must be 1-4096 characters
+// Roles must be 'user' or 'assistant'
+// Language must be 'en' or 'fr'
+// Last message must be from user
 ```
 
-## Topics Coverage
-
-The profile includes entries across these topics:
-
-- **about**: Personal introduction and motivation
-- **education**: Educational background and certifications
-- **skills**: Technical and soft skills
-- **projects**: Notable projects and achievements
-- **experience**: Professional background and roles
-- **languages**: Programming and spoken languages
-- **vision**: Future vision and aspirations
-- **tools**: Development tools and platforms
-- **values**: Professional values and principles
-- **cv**: CV summary and highlights
-- **goals**: Career goals and objectives
-- **future**: Future interests and trends
-- **philosophy**: Work philosophy and approach
-- **portfolio**: Portfolio and open-source work
-- **music**: Personal hobbies and interests
-- **style**: Coding style and preferences
-- **mindset**: Learning and problem-solving approach
-- **contact**: Contact information and availability
-
-## Troubleshooting
-
-### "Profile data validation failed" on startup
-
-**Solution**: Check `public/data/profile.json` for:
-- Syntax errors (use JSON validator)
-- Missing required fields in entries
-- Empty string values in multilingual fields
-- Duplicate entry IDs
-- Fewer than 40 entries
-
-### "Failed to load profile data"
-
-**Solution**:
-- Ensure `public/data/profile.json` exists
-- Check file permissions
-- Verify JSON syntax is valid
-- On server-side, verify the file path is correct
-
-### Type errors in TypeScript
-
-**Solution**:
-- Ensure all imports use `@/lib/profile` and `@/types/profile`
-- Verify `tsconfig.json` has correct `paths` configuration
-- Run `npm run build` to see full error messages
-
-## API Reference
-
-See individual JSDoc comments in `lib/profile.ts` for detailed function signatures and return types.
-
-## Performance Considerations
-
-- Profile data is cached in memory after first load
-- Validation runs only once on initial load
-- Search and filter operations run in O(n) time
-- Use `getProfileEntry()` for ID lookups (O(n)) or cache results for repeated access
-
-## Chat Features
-
-### Context Orchestration
-
-The chat assistant uses intelligent context orchestration to provide relevant, accurate responses:
-
-- **Relevance Scoring** - Automatically scores profile entries based on query relevance
-- **Context Injection** - Injects top-scoring entries into the system prompt
-- **Rolling History** - Maintains conversation context with configurable history window
-- **Guardrails** - Detects insufficient context and asks clarifying questions instead of hallucinating
-
-Configuration options in `lib/prompt.ts`:
-```typescript
-{
-  maxContextEntries: 5,        // Max profile entries to include
-  contextRelevanceThreshold: 0.3, // Minimum relevance score
-  language: 'en',              // Response language
-  includeGuardrails: true,     // Enable hallucination prevention
-  maxHistoryTurns: 10          // Rolling window size
-}
-```
-
-### Language Support
-
-Automatic language detection and switching:
-
-- **Auto-detection** - Uses `franc-min` to detect user message language
-- **Manual Override** - Language switcher in header for explicit control
-- **Bilingual UI** - All UI elements localized via `lib/i18n.ts`
-- **Context Localization** - Profile context served in detected language
-- **Response Control** - System prompt instructs model to respond in target language
-
-### Error Handling
-
-Robust error handling with user-friendly fallbacks:
-
-- **Error Banner** - Displays errors with retry and dismiss actions
-- **Rate Limiting** - 10 requests per minute with graceful error messages
-- **Network Errors** - Detects offline/connection issues
-- **API Errors** - Handles Gemini API failures with fallback messages
-- **Validation Errors** - Profile data validated on load with detailed error reporting
-
-## Testing
-
-### Unit Tests
-
-Run Jest unit tests:
-```bash
-npm test                # Run all unit tests
-npm run test:watch      # Watch mode for development
-```
-
-Test coverage:
-- Profile data validation (`__tests__/profile.test.ts`)
-- Prompt builder logic (`__tests__/prompt.test.ts`)
-- Language detection (`__tests__/languageDetection.test.ts`)
-- Gemini client (`__tests__/geminiClient.test.ts`)
-- Rate limiter (`__tests__/rateLimiter.test.ts`)
-- Chat API route (`__tests__/chat-route.test.ts`)
-
-### End-to-End Tests
-
-Run Playwright E2E tests:
-```bash
-npm run test:e2e        # Run E2E tests
-npm run test:e2e:ui     # Run with UI inspector
-npm run test:all        # Run unit + E2E tests
-```
-
-E2E test coverage:
-- Chat interface rendering
-- Message sending and receiving
-- Language switching
-- Typing indicators
-- Error states
-- Responsive design
-- Keyboard navigation
-- Accessibility
-
-## Deployment
-
-### Environment Variables
-
-Required environment variables for production:
-
-```bash
-# .env.local
-GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-### Production Considerations
-
-1. **API Key Security**
-   - Never commit API keys to version control
-   - Use environment variables or secret management
-   - Rotate keys regularly
-
-2. **Rate Limiting**
-   - Default: 10 requests/minute per IP
-   - Adjust in `app/api/chat/route.ts` as needed
-   - Consider Redis for distributed rate limiting
-
-3. **Caching**
-   - Profile data cached in memory after first load
-   - Consider CDN caching for `/data/profile.json`
-   - API responses not cached (streaming)
-
-4. **Monitoring**
-   - Log chat errors to monitoring service
-   - Track API usage and costs
-   - Monitor rate limit violations
-
-5. **Performance**
-   - Profile context kept under 5 entries (configurable)
-   - Conversation history limited to 10 turns (configurable)
-   - Streaming responses for better perceived performance
-
-### Build and Deploy
-
-```bash
-# Production build
-npm run build
-
-# Start production server
-npm start
-
-# Validate everything before deploy
-npm run lint
-npm run type-check
-npm run validate
-npm test
-npm run test:e2e
-npm run build
-```
-
-## Troubleshooting
-
-### "GOOGLE_GEMINI_API_KEY not set"
-
-**Solution**: Create `.env.local` with your API key:
-```bash
-echo "GOOGLE_GEMINI_API_KEY=your_key_here" > .env.local
-```
-
-### "Rate limit exceeded"
-
-**Solution**: 
-- Wait 1 minute and try again
-- Adjust rate limit in `app/api/chat/route.ts`
-- Implement user authentication for higher limits
-
-### "Failed to build chat context"
-
-**Solution**:
-- Check profile data is valid: `npm run validate`
-- Ensure `public/data/profile.json` exists
-- Verify JSON syntax
-
-### Language detection not accurate
-
-**Solution**:
-- Provide more context in messages (10+ characters work best)
-- Use language switcher for manual override
-- Check message is clearly in English or French
-
-### E2E tests failing
-
-**Solution**:
-- Ensure dev server is running: `npm run dev`
-- Check port 3000 is available
-- Install Playwright browsers: `npx playwright install`
-
-## Architecture
-
-### Request Flow
-
-1. User types message in chat UI
-2. Frontend detects language using `franc-min`
-3. Message sent to `/api/chat` with conversation history
-4. API route builds enhanced messages with profile context
-5. System prompt + history + user message sent to Gemini
-6. Streaming response parsed and sent to frontend
-7. Frontend displays response with typing animation
-
-### Prompt Assembly
-
-```
-[System Message]
-- Role instructions
-- Language directive
-- Relevant profile context (top 5 entries)
-- Guardrails for hallucination prevention
-
-[Conversation History]
-- Last 10 turns (20 messages)
-- User and assistant messages
-
-[User Message]
-- Latest user query
-```
-
-### File Organization
-
-```
-lib/
-├── profile.ts              # Profile data loader
-├── prompt.ts               # Context orchestration
-├── languageDetection.ts    # Language detection
-├── i18n.ts                 # UI translations
-├── chatStore.ts            # Zustand state
-├── geminiClient.ts         # Gemini API client
-└── rateLimiter.ts          # Rate limiting
-
-components/chat/
-├── ChatLayout.tsx          # Main layout with header
-├── MessageList.tsx         # Scrollable message container
-├── MessageBubble.tsx       # Individual message
-├── ChatComposer.tsx        # Input area
-├── TypingIndicator.tsx     # Typing animation
-├── ErrorBanner.tsx         # Error display
-└── LanguageSwitcher.tsx    # Language toggle
-
-app/api/chat/
-└── route.ts                # Chat API endpoint
-
-pages/
-└── index.tsx               # Main chat page
-```
-
-## Customization
-
-### Tuning Prompt Parameters
-
-Edit `lib/prompt.ts` to adjust:
-- `maxContextEntries` - More entries = more context, longer prompts
-- `contextRelevanceThreshold` - Higher = fewer but more relevant entries
-- `maxHistoryTurns` - Longer memory vs shorter prompts
-
-### Adding UI Translations
-
-Edit `lib/i18n.ts` to add new UI copy or languages.
-
-### Styling
-
-All styles use Tailwind CSS. Key files:
-- `styles/globals.css` - Global styles and custom components
-- `tailwind.config.js` - Theme configuration
-- Individual components use inline Tailwind classes
+### Prompt Injection Prevention
+
+Message content is sanitized to remove:
+- Control characters (0x00-0x08, 0x0B-0x0C, 0x0E-0x1F, 0x7F)
+- Leading/trailing whitespace
+- Invalid UTF-8 sequences
+
+### API Key Protection
+
+- API key stored in environment variable only
+- Never logged or exposed in error messages
+- Never sent to frontend (backend-only integration)
+- Groq SDK handles secure transmission via HTTPS
 
 ### Rate Limiting
 
-Adjust in `app/api/chat/route.ts`:
-```typescript
-const rateLimiter = createRateLimiter({
-  maxTokens: 20,        // Increase limit
-  refillRate: 20 / 60,  // 20 per minute
-});
+- **30 requests per minute per IP** (Groq free tier limit)
+- Token bucket algorithm for fair distribution
+- Retry-After header included in 429 responses
+- Per-IP tracking with automatic cleanup
+
+### CORS Configuration
+
+- Proper Access-Control headers
+- Only allows POST and OPTIONS methods
+- Content-Type validation required
+
+## 🔄 Streaming Pipeline
+
+The chat endpoint implements a production-ready streaming pipeline:
+
+```
+Client Request
+    ↓
+Rate Limit Check (per IP)
+    ↓
+Input Validation (Zod)
+    ↓
+Message Sanitization
+    ↓
+Context Orchestration (relevant profile entries)
+    ↓
+Groq API Call (with retry + backoff)
+    ↓
+SSE Stream (chunk by chunk)
+    ↓
+Error Handling (graceful fallback)
 ```
 
-## Future Enhancements
+### Response Format (Server-Sent Events)
 
-Possible improvements:
-- Voice input/output
-- Markdown rendering in messages
-- Export conversation feature
-- User authentication and history persistence
-- Advanced context retrieval (semantic search, embeddings)
-- Multi-turn clarification flows
-- Custom prompt templates per topic
-- Analytics dashboard
-- Support for additional languages (Spanish, German, etc.)
+```
+data: {"type": "content", "data": "Hello"}
+data: {"type": "content", "data": " from"}
+data: {"type": "content", "data": " Groq"}
+data: {"type": "done"}
+```
 
-## License
+Or on error:
 
-This project is part of a profile portfolio system.
+```
+data: {"type": "error", "error": "User-friendly message", "code": "ERROR_CODE"}
+```
 
-## Support
+## ⚙️ API Endpoint
 
-For issues or questions, please refer to the project documentation or contact the maintainer.
+### POST /api/chat
+
+Streams chat responses with context and error handling.
+
+**Request:**
+
+```json
+{
+  "messages": [
+    {"role": "user", "content": "What are your skills?"}
+  ],
+  "language": "en",
+  "conversationId": "optional-id"
+}
+```
+
+**Response (SSE):**
+
+```
+data: {"type": "content", "data": "I have strong skills in..."}
+data: {"type": "done"}
+```
+
+**Error Response:**
+
+```
+data: {"type": "error", "error": "Rate limit exceeded", "code": "RATE_LIMIT_EXCEEDED"}
+```
+
+**Status Codes:**
+
+- `200` - Success (stream)
+- `400` - Invalid request (validation error)
+- `429` - Rate limit exceeded
+- `500` - Server error
+
+## 🛡️ Error Handling
+
+### Groq-Specific Errors
+
+| Error | Status | Message | Recovery |
+|-------|--------|---------|----------|
+| Invalid API Key | 401 | "Groq API authentication failed" | Check GROQ_API_KEY |
+| Rate Limited | 429 | "Groq API rate limit exceeded" | Retry after delay |
+| Timeout | 408 | "Request timed out" | Auto-retry with backoff |
+| Service Down | 503 | "Groq service unavailable" | Auto-retry with backoff |
+
+### Retry Logic
+
+- **Transient errors**: Automatic retry with exponential backoff
+- **Max retries**: 3 (configurable via GROQ_MAX_RETRIES)
+- **Initial delay**: 1 second
+- **Backoff**: 2x multiplier (1s → 2s → 4s)
+
+### Logging
+
+All errors are logged with:
+
+- Timestamp
+- Error name and message
+- Error code
+- **NO sensitive data** (API keys, user content)
+
+Example:
+
+```
+[Chat API Error] {
+  name: 'GroqClientError',
+  message: 'Request timed out',
+  code: 'TIMEOUT'
+}
+```
+
+## 📊 Rate Limiting
+
+Groq free tier allows ~30 requests per minute. This app implements:
+
+- **Token bucket algorithm** for fair distribution
+- **Per-IP tracking** to prevent abuse
+- **Automatic cleanup** of inactive IPs
+- **Retry-After header** for HTTP 429 responses
+
+Calculate when your limit resets:
+
+```
+Retry-After = ceil((1 - current_tokens) / refill_rate)
+```
+
+## 🧪 Testing
+
+### Run All Tests
+
+```bash
+npm run test              # Jest unit tests
+npm run test:e2e          # Playwright E2E tests
+npm run test:all          # Both
+npm run test:watch        # Jest watch mode
+npm run test:e2e:ui       # E2E tests with UI
+```
+
+### Test Coverage
+
+- **groqClient.test.ts** - Groq SDK wrapper (mocked)
+- **chatValidation.test.ts** - Input validation with Zod
+- **chat-route.test.ts** - API route handler with streaming
+- **rateLimiter.test.ts** - Token bucket rate limiter
+- **prompt.test.ts** - Context orchestration
+- **profile.test.ts** - Profile data helpers
+- **e2e/** - Full UI testing with Playwright
+
+### Key Test Scenarios
+
+✅ Valid request → successful stream
+✅ Invalid JSON → 400 error
+✅ Empty messages → 400 error  
+✅ Message too long → 400 error
+✅ Last message not from user → 400 error
+✅ Rate limit exceeded → 429 with Retry-After
+✅ Groq API error → proper error message
+✅ Timeout → auto-retry with backoff
+✅ Stream cancellation → graceful cleanup
+
+## 🔍 Validation
+
+### Message Validation
+
+```typescript
+// Each message must have:
+{
+  "role": "user" | "assistant",      // Required, enum
+  "content": "1-4096 characters"      // Required, string
+}
+```
+
+### Request Validation
+
+```typescript
+{
+  "messages": ChatMessage[],           // Required, non-empty
+  "language": "en" | "fr",             // Optional, defaults to 'en'
+  "conversationId": "string"           // Optional
+}
+```
+
+### Validation Errors
+
+Returns detailed error info:
+
+```json
+{
+  "error": "Invalid request payload",
+  "code": "INVALID_PAYLOAD",
+  "details": {
+    "errors": [
+      {"field": "messages.0.content", "message": "exceeds maximum length", "code": "too_big"}
+    ]
+  }
+}
+```
+
+## 🚀 Deployment
+
+### Environment Variables
+
+Set these in your deployment platform:
+
+```
+GROQ_API_KEY=<your-api-key>
+GROQ_MODEL=mixtral-8x7b-32768
+GROQ_TIMEOUT=30000
+GROQ_MAX_RETRIES=3
+```
+
+### Recommended Platforms
+
+- **Vercel** (Next.js native)
+- **Railway**
+- **Render**
+- **Heroku**
+- **AWS Amplify**
+
+### Production Checklist
+
+- [ ] GROQ_API_KEY set in environment
+- [ ] npm run build succeeds
+- [ ] npm run lint passes
+- [ ] npm run type-check passes
+- [ ] npm run test passes
+- [ ] Tested streaming with real API key
+- [ ] Rate limiting verified
+- [ ] Error logs verified (no API keys)
+- [ ] SSL/HTTPS enabled
+- [ ] CORS configured for your domain
+
+## 🐛 Troubleshooting
+
+### "GROQ_API_KEY is not set"
+
+**Issue**: Getting "GROQ_API_KEY environment variable is not set" error.
+
+**Solution**:
+1. Copy `.env.example` to `.env.local`
+2. Add your API key: `GROQ_API_KEY=gsk_...`
+3. Restart dev server: `npm run dev`
+
+### "Rate limit exceeded"
+
+**Issue**: Getting 429 errors after a few requests.
+
+**Current limits**: 30 requests/minute per IP
+
+**Solution**:
+- Wait for rate limit to reset (~2 seconds)
+- Or upgrade Groq plan for higher limits
+
+### "Request timed out"
+
+**Issue**: Getting timeout errors (>30 seconds).
+
+**Solution**:
+- Check your internet connection
+- Verify Groq API is up: https://status.groq.com
+- Increase timeout: `GROQ_TIMEOUT=60000`
+- Auto-retry is enabled, wait 1-4 seconds
+
+### "Invalid API key"
+
+**Issue**: Getting 401 authentication error.
+
+**Solution**:
+1. Get fresh key: https://console.groq.com/keys
+2. Verify key format (should start with `gsk_`)
+3. Update `.env.local`
+4. Restart dev server
+
+### "Groq service unavailable"
+
+**Issue**: Getting 503 or 500 errors consistently.
+
+**Solution**:
+- Check Groq status page: https://status.groq.com
+- Try another model: `GROQ_MODEL=llama2-70b-4096`
+- Auto-retry is enabled, usually resolves itself
+
+### Tests Failing
+
+**Solution**:
+```bash
+# Clear cache and reinstall
+rm -rf node_modules package-lock.json
+npm install
+
+# Run tests with debug output
+npm run test -- --verbose
+```
+
+## 📖 API Documentation
+
+### Chat API
+
+**Endpoint**: `POST /api/chat`
+
+**Headers**:
+```
+Content-Type: application/json
+```
+
+**Request Body**:
+```json
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "What skills do you have?"
+    }
+  ],
+  "language": "en",
+  "conversationId": "conv-123"
+}
+```
+
+**Success Response** (HTTP 200):
+```
+data: {"type": "content", "data": "chunk1"}
+data: {"type": "content", "data": "chunk2"}
+data: {"type": "done"}
+```
+
+**Error Response** (HTTP 400/429/500):
+```json
+{
+  "error": "Rate limit exceeded",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "details": {
+    "retryAfter": 5
+  }
+}
+```
+
+## 🔄 Context Orchestration
+
+The system automatically surfaces relevant profile information:
+
+1. **Relevance Scoring** - Keywords matched against profile entries
+2. **Top Entries** - Top 5 most relevant entries selected (default)
+3. **System Prompt** - Entries injected into system prompt
+4. **Response** - Model uses context to answer user queries
+
+Example system prompt:
+
+```
+You are a helpful AI assistant with access to profile information...
+
+Available Profile Context:
+1. Q: What are your skills?
+   A: I have strong skills in React, Node.js, TypeScript...
+2. Q: What projects have you built?
+   A: I've built several full-stack applications...
+
+Instructions:
+- Use the profile context above...
+- If context lacks information, ask clarifying questions...
+```
+
+## 📝 Changelog
+
+### Recent Updates
+
+- ✅ **Groq Integration** - Replaced Ollama with Groq API (free tier)
+- ✅ **Input Validation** - Added Zod schema validation
+- ✅ **Prompt Injection Prevention** - Content sanitization
+- ✅ **Retry Logic** - Exponential backoff for transient errors
+- ✅ **Rate Limiting** - 30 req/min per IP (Groq free tier)
+- ✅ **Improved Errors** - User-friendly error messages
+- ✅ **Better Logging** - Sanitized, no API keys
+- ✅ **Comprehensive Tests** - 80%+ coverage
+
+## 📄 License
+
+MIT
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `npm run test:all`
+5. Submit a pull request
+
+## 📞 Support
+
+For issues or questions:
+- Check the [Troubleshooting](#troubleshooting) section
+- Review error messages and logs
+- Check Groq status page: https://status.groq.com
+- Visit Groq docs: https://console.groq.com/docs

@@ -1,18 +1,19 @@
 /**
  * API Route: POST /api/chat
- * Streams Ollama responses with rate limiting and error handling
+ * Streams Groq responses with rate limiting, validation, and error handling
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { streamChatResponse } from '@/lib/ollamaClient';
+import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
 import { buildChatMessages } from '@/lib/prompt';
+import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatErrorResponse, ChatMessage } from '@/types/chat';
 
-// Create a singleton rate limiter (10 requests per minute per IP)
+// Create a singleton rate limiter (30 requests per minute per IP - Groq free tier)
 const rateLimiter = createRateLimiter({
-  maxTokens: 10,
-  refillRate: 10 / 60, // 10 tokens per minute
+  maxTokens: 30,
+  refillRate: 30 / 60, // 30 tokens per minute
 });
 
 function getClientIp(request: NextRequest): string {
@@ -51,43 +52,27 @@ function createErrorResponse(
   });
 }
 
-function validateRequestPayload(payload: unknown): payload is ChatRequestPayload {
-  if (!payload || typeof payload !== 'object') {
-    return false;
-  }
-
-  const p = payload as Record<string, unknown>;
-
-  if (!Array.isArray(p.messages)) {
-    return false;
-  }
-
-  if (p.messages.length === 0) {
-    return false;
-  }
-
-  return p.messages.every(
-    (msg): msg is ChatMessage =>
-      msg &&
-      typeof msg === 'object' &&
-      'role' in msg &&
-      'content' in msg &&
-      typeof (msg as Record<string, unknown>).role === 'string' &&
-      typeof (msg as Record<string, unknown>).content === 'string' &&
-      ((msg as Record<string, unknown>).role === 'user' ||
-        (msg as Record<string, unknown>).role === 'assistant')
-  );
-}
-
 export async function POST(request: NextRequest): Promise<NextResponse | Response> {
   try {
     // Check rate limit
     const clientIp = getClientIp(request);
     if (!rateLimiter.isAllowed(clientIp, 1)) {
-      return createErrorResponse(
-        429,
-        'Rate limit exceeded. Please try again later.',
-        'RATE_LIMIT_EXCEEDED'
+      const retryAfter = rateLimiter.getRetryAfterSeconds(clientIp);
+      return new NextResponse(
+        JSON.stringify({
+          error: 'Rate limit exceeded. Please try again later.',
+          code: 'RATE_LIMIT_EXCEEDED',
+          details: {
+            retryAfter,
+          },
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': retryAfter.toString(),
+          },
+        }
       );
     }
 
@@ -99,17 +84,23 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
       return createErrorResponse(400, 'Invalid JSON in request body', 'INVALID_JSON');
     }
 
-    // Validate payload
-    if (!validateRequestPayload(payload)) {
+    // Validate payload with Zod schema
+    const validationResult = validateChatRequest(payload);
+    if (!validationResult.valid) {
+      const errorDetails = {
+        errors: validationResult.errors,
+      };
       return createErrorResponse(
         400,
-        'Invalid request payload. Expected: { messages: Array<{role, content}> }',
-        'INVALID_PAYLOAD'
+        'Invalid request payload',
+        'INVALID_PAYLOAD',
+        errorDetails
       );
     }
 
-    // Ensure last message is from user
-    if (payload.messages[payload.messages.length - 1].role !== 'user') {
+    // Additional validation: last message must be from user
+    const messageValidation = validateLastMessageIsFromUser(payload as ChatRequestPayload);
+    if (!messageValidation.valid) {
       return createErrorResponse(
         400,
         'Last message must be from user',
@@ -117,19 +108,22 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
       );
     }
 
+    const typedPayload = payload as ChatRequestPayload;
+
     // Extract language from conversation (optional, defaults to 'en')
-    const language = payload.language;
+    const language = typedPayload.language || 'en';
 
     // Build enhanced messages with profile context
-    const lastUserMessage = payload.messages[payload.messages.length - 1].content;
-    const conversationHistory = payload.messages.slice(0, -1);
+    const lastUserMessage = typedPayload.messages[typedPayload.messages.length - 1].content;
+    const conversationHistory = typedPayload.messages.slice(0, -1);
 
     let enhancedMessages: ChatMessage[];
     try {
       enhancedMessages = await buildChatMessages(lastUserMessage, conversationHistory, {
-        language: language || 'en',
+        language,
       });
     } catch (error) {
+      console.error('[Chat API] Context building error:', error);
       return createErrorResponse(
         500,
         'Failed to build chat context',
@@ -165,24 +159,42 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
         } catch (error) {
           isStreamActive = false;
 
-          // Log error for debugging
-          console.error('[Chat API Error]', error);
+          // Log error for debugging (sanitized, no API keys)
+          console.error('[Chat API Error]', {
+            name: error instanceof Error ? error.name : 'Unknown',
+            message: error instanceof Error ? error.message : 'Unknown error',
+            code: error instanceof GroqClientError ? error.code : 'UNKNOWN',
+          });
 
           // Determine error response
           let errorMessage = 'An unexpected error occurred while processing your request.';
           let errorCode = 'INTERNAL_ERROR';
 
-          if (error instanceof Error) {
-            if (
-              error.message.includes('Failed to connect to Ollama') ||
-              error.message.includes('localhost:11434')
-            ) {
+          if (error instanceof GroqClientError) {
+            errorCode = error.code;
+
+            if (error.code === 'MISSING_API_KEY') {
               errorMessage =
-                'AI service is not available. Please make sure Ollama is running locally on port 11434.';
-              errorCode = 'OLLAMA_CONNECTION_ERROR';
-            } else if (error.message.includes('Ollama API returned')) {
-              errorMessage = 'The AI service returned an error. Please try again later.';
-              errorCode = 'OLLAMA_API_ERROR';
+                'Groq API is not properly configured. Please verify GROQ_API_KEY is set.';
+            } else if (error.code === 'INVALID_API_KEY') {
+              errorMessage = 'Groq API authentication failed. Please verify your API key.';
+            } else if (error.code === 'RATE_LIMITED') {
+              errorMessage = 'Groq API rate limit exceeded. Please try again in a moment.';
+            } else if (error.code === 'TIMEOUT') {
+              errorMessage = 'Request to Groq API timed out. Please try again.';
+            } else if (error.code === 'SERVICE_ERROR') {
+              errorMessage = 'Groq service is temporarily unavailable. Please try again later.';
+            } else if (error.code === 'CONNECTION_ERROR') {
+              errorMessage = 'Failed to connect to Groq API. Please check your connection.';
+            } else if (error.code === 'INVALID_INPUT') {
+              errorMessage = error.message;
+            } else {
+              errorMessage = error.message;
+            }
+          } else if (error instanceof Error) {
+            if (error.message.includes('timeout')) {
+              errorCode = 'TIMEOUT';
+              errorMessage = 'Request timed out. Please try again.';
             }
           }
 
