@@ -10,7 +10,7 @@ import { ChatLayout, MessageList, ChatComposer, ErrorBanner, LanguageSwitcher } 
 import { useChatStore } from '@/lib/chatStore';
 import { useTranslations } from '@/lib/i18n';
 import { detectLanguage } from '@/lib/languageDetection';
-import type { ChatMessage, Message } from '@/types/chat';
+import type { ChatMessage } from '@/types/chat';
 
 export default function Chat(): ReactElement {
   const {
@@ -33,26 +33,6 @@ export default function Chat(): ReactElement {
   const { t } = useTranslations(language);
   const [lastMessageRef, setLastMessageRef] = useState<string>('');
 
-  // Helper function to extract user name from messages
-  const extractUserName = useCallback((messages: Message[]): string | undefined => {
-    const namePatterns = [
-      /(?:my name is|i'm|i am|call me)\s+([a-zA-Z]+)/gi,
-      /(?:je m'appelle|je suis)\s+([a-zA-Z]+)/gi,
-    ];
-
-    for (const message of messages) {
-      if (message.role === 'user') {
-        for (const pattern of namePatterns) {
-          const match = message.content.match(pattern);
-          if (match && match[1]) {
-            return match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
-          }
-        }
-      }
-    }
-    return undefined;
-  }, []);
-
   const handleSendMessage = useCallback(
     async (content: string) => {
       // Detect language from user message if not manually set
@@ -71,11 +51,8 @@ export default function Chat(): ReactElement {
       setTyping(true);
       setError(null);
 
-      // Try to extract user name from the current message
-      const extractedName = extractUserName([...messages, { content, role: 'user' as const, id: '', timestamp: new Date() }]);
-      if (extractedName && !userName) {
-        setUserName(extractedName);
-      }
+      // Name extraction is now handled in the backend
+      // The backend will extract names from conversation history
 
       try {
         // Build conversation history
@@ -93,7 +70,7 @@ export default function Chat(): ReactElement {
           body: JSON.stringify({
             messages: [...conversationHistory, { role: 'user', content }],
             language: detectedLang,
-            userName: userName || extractedName,
+            userName: userName,
           }),
         });
 
@@ -151,7 +128,7 @@ export default function Chat(): ReactElement {
         stopStreaming();
       }
     },
-    [messages, language, userName, addMessage, setTyping, startStreaming, stopStreaming, setLanguage, setError, t, extractUserName, setUserName]
+    [messages, language, userName, addMessage, setTyping, startStreaming, stopStreaming, setLanguage, setError, t, setUserName]
   );
 
   const handleRetry = useCallback(() => {

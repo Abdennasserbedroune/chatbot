@@ -8,6 +8,9 @@ import {
   buildChatMessages,
   needsClarification,
   generateClarificationPrompt,
+  extractUserName,
+  isSimpleFactQuestion,
+  isProjectQuery,
   DEFAULT_PROMPT_CONFIG,
 } from '@/lib/prompt';
 
@@ -45,7 +48,7 @@ jest.mock('@/lib/profile', () => ({
       tags: ['personal', 'design'],
     },
   ]),
-  searchEntries: jest.fn().mockImplementation((query: string, lang: 'en' | 'fr') => {
+  searchEntries: jest.fn().mockImplementation((_query: string, _lang: 'en' | 'fr') => {
     return Promise.resolve([]);
   }),
 }));
@@ -215,6 +218,144 @@ describe('Prompt Builder', () => {
       const prompt = generateClarificationPrompt('salut', 'fr');
       expect(prompt).toContain('plus de détails');
       expect(prompt).toContain('Quel aspect spécifique');
+    });
+  });
+
+  describe('extractUserName', () => {
+    it('should extract name from English patterns', () => {
+      const messages = [
+        { role: 'user' as const, content: 'My name is John' },
+        { role: 'assistant' as const, content: 'Hello!' },
+      ];
+      expect(extractUserName(messages)).toBe('John');
+    });
+
+    it('should extract name from "I am" patterns', () => {
+      const messages = [
+        { role: 'user' as const, content: 'I am Sarah and I need help' },
+      ];
+      expect(extractUserName(messages)).toBe('Sarah');
+    });
+
+    it('should extract name from French patterns', () => {
+      const messages = [
+        { role: 'user' as const, content: 'Je m\'appelle Marie' },
+      ];
+      expect(extractUserName(messages)).toBe('Marie');
+    });
+
+    it('should return undefined for no name found', () => {
+      const messages = [
+        { role: 'user' as const, content: 'Hello, how are you?' },
+      ];
+      expect(extractUserName(messages)).toBeUndefined();
+    });
+
+    it('should filter out common words', () => {
+      const messages = [
+        { role: 'user' as const, content: 'I am the best' },
+      ];
+      expect(extractUserName(messages)).toBeUndefined();
+    });
+
+    it('should check messages in reverse order', () => {
+      const messages = [
+        { role: 'user' as const, content: 'My name is Alice' },
+        { role: 'assistant' as const, content: 'Hello!' },
+        { role: 'user' as const, content: 'Actually, call me Bob' },
+      ];
+      expect(extractUserName(messages)).toBe('Bob');
+    });
+  });
+
+  describe('isSimpleFactQuestion', () => {
+    it('should detect English age questions', () => {
+      expect(isSimpleFactQuestion('How old are you?')).toBe(true);
+      expect(isSimpleFactQuestion('What age are you?')).toBe(true);
+      expect(isSimpleFactQuestion('Age?')).toBe(true);
+    });
+
+    it('should detect English origin questions', () => {
+      expect(isSimpleFactQuestion('Where are you from?')).toBe(true);
+      expect(isSimpleFactQuestion('Where were you born?')).toBe(true);
+      expect(isSimpleFactQuestion('Where do you live?')).toBe(true);
+    });
+
+    it('should detect English identity questions', () => {
+      expect(isSimpleFactQuestion('What is your name?')).toBe(true);
+      expect(isSimpleFactQuestion('Who are you?')).toBe(true);
+      expect(isSimpleFactQuestion('What do you do?')).toBe(true);
+    });
+
+    it('should detect French age questions', () => {
+      expect(isSimpleFactQuestion('Quel âge as-tu?')).toBe(true);
+      expect(isSimpleFactQuestion('Âge?')).toBe(true);
+    });
+
+    it('should detect French origin questions', () => {
+      expect(isSimpleFactQuestion('D\'où viens-tu?')).toBe(true);
+      expect(isSimpleFactQuestion('Où es-tu né?')).toBe(true);
+      expect(isSimpleFactQuestion('Où habites-tu?')).toBe(true);
+    });
+
+    it('should return false for complex questions', () => {
+      expect(isSimpleFactQuestion('Tell me about your experience with React')).toBe(false);
+      expect(isSimpleFactQuestion('Can you explain your approach to problem solving?')).toBe(false);
+    });
+  });
+
+  describe('isProjectQuery', () => {
+    it('should detect project keywords in English', () => {
+      expect(isProjectQuery('Tell me about Fanpocket', [])).toBe(true);
+      expect(isProjectQuery('What projects have you built?', [])).toBe(true);
+      expect(isProjectQuery('Tell me about your app', [])).toBe(true);
+    });
+
+    it('should detect project keywords in French', () => {
+      expect(isProjectQuery('Parle-moi de Fanpocket', [])).toBe(true);
+      expect(isProjectQuery('Quels projets as-tu développés?', [])).toBe(true);
+    });
+
+    it('should detect project-related entries', () => {
+      const relevantEntries = [
+        {
+          id: 'test-1',
+          topic: 'Technology',
+          question: { en: 'What is React?', fr: 'Qu\'est-ce que React?' },
+          answer: { en: 'React is...', fr: 'React est...' },
+          tags: ['project', 'development'],
+        },
+      ];
+      expect(isProjectQuery('Tell me about your work', relevantEntries)).toBe(true);
+    });
+
+    it('should return false for non-project queries', () => {
+      expect(isProjectQuery('What is your favorite color?', [])).toBe(false);
+      expect(isProjectQuery('How do you learn?', [])).toBe(false);
+    });
+  });
+
+  describe('buildChatMessages with name extraction', () => {
+    it('should extract name from conversation history', async () => {
+      const history = [
+        { role: 'user' as const, content: 'My name is David' },
+        { role: 'assistant' as const, content: 'Hello!' },
+      ];
+
+      const messages = await buildChatMessages('Tell me about React', history);
+      const systemMessage = messages.find(m => m.role === 'system');
+      expect(systemMessage?.content).toContain('David');
+    });
+
+    it('should use provided userName over extraction', async () => {
+      const history = [
+        { role: 'user' as const, content: 'My name is David' },
+      ];
+
+      const messages = await buildChatMessages('Tell me about React', history, {}, 'Sarah');
+      const systemMessage = messages.find(m => m.role === 'system');
+      expect(systemMessage?.content).toContain('Sarah');
+      expect(systemMessage?.content).not.toContain('David');
     });
   });
 
