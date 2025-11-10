@@ -98,10 +98,10 @@ describe('Prompt Builder', () => {
       ];
 
       const prompt = buildSystemPrompt(entries, { language: 'en' });
-      expect(prompt).toContain('You are a helpful AI assistant');
+      expect(prompt).toContain('Abdennasser Bedroune');
       expect(prompt).toContain('What is React?');
       expect(prompt).toContain('React is a JavaScript library');
-      expect(prompt).toContain('English');
+      expect(prompt).toContain('ADDITIONAL CONTEXT');
     });
 
     it('should build system prompt in French', () => {
@@ -119,21 +119,21 @@ describe('Prompt Builder', () => {
       ];
 
       const prompt = buildSystemPrompt(entries, { language: 'fr' });
-      expect(prompt).toContain('Vous êtes un assistant IA utile');
+      expect(prompt).toContain('Abdennasser Bedroune');
       expect(prompt).toContain('Qu\'est-ce que React?');
       expect(prompt).toContain('React est une bibliothèque JavaScript');
-      expect(prompt).toContain('français');
+      expect(prompt).toContain('CONTEXTE ADDITIONNEL');
     });
 
     it('should include guardrails when configured', () => {
       const prompt = buildSystemPrompt([], { includeGuardrails: true, language: 'en' });
-      expect(prompt).toContain('Guardrails');
+      expect(prompt).toContain('Additional Guardrails');
       expect(prompt).toContain('DO NOT fabricate');
     });
 
     it('should exclude guardrails when configured', () => {
       const prompt = buildSystemPrompt([], { includeGuardrails: false, language: 'en' });
-      expect(prompt).not.toContain('Guardrails');
+      expect(prompt).not.toContain('Additional Guardrails');
     });
 
     it('should handle empty entries gracefully', () => {
@@ -146,7 +146,7 @@ describe('Prompt Builder', () => {
     it('should build complete message array', async () => {
       const messages = await buildChatMessages('Tell me about React', []);
       expect(messages.length).toBeGreaterThan(1);
-      expect(messages[0].role).toBe('assistant'); // System prompt
+      expect(messages[0].role).toBe('system'); // System prompt
       expect(messages[messages.length - 1].role).toBe('user');
       expect(messages[messages.length - 1].content).toBe('Tell me about React');
     });
