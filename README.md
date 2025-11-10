@@ -55,7 +55,7 @@ Create a `.env.local` file:
 GROQ_API_KEY=your_groq_api_key_here
 
 # Optional (these are defaults if not set)
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 GROQ_MAX_RETRIES=3
 GROQ_INITIAL_RETRY_DELAY=1000
@@ -358,7 +358,7 @@ Set these in your deployment platform:
 
 ```
 GROQ_API_KEY=<your-api-key>
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 GROQ_MAX_RETRIES=3
 ```

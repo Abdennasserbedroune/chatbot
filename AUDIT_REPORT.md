@@ -380,7 +380,7 @@ GROQ_API_KEY=<api-key>
 
 **Optional Variables**:
 ```
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 GROQ_MAX_RETRIES=3
 GROQ_INITIAL_RETRY_DELAY=1000

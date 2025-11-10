@@ -26,7 +26,7 @@ GROQ_API_KEY=gsk_...  # Your Groq API key from console.groq.com
 
 ```bash
 # Model selection - see https://console.groq.com/docs/models
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 
 # Timeout in milliseconds (default: 30000)
 # Increase for slow connections, decrease for aggressive timeout
@@ -52,7 +52,7 @@ GROQ_INITIAL_RETRY_DELAY=1000
 # 2. Set environment variables in Vercel dashboard
 # Settings → Environment Variables
 GROQ_API_KEY=gsk_...
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 
 # 3. Deploy automatically on push to main branch
@@ -77,7 +77,7 @@ GROQ_TIMEOUT=30000
 # 3. Add environment variables
 # Project → Variables
 GROQ_API_KEY=gsk_...
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 
 # 4. Deploy
@@ -102,7 +102,7 @@ npm run start
 # 5. Add environment variables
 # Environment → Environment Variables
 GROQ_API_KEY=gsk_...
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 
 # 6. Deploy and check logs
@@ -120,7 +120,7 @@ heroku create your-app-name
 
 # 3. Set environment variables
 heroku config:set GROQ_API_KEY=gsk_...
-heroku config:set GROQ_MODEL=mixtral-8x7b-32768
+heroku config:set GROQ_MODEL=llama-3.1-70b-versatile
 heroku config:set GROQ_TIMEOUT=30000
 
 # 4. Deploy
@@ -145,7 +145,7 @@ heroku logs --tail
 # 4. Add environment variables
 # Deployment → Environment variables
 GROQ_API_KEY=gsk_...
-GROQ_MODEL=mixtral-8x7b-32768
+GROQ_MODEL=llama-3.1-70b-versatile
 GROQ_TIMEOUT=30000
 
 # 5. Deploy
@@ -186,7 +186,7 @@ CMD ["npm", "start"]
 docker build -t profile-chat .
 docker run -p 3000:3000 \
   -e GROQ_API_KEY=gsk_... \
-  -e GROQ_MODEL=mixtral-8x7b-32768 \
+  -e GROQ_MODEL=llama-3.1-70b-versatile \
   profile-chat
 ```
 
@@ -472,7 +472,7 @@ heroku rollback v<number>
 
 ### Current Limits (Free Tier)
 - Requests: ~30/minute per IP
-- Model: mixtral-8x7b-32768 or llama2-70b-4096
+- Model: llama-3.1-70b-versatile or llama-3.1-8b-instant
 - Streaming: Supported
 - Timeout: Recommended 30 seconds
 
@@ -487,8 +487,8 @@ heroku rollback v<number>
    ```bash
    # Try primary model first
    # Fall back to secondary on 429
-   GROQ_PRIMARY_MODEL=mixtral-8x7b-32768
-   GROQ_FALLBACK_MODEL=llama2-70b-4096
+   GROQ_PRIMARY_MODEL=llama-3.1-70b-versatile
+   GROQ_FALLBACK_MODEL=llama-3.1-8b-instant
    ```
 
 3. **Response Caching**
