@@ -148,6 +148,101 @@ function formatProfileContext(entries: ProfileEntry[], language: 'en' | 'fr'): s
 }
 
 /**
+ * Extracts user name from conversation history using regex patterns
+ */
+export function extractUserName(conversationHistory: ChatMessage[]): string | undefined {
+  const namePatterns = [
+    // English patterns
+    /my name is\s+([a-zA-Z]{2,})/gi,
+    /i'm\s+([a-zA-Z]{2,})/gi,
+    /i am\s+([a-zA-Z]{2,})/gi,
+    /call me\s+([a-zA-Z]{2,})/gi,
+    /(?:i'm|i am)\s+([a-zA-Z]{2,})\s+and/i,
+    /you can call me\s+([a-zA-Z]{2,})/gi,
+    // French patterns (handle accented characters)
+    /je m'appelle\s+([a-zA-Zàâäéèêëïîôöùûüÿç]{2,})/gi,
+    /je suis\s+([a-zA-Zàâäéèêëïîôöùûüÿç]{2,})/gi,
+    /appelez-moi\s+([a-zA-Zàâäéèêëïîôöùûüÿç]{2,})/gi,
+  ];
+
+  // Check messages in reverse order (most recent first)
+  for (let i = conversationHistory.length - 1; i >= 0; i--) {
+    const message = conversationHistory[i];
+    if (message.role === 'user') {
+      for (const pattern of namePatterns) {
+        const match = pattern.exec(message.content);
+        if (match && match[1]) {
+          const name = match[1].charAt(0).toUpperCase() + match[1].slice(1).toLowerCase();
+          // Filter out common words that might match patterns
+          const commonWords = ['the', 'and', 'but', 'for', 'not', 'you', 'all', 'can', 'will', 'just', 'very', 'bien', 'avec', 'pour'];
+          if (!commonWords.includes(name.toLowerCase())) {
+            return name;
+          }
+        }
+        // Reset regex lastIndex for next pattern
+        pattern.lastIndex = 0;
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Detects if a query is a simple fact question about basic personal info
+ */
+export function isSimpleFactQuestion(query: string): boolean {
+  const lowerQuery = query.toLowerCase();
+  
+  // English simple fact patterns
+  const englishPatterns = [
+    /^(how old|what age|age)/,
+    /^(where.*from|where.*born|where.*live)/,
+    /^(what.*name|who.*you)/,
+    /^(what do you do|what's your job)/,
+    /^(where.*work)/,
+    /^(when.*born)/,
+  ];
+  
+  // French simple fact patterns
+  const frenchPatterns = [
+    /^(quel âge|âge)/,
+    /^(d'où.*viens|où.*né|où.*habites)/,
+    /^(quel.*nom|qui.*tu)/,
+    /^(que fais-tu|quel travail)/,
+    /^(où.*travailles)/,
+  ];
+  
+  const allPatterns = [...englishPatterns, ...frenchPatterns];
+  
+  return allPatterns.some(pattern => pattern.test(lowerQuery));
+}
+
+/**
+ * Detects if a query is about projects and should trigger follow-up questions
+ */
+export function isProjectQuery(query: string, relevantEntries: ProfileEntry[]): boolean {
+  const lowerQuery = query.toLowerCase();
+  const projectKeywords = [
+    'fanpocket', 'musicjam', 'truetale', 'chatbot', 'project', 'app', 'website',
+    'application', 'developed', 'built', 'created', 'made', 'code', 'programming',
+    'fanpocket', 'musicjam', 'truetale', 'chatbot', 'projet', 'application', 
+    'développé', 'créé', 'codé', 'programmation'
+  ];
+  
+  // Check if query contains project keywords
+  const hasProjectKeyword = projectKeywords.some(keyword => lowerQuery.includes(keyword));
+  
+  // Check if relevant entries are about projects
+  const hasProjectEntries = relevantEntries.some(entry => 
+    entry.tags.some(tag => 
+      tag.includes('project') || tag.includes('app') || tag.includes('development')
+    )
+  );
+  
+  return hasProjectKeyword || hasProjectEntries;
+}
+
+/**
  * Builds the system prompt with profile context
  */
 export function buildSystemPrompt(
@@ -160,17 +255,17 @@ export function buildSystemPrompt(
 
   const isEnglish = language === 'en';
 
-  // Start with the Nass Er system preprompt
+  // Start with the Abdennasser system preprompt
   const systemPreprompt = SYSTEM_PREPROMPT;
 
   // Add user name context if available
   const userNameContext = userName 
     ? (isEnglish 
-        ? `\n\n**User Context**: The user's name is ${userName}. Use their name naturally in your responses.`
-        : `\n\n**Contexte Utilisateur**: Le nom de l'utilisateur est ${userName}. Utilisez leur nom naturellement dans vos réponses.`)
+        ? `\n\n**User Context**: The user's name is ${userName}. Use their name naturally in your responses. If this is the first time you've learned their name, acknowledge it briefly with "Nice to know you, ${userName}!" or similar.`
+        : `\n\n**Contexte Utilisateur**: Le nom de l'utilisateur est ${userName}. Utilisez leur nom naturellement dans vos réponses. Si c'est la première fois que vous apprenez leur nom, reconnaissez-le brièvement avec "Ravi de vous connaître, ${userName}!" ou similaire.`)
     : (isEnglish
-        ? `\n\n**User Context**: No name known yet. Early in conversation, ask for the user's name naturally.`
-        : `\n\n**Contexte Utilisateur**: Pas encore de nom connu. Tôt dans la conversation, demandez naturellement le nom de l'utilisateur.`);
+        ? `\n\n**User Context**: No name known yet. Early in conversation, ask for the user's name naturally when appropriate.`
+        : `\n\n**Contexte Utilisateur**: Pas encore de nom connu. Tôt dans la conversation, demandez naturellement le nom de l'utilisateur quand c'est approprié.`);
 
   // Additional profile context instructions
   const profileInstructions = isEnglish
@@ -234,8 +329,11 @@ export async function buildChatMessages(
   // Find relevant profile entries for the user's latest message
   const relevantEntries = await findRelevantEntries(userMessage, fullConfig);
 
+  // Extract user name from conversation history if not provided
+  const extractedName = userName || extractUserName(conversationHistory);
+
   // Build system prompt with user name context
-  const systemPrompt = buildSystemPrompt(relevantEntries, fullConfig, userName);
+  const systemPrompt = buildSystemPrompt(relevantEntries, fullConfig, extractedName);
 
   // Trim conversation history to rolling window
   const recentHistory = conversationHistory.slice(-fullConfig.maxHistoryTurns * 2);
