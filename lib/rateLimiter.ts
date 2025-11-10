@@ -6,6 +6,7 @@
 interface TokenBucket {
   tokens: number;
   lastRefill: number;
+  lastRejection?: number;
 }
 
 interface RateLimiterOptions {
@@ -76,6 +77,21 @@ class RateLimiter {
     return Math.min(this.maxTokens, bucket.tokens + tokensToAdd);
   }
 
+  getRetryAfterSeconds(key: string): number {
+    const bucket = this.buckets.get(key);
+    if (!bucket) {
+      return 0;
+    }
+
+    // Calculate how many seconds until we have at least 1 token
+    const tokensNeeded = 1 - bucket.tokens;
+    if (tokensNeeded <= 0) {
+      return 0;
+    }
+
+    return Math.ceil(tokensNeeded / this.refillRate);
+  }
+
   private cleanup(): void {
     const now = Date.now();
     const keysToDelete: string[] = [];
@@ -99,11 +115,11 @@ class RateLimiter {
 }
 
 // Create singleton instance with sensible defaults
-// 10 requests per minute per IP
+// 30 requests per minute per IP (Groq free tier limit)
 export const createRateLimiter = (options?: Partial<RateLimiterOptions>): RateLimiter => {
   return new RateLimiter({
-    maxTokens: 10,
-    refillRate: 10 / 60, // 10 tokens per minute
+    maxTokens: 30,
+    refillRate: 30 / 60, // 30 tokens per minute
     ...options,
   });
 };

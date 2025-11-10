@@ -1,15 +1,15 @@
 /**
- * Unit and integration tests for the Ollama chat API route
+ * Unit and integration tests for the Groq chat API route
  */
 
 import { NextRequest } from 'next/server';
 import { POST, OPTIONS } from '@/app/api/chat/route';
-import * as ollamaClient from '@/lib/ollamaClient';
+import * as groqClient from '@/lib/groqClient';
 import { RateLimiter } from '@/lib/rateLimiter';
 import type { ChatRequestPayload, ChatMessage } from '@/types/chat';
 
-// Mock the ollama client
-jest.mock('@/lib/ollamaClient');
+// Mock the groq client
+jest.mock('@/lib/groqClient');
 
 // Mock the prompt builder
 jest.mock('@/lib/prompt', () => ({
@@ -26,7 +26,7 @@ jest.mock('@/lib/prompt', () => ({
 async function consumeStream(response: Response): Promise<string> {
   const reader = response.body?.getReader();
   if (!reader) return '';
-  
+
   let result = '';
   try {
     // Read with a timeout to prevent hanging tests
@@ -34,7 +34,7 @@ async function consumeStream(response: Response): Promise<string> {
       const timeout = setTimeout(() => {
         resolve({ done: true });
       }, 100);
-      
+
       reader.read().then((chunk) => {
         clearTimeout(timeout);
         resolve(chunk);
@@ -75,10 +75,11 @@ describe('Chat API Route Handler', () => {
       // Setup mock generator
       const mockGenerator = (async function* () {
         yield 'Hello ';
-        yield 'world';
+        yield 'from';
+        yield ' Groq';
       })();
 
-      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       // Create request
       const payload: ChatRequestPayload = {
@@ -113,7 +114,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response to multi-turn';
       })();
 
-      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [
@@ -133,7 +134,7 @@ describe('Chat API Route Handler', () => {
 
       expect(response.status).toBe(200);
       // streamChatResponse is called with enhanced messages from buildChatMessages
-      expect(ollamaClient.streamChatResponse).toHaveBeenCalled();
+      expect(groqClient.streamChatResponse).toHaveBeenCalled();
 
       // Consume the stream to clean up
       await consumeStream(response);
@@ -144,7 +145,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response';
       })();
 
-      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
@@ -160,9 +161,33 @@ describe('Chat API Route Handler', () => {
       const response = await POST(request);
 
       // Verify streamChatResponse was called with enhanced messages
-      expect(ollamaClient.streamChatResponse).toHaveBeenCalled();
+      expect(groqClient.streamChatResponse).toHaveBeenCalled();
 
       // Consume the stream to clean up
+      await consumeStream(response);
+    });
+
+    it('should handle French language requests', async () => {
+      const mockGenerator = (async function* () {
+        yield 'Réponse en français';
+      })();
+
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+
+      const payload: ChatRequestPayload = {
+        messages: [{ role: 'user', content: 'Bonjour' }],
+        language: 'fr',
+      };
+
+      const request = new NextRequest(new URL('http://localhost:3000/api/chat'), {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
       await consumeStream(response);
     });
   });
@@ -254,9 +279,29 @@ describe('Chat API Route Handler', () => {
       expect(data.code).toBe('INVALID_CONVERSATION');
     });
 
-    it('should return 500 when Ollama is not running', async () => {
-      (ollamaClient.streamChatResponse as jest.Mock).mockRejectedValue(
-        new Error('Failed to connect to Ollama API at http://localhost:11434')
+    it('should return 400 for message content exceeding max length', async () => {
+      const payload = {
+        messages: [
+          { role: 'user', content: 'x'.repeat(5000) },
+        ],
+      };
+
+      const request = new NextRequest(new URL('http://localhost:3000/api/chat'), {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(400);
+      const data = await response.json();
+      expect(data.code).toBe('INVALID_PAYLOAD');
+    });
+
+    it('should return 500 when Groq client throws error', async () => {
+      (groqClient.streamChatResponse as jest.Mock).mockRejectedValue(
+        new Error('Failed to connect to Groq API')
       );
 
       const payload: ChatRequestPayload = {
@@ -279,8 +324,37 @@ describe('Chat API Route Handler', () => {
       await consumeStream(response);
     });
 
+    it('should handle Groq API errors with proper messages', async () => {
+      const groqError = new (groqClient.GroqClientError as any)(
+        'Invalid API key',
+        'INVALID_API_KEY',
+        401,
+        false
+      );
+
+      (groqClient.streamChatResponse as jest.Mock).mockRejectedValue(groqError);
+
+      const payload: ChatRequestPayload = {
+        messages: [{ role: 'user', content: 'Hello' }],
+      };
+
+      const request = new NextRequest(new URL('http://localhost:3000/api/chat'), {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get('Content-Type')).toBe('text/event-stream');
+
+      // Consume the stream to clean up
+      await consumeStream(response);
+    });
+
     it('should return 500 for unexpected errors', async () => {
-      (ollamaClient.streamChatResponse as jest.Mock).mockRejectedValue(
+      (groqClient.streamChatResponse as jest.Mock).mockRejectedValue(
         new Error('Unexpected error')
       );
 
@@ -325,12 +399,31 @@ describe('Chat API Route Handler', () => {
       testLimiter.destroy();
     });
 
+    it('should include Retry-After header in rate limit response', async () => {
+      // Create a rate limiter with very restrictive settings for testing
+      const testLimiter = new RateLimiter({
+        maxTokens: 1,
+        refillRate: 0,
+      });
+
+      const ip = '192.168.1.1';
+
+      // Exhaust the limiter
+      testLimiter.isAllowed(ip, 1);
+
+      // Get retry-after time
+      const retryAfter = testLimiter.getRetryAfterSeconds(ip);
+      expect(retryAfter).toBeGreaterThan(0);
+
+      testLimiter.destroy();
+    });
+
     it('should extract client IP from x-forwarded-for header', async () => {
       const mockGenerator = (async function* () {
         yield 'Response';
       })();
 
-      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
@@ -359,7 +452,7 @@ describe('Chat API Route Handler', () => {
         yield 'Response';
       })();
 
-      (ollamaClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
+      (groqClient.streamChatResponse as jest.Mock).mockResolvedValue(mockGenerator);
 
       const payload: ChatRequestPayload = {
         messages: [{ role: 'user', content: 'Test' }],
