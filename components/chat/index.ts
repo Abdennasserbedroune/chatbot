@@ -5,3 +5,7 @@ export { ChatComposer } from './ChatComposer';
 export { TypingIndicator } from './TypingIndicator';
 export { ErrorBanner } from './ErrorBanner';
 export { LanguageSwitcher } from './LanguageSwitcher';
+export { default as ChatHeader } from './ChatHeader';
+export { StatusBadge, detectMessageStatus } from './StatusBadge';
+export { TypingDots, EnhancedTypingIndicator } from './TypingDots';
+export { CodeProject, CodeProjectBadge } from './CodeProject';

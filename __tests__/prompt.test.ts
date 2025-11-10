@@ -98,7 +98,7 @@ describe('Prompt Builder', () => {
       ];
 
       const prompt = buildSystemPrompt(entries, { language: 'en' });
-      expect(prompt).toContain('Abdennasser Bedroune');
+      expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('What is React?');
       expect(prompt).toContain('React is a JavaScript library');
       expect(prompt).toContain('ADDITIONAL CONTEXT');
@@ -119,7 +119,7 @@ describe('Prompt Builder', () => {
       ];
 
       const prompt = buildSystemPrompt(entries, { language: 'fr' });
-      expect(prompt).toContain('Abdennasser Bedroune');
+      expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('Qu\'est-ce que React?');
       expect(prompt).toContain('React est une bibliothèque JavaScript');
       expect(prompt).toContain('CONTEXTE ADDITIONNEL');

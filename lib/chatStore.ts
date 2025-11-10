@@ -11,6 +11,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   isStreaming: false,
   language: 'en',
   error: null,
+  userName: undefined,
+  hasAskedForName: false,
 
   // Actions
   addMessage: (messageData) => {
@@ -71,5 +73,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   setError: (error) => {
     set({ error });
+  },
+
+  setUserName: (name) => {
+    set({ userName: name });
+  },
+
+  setHasAskedForName: (asked) => {
+    set({ hasAskedForName: asked });
   },
 }));

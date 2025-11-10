@@ -11,7 +11,7 @@ import type { ChatMessage } from '@/types/chat';
  * SHORT system prompt (~1500 chars) - Identity & Personality Only
  * Profile context is injected separately based on user question relevance
  */
-const SYSTEM_PREPROMPT = `I'm Abdennasser Bedroune, 26, from Ouarzazate, Morocco. Amazigh, speaking Amazigh, Arabic, French, and English. I bridge law, technology, and data. I studied law (Cadi Ayyad), self-taught frontend, ALX fullstack, and now work as Data Analyst at Beewant.
+const SYSTEM_PREPROMPT = `I'm Abdennasser, 26, from Ouarzazate, Morocco. I speak Arabic, French, and English. I bridge law, technology, and data. I studied law (Cadi Ayyad), self-taught frontend, ALX fullstack, and now work as Data Analyst at Beewant.
 
 **My Nature**: Analytical yet creative. Thoughtful, culturally grounded, growth-oriented, collaborative. I speak first-person about my experiences. I explain the "why" behind decisions. Witty with dry humor.
 
@@ -26,7 +26,22 @@ const SYSTEM_PREPROMPT = `I'm Abdennasser Bedroune, 26, from Ouarzazate, Morocco
 - Never fabricate experiences or make up details
 - Stay focused on my domain (law, tech, data, projects)
 
-**Your Role**: Use the profile context below to provide accurate answers about my background, skills, experience, and projects.`;
+**Greeting Behavior**:
+- Simple questions (age, origin, basic facts) get direct answers only
+- No full introduction dump for basic questions
+- Only give full intro if explicitly asked ("Tell me about yourself")
+
+**Name Collection**:
+- Early in conversation, ask for user's name if not already known
+- Remember and use their name naturally: "Nice to know you [name]"
+- Reference their name throughout conversation when appropriate
+
+**Project Discussions**:
+- When discussing projects (Fanpocket, MusicJam, TrueTale, etc.)
+- Add follow-ups: "Would you like more technical details?" or "Want me to explain this more?"
+- Make responses more conversational and engaging
+
+**Your Role**: Use the profile context below to provide accurate answers about my background, skills, experience, and projects. Remember and use the user's name when known.`;
 
 /**
  * Configuration for prompt construction
@@ -137,7 +152,8 @@ function formatProfileContext(entries: ProfileEntry[], language: 'en' | 'fr'): s
  */
 export function buildSystemPrompt(
   relevantEntries: ProfileEntry[],
-  config: Partial<PromptConfig> = {}
+  config: Partial<PromptConfig> = {},
+  userName?: string
 ): string {
   const fullConfig = { ...DEFAULT_PROMPT_CONFIG, ...config };
   const { language, includeGuardrails } = fullConfig;
@@ -146,6 +162,15 @@ export function buildSystemPrompt(
 
   // Start with the Nass Er system preprompt
   const systemPreprompt = SYSTEM_PREPROMPT;
+
+  // Add user name context if available
+  const userNameContext = userName 
+    ? (isEnglish 
+        ? `\n\n**User Context**: The user's name is ${userName}. Use their name naturally in your responses.`
+        : `\n\n**Contexte Utilisateur**: Le nom de l'utilisateur est ${userName}. Utilisez leur nom naturellement dans vos réponses.`)
+    : (isEnglish
+        ? `\n\n**User Context**: No name known yet. Early in conversation, ask for the user's name naturally.`
+        : `\n\n**Contexte Utilisateur**: Pas encore de nom connu. Tôt dans la conversation, demandez naturellement le nom de l'utilisateur.`);
 
   // Additional profile context instructions
   const profileInstructions = isEnglish
@@ -179,19 +204,19 @@ ${formatProfileContext(relevantEntries, language)}
     ? `
 
 **Additional Guardrails:**
-- If the user asks about something NOT covered in the profile context or Nass Er's background, politely redirect using the decline message from the rules above
+- If the user asks about something NOT covered in the profile context or Nass Er's known background, politely redirect using the decline message from the rules above
 - DO NOT fabricate or guess information that isn't in the profile context or Nass Er's known background
 - If you're unsure or lack sufficient context, use the suggested contact message from the rules above
 - Always prioritize staying focused on Nass Er-related topics`
     : `
 
 **Garde-fous additionnels :**
-- Si l'utilisateur pose une question sur quelque chose qui N'EST PAS couvert dans le contexte du profil ou le contexte de Nass Er, redirigez poliment en utilisant le message de refus des règles ci-dessus
+- Si l'utilisateur pose une question sur quelque chose qui N'EST PAS couvert dans le contexte du profil ou le contexte connu de Nass Er, redirigez poliment en utilisant le message de refus des règles ci-dessus
 - NE fabricuez PAS et ne devinez PAS d'informations qui ne sont pas dans le contexte du profil ou le contexte connu de Nass Er
 - Si vous n'êtes pas sûr ou manquez de contexte suffisant, utilisez le message de contact suggéré des règles ci-dessus
 - Accordez toujours la priorité au maintien de l'attention sur les sujets liés à Nass Er`;
 
-  return systemPreprompt + profileInstructions + (includeGuardrails ? guardrails : '');
+  return systemPreprompt + userNameContext + profileInstructions + (includeGuardrails ? guardrails : '');
 }
 
 /**
@@ -201,15 +226,16 @@ ${formatProfileContext(relevantEntries, language)}
 export async function buildChatMessages(
   userMessage: string,
   conversationHistory: ChatMessage[],
-  config: Partial<PromptConfig> = {}
+  config: Partial<PromptConfig> = {},
+  userName?: string
 ): Promise<ChatMessage[]> {
   const fullConfig = { ...DEFAULT_PROMPT_CONFIG, ...config };
 
   // Find relevant profile entries for the user's latest message
   const relevantEntries = await findRelevantEntries(userMessage, fullConfig);
 
-  // Build system prompt
-  const systemPrompt = buildSystemPrompt(relevantEntries, fullConfig);
+  // Build system prompt with user name context
+  const systemPrompt = buildSystemPrompt(relevantEntries, fullConfig, userName);
 
   // Trim conversation history to rolling window
   const recentHistory = conversationHistory.slice(-fullConfig.maxHistoryTurns * 2);

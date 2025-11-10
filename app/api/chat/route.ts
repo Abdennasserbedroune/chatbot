@@ -110,8 +110,9 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
 
     const typedPayload = payload as ChatRequestPayload;
 
-    // Extract language from conversation (optional, defaults to 'en')
+    // Extract language and userName from conversation (optional, defaults to 'en')
     const language = typedPayload.language || 'en';
+    const userName = typedPayload.userName;
 
     // Build enhanced messages with profile context
     const lastUserMessage = typedPayload.messages[typedPayload.messages.length - 1].content;
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     try {
       enhancedMessages = await buildChatMessages(lastUserMessage, conversationHistory, {
         language,
-      });
+      }, userName);
     } catch (error) {
       console.error('[Chat API] Context building error:', error);
       return createErrorResponse(

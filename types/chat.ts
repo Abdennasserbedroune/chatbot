@@ -15,6 +15,7 @@ export interface ChatRequestPayload {
   messages: ChatMessage[];
   conversationId?: string;
   language?: 'en' | 'fr';
+  userName?: string;
 }
 
 export interface ChatErrorResponse {
@@ -32,6 +33,8 @@ export interface ChatState {
   isStreaming: boolean;
   language: 'en' | 'fr';
   error: string | null;
+  userName?: string;
+  hasAskedForName: boolean;
 }
 
 export interface ChatActions {
@@ -43,6 +46,8 @@ export interface ChatActions {
   clearMessages: () => void;
   setLanguage: (language: 'en' | 'fr') => void;
   setError: (error: string | null) => void;
+  setUserName: (name?: string) => void;
+  setHasAskedForName: (asked: boolean) => void;
 }
 
 export type ChatStore = ChatState & ChatActions;
