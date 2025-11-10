@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { StatusBadge, detectMessageStatus } from './StatusBadge';
 import type { MessageBubbleProps } from '@/types/chat';
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
@@ -7,6 +8,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
   isTyping = false,
 }) => {
   const isUser = message.role === 'user';
+  const statusType = isUser ? 'conversational' : detectMessageStatus(message.content);
 
   return (
     <motion.div
@@ -28,19 +30,26 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
             : 'bg-gradient-to-br from-blue-500 to-purple-600 text-white'
         }`}
       >
-        {isUser ? 'U' : 'AI'}
+        {isUser ? 'U' : 'AB'}
       </div>
 
       {/* Message bubble */}
       <div
         className={`message-bubble ${
           isUser ? 'user-bubble' : 'bot-bubble'
-        } relative group`}
+        } relative group max-w-[85%]`}
       >
+        {/* Status badge for bot messages */}
+        {!isUser && !isTyping && (
+          <div className="absolute -top-2 -left-2 z-10">
+            <StatusBadge type={statusType} size="sm" />
+          </div>
+        )}
+
         {/* Message content */}
         <p
           className={`text-sm leading-relaxed whitespace-pre-wrap break-words ${
-            isUser ? 'text-white' : 'text-gray-800'
+            isUser ? 'text-white' : 'text-gray-800 dark:text-gray-200'
           }`}
         >
           {message.content}
@@ -78,7 +87,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
 
         {/* Timestamp */}
         <div
-          className={`absolute -bottom-5 text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${
+          className={`absolute -bottom-5 text-xs text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity ${
             isUser ? 'right-12' : 'left-12'
           }`}
         >

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { TypingDots } from './TypingDots';
 import type { TypingIndicatorProps } from '@/types/chat';
 
 export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
@@ -23,7 +24,7 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
       } else {
         clearInterval(interval);
       }
-    }, 30 + Math.random() * 40); // Random delay between 30-70ms
+    }, 25 + Math.random() * 35); // Variable delay between 25-60ms for more natural feel
 
     return () => clearInterval(interval);
   }, [isVisible, message, currentIndex]);
@@ -39,42 +40,26 @@ export const TypingIndicator: React.FC<TypingIndicatorProps> = ({
     >
       {/* Bot avatar */}
       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-medium shadow-sm">
-        AI
+        AB
       </div>
       
       {/* Typing bubble */}
       <div className="message-bubble bot-bubble relative">
         {displayedText && (
-          <span className="text-gray-800">{displayedText}</span>
+          <span className="text-gray-800 dark:text-gray-200">{displayedText}</span>
         )}
         
-        {/* Typing dots animation */}
+        {/* Typing dots animation using new component */}
         {!displayedText && (
-          <div className="flex items-center gap-1">
-            {[0, 1, 2].map((i) => (
-              <motion.div
-                key={i}
-                className="w-2 h-2 bg-gray-400 rounded-full"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 1, 0.5],
-                }}
-                transition={{
-                  duration: 1.4,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                }}
-              />
-            ))}
-          </div>
+          <TypingDots size="md" color="rgb(156 163 175)" />
         )}
         
         {/* Cursor for typing animation */}
         {displayedText && displayedText.length < message.length && (
           <motion.span
-            className="inline-block w-0.5 h-4 bg-gray-400 ml-1"
+            className="inline-block w-0.5 h-4 bg-gray-400 dark:bg-gray-500 ml-1"
             animate={{ opacity: [1, 0, 1] }}
-            transition={{ duration: 1, repeat: Infinity }}
+            transition={{ duration: 0.8, repeat: Infinity }}
           />
         )}
       </div>
