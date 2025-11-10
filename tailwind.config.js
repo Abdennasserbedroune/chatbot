@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './lib/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   darkMode: 'class',
   theme: {
@@ -33,20 +34,39 @@ module.exports = {
         },
       },
       colors: {
-        // Custom brand colors
+        // Premium Orange Theme
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          DEFAULT: '#FF6B35',
+          50: '#FFF5F0',
+          100: '#FFE5D9',
+          200: '#FFD0B8',
+          300: '#FFB596',
+          400: '#FF8E5E',
+          500: '#FF6B35',
+          600: '#E55A2B',
+          700: '#C44A20',
+          800: '#A33A1A',
+          900: '#822A15',
+          950: '#5A1A0F',
         },
+        'primary-foreground': '#FFFFFF',
+        
+        // Dark mode colors
+        'dark-background': '#0A0A0A',
+        'dark-foreground': '#FFFFFF',
+        'dark-card': '#1A1A1A',
+        'dark-muted-foreground': '#666666',
+        'dark-border': '#2A2A2A',
+        
+        // Light mode colors
+        background: '#FFFFFF',
+        foreground: '#1A1A1A',
+        card: '#F5F5F5',
+        'muted-foreground': '#666666',
+        border: '#E8E8E8',
+        muted: '#E8E8E8',
+        accent: '#FF6B35',
+        'accent-foreground': '#FFFFFF',
         // Custom semantic colors
         success: {
           50: '#f0fdf4',

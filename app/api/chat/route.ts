@@ -1,6 +1,6 @@
 /**
  * API Route: POST /api/chat
- * Streams Groq responses with rate limiting, validation, and error handling
+ * Streams Groq responses with rate limiting, validation, and custom streaming
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -8,29 +8,13 @@ import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
 import { buildChatMessages } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
-import type { ChatRequestPayload, ChatErrorResponse, ChatMessage } from '@/types/chat';
+import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
 // Create a singleton rate limiter (30 requests per minute per IP - Groq free tier)
 const rateLimiter = createRateLimiter({
   maxTokens: 30,
   refillRate: 30 / 60, // 30 tokens per minute
 });
-
-function getClientIp(request: NextRequest): string {
-  // Try to get IP from headers (works with most proxies)
-  const forwarded = request.headers.get('x-forwarded-for');
-  if (forwarded) {
-    return forwarded.split(',')[0].trim();
-  }
-
-  const ip = request.headers.get('x-real-ip');
-  if (ip) {
-    return ip;
-  }
-
-  // Fallback to socket address if available
-  return 'unknown';
-}
 
 function createErrorResponse(
   status: number,
@@ -52,24 +36,39 @@ function createErrorResponse(
   });
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse | Response> {
+function getClientIp(request: NextRequest): string {
+  // Try to get IP from headers (works with most proxies)
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+
+  const ip = request.headers.get('x-real-ip');
+  if (ip) {
+    return ip;
+  }
+
+  // Fallback to socket address if available
+  return 'unknown';
+}
+
+export async function POST(request: NextRequest) {
   try {
     // Check rate limit
     const clientIp = getClientIp(request);
     if (!rateLimiter.isAllowed(clientIp, 1)) {
       const retryAfter = rateLimiter.getRetryAfterSeconds(clientIp);
-      return new NextResponse(
-        JSON.stringify({
+      return Response.json(
+        {
           error: 'Rate limit exceeded. Please try again later.',
           code: 'RATE_LIMIT_EXCEEDED',
           details: {
             retryAfter,
           },
-        }),
+        },
         {
           status: 429,
           headers: {
-            'Content-Type': 'application/json',
             'Retry-After': retryAfter.toString(),
           },
         }
@@ -81,30 +80,34 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
     try {
       payload = await request.json();
     } catch {
-      return createErrorResponse(400, 'Invalid JSON in request body', 'INVALID_JSON');
+      return Response.json(
+        { error: 'Invalid JSON in request body', code: 'INVALID_JSON' },
+        { status: 400 }
+      );
     }
 
     // Validate payload with Zod schema
     const validationResult = validateChatRequest(payload);
     if (!validationResult.valid) {
-      const errorDetails = {
-        errors: validationResult.errors,
-      };
-      return createErrorResponse(
-        400,
-        'Invalid request payload',
-        'INVALID_PAYLOAD',
-        errorDetails
+      return Response.json(
+        {
+          error: 'Invalid request payload',
+          code: 'INVALID_PAYLOAD',
+          details: { errors: validationResult.errors },
+        },
+        { status: 400 }
       );
     }
 
     // Additional validation: last message must be from user
     const messageValidation = validateLastMessageIsFromUser(payload as ChatRequestPayload);
     if (!messageValidation.valid) {
-      return createErrorResponse(
-        400,
-        'Last message must be from user',
-        'INVALID_CONVERSATION'
+      return Response.json(
+        {
+          error: 'Last message must be from user',
+          code: 'INVALID_CONVERSATION'
+        },
+        { status: 400 }
       );
     }
 
@@ -125,10 +128,12 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
       }, userName);
     } catch (error) {
       console.error('[Chat API] Context building error:', error);
-      return createErrorResponse(
-        500,
-        'Failed to build chat context',
-        'CONTEXT_ERROR'
+      return Response.json(
+        {
+          error: 'Failed to build chat context',
+          code: 'CONTEXT_ERROR'
+        },
+        { status: 500 }
       );
     }
 
@@ -225,10 +230,12 @@ export async function POST(request: NextRequest): Promise<NextResponse | Respons
   } catch (error) {
     console.error('[Chat API Unhandled Error]', error);
 
-    return createErrorResponse(
-      500,
-      'An unexpected error occurred. Please try again later.',
-      'UNHANDLED_ERROR'
+    return Response.json(
+      {
+        error: 'An unexpected error occurred. Please try again later.',
+        code: 'UNHANDLED_ERROR'
+      },
+      { status: 500 }
     );
   }
 }
