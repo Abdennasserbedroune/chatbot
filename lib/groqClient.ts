@@ -8,7 +8,7 @@ import Groq from 'groq-sdk';
 import type { ChatMessage } from '@/types/chat';
 
 // Configuration constants
-const GROQ_MODEL = process.env.GROQ_MODEL || 'mixtral-8x7b-32768';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.1-70b-versatile';
 const GROQ_TIMEOUT = parseInt(process.env.GROQ_TIMEOUT || '30000', 10); // 30 seconds
 const GROQ_MAX_RETRIES = parseInt(process.env.GROQ_MAX_RETRIES || '3', 10);
 const GROQ_INITIAL_RETRY_DELAY = parseInt(process.env.GROQ_INITIAL_RETRY_DELAY || '1000', 10);

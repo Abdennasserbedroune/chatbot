@@ -15,7 +15,7 @@ Complete code audit and refactor from Ollama (local API) to Groq API (cloud-base
 | Type | Local API | Cloud API |
 | Cost | Free (self-hosted) | Free tier (~30 req/min) |
 | Setup | Requires local server | Just API key |
-| Model | phi (limited) | mixtral-8x7b-32768 (SOTA) |
+| Model | phi (limited) | llama-3.1-70b-versatile (SOTA) |
 | Scalability | Limited to local resources | Unlimited by default |
 | Reliability | Depends on local setup | Enterprise-grade SLA |
 
@@ -256,17 +256,17 @@ GROQ_API_KEY=gsk_...
 # Before: No variables needed (local API)
 # After: One required variable
 
-GROQ_API_KEY=gsk_...            # Required
-GROQ_MODEL=mixtral-8x7b-32768   # Optional (default)
-GROQ_TIMEOUT=30000              # Optional (default)
-GROQ_MAX_RETRIES=3              # Optional (default)
+GROQ_API_KEY=gsk_...                    # Required
+GROQ_MODEL=llama-3.1-70b-versatile     # Optional (default)
+GROQ_TIMEOUT=30000                      # Optional (default)
+GROQ_MAX_RETRIES=3                      # Optional (default)
 ```
 
 ## Performance Comparison
 
 | Aspect | Ollama | Groq |
 |--------|--------|------|
-| Model Quality | Good (phi) | Excellent (mixtral-8x7b-32768) |
+| Model Quality | Good (phi) | Excellent (llama-3.1-70b-versatile) |
 | Response Speed | Depends on hardware | Optimized (<500ms) |
 | Rate Limit | Unlimited (local) | 30 req/min (free tier) |
 | Reliability | Local dependencies | Enterprise SLA |
