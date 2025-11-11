@@ -16,6 +16,33 @@ const rateLimiter = createRateLimiter({
   refillRate: 30 / 60, // 30 tokens per minute
 });
 
+/**
+ * Sanitize messages to prevent Groq API 4096 character limit errors
+ * - Keeps only last N messages to prevent infinite history growth
+ * - Truncates individual messages that exceed safe length
+ */
+function sanitizeMessages(messages: ChatMessage[]): ChatMessage[] {
+  const MAX_MESSAGE_LENGTH = 4000; // Safe buffer before 4096 limit
+  const MAX_MESSAGES = 10; // Keep only last 10 messages for context
+
+  // Step 1: Keep only the last N messages (prevent infinite history growth)
+  let trimmed = messages.slice(-MAX_MESSAGES);
+
+  // Step 2: Truncate any individual message that's too long
+  trimmed = trimmed.map(msg => {
+    if (msg.content.length > MAX_MESSAGE_LENGTH) {
+      console.warn(`[Chat] Trimmed message (${msg.role}) from ${msg.content.length} to ${MAX_MESSAGE_LENGTH} chars`);
+      return {
+        ...msg,
+        content: msg.content.slice(0, MAX_MESSAGE_LENGTH) + '... [truncated]'
+      };
+    }
+    return msg;
+  });
+
+  return trimmed;
+}
+
 function createErrorResponse(
   status: number,
   error: string,
@@ -113,13 +140,16 @@ export async function POST(request: NextRequest) {
 
     const typedPayload = payload as ChatRequestPayload;
 
+    // Sanitize messages to prevent 4096 character limit errors
+    const sanitizedMessages = sanitizeMessages(typedPayload.messages);
+
     // Extract language and userName from conversation (optional, defaults to 'en')
     const language = typedPayload.language || 'en';
     const userName = typedPayload.userName;
 
     // Build enhanced messages with profile context
-    const lastUserMessage = typedPayload.messages[typedPayload.messages.length - 1].content;
-    const conversationHistory = typedPayload.messages.slice(0, -1);
+    const lastUserMessage = sanitizedMessages[sanitizedMessages.length - 1].content;
+    const conversationHistory = sanitizedMessages.slice(0, -1);
 
     // Check for jailbreak attempts - log for security monitoring
     const isJailbreak = isJailbreakAttempt(lastUserMessage);
