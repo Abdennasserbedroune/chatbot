@@ -30,23 +30,17 @@ export default function ChatPage() {
     }
 
     setIsProcessingQueue(true)
+    const currentMessage = messageQueue[0]
     
-    while (messageQueue.length > 0) {
-      const currentMessage = messageQueue[0]
-      
-      try {
-        await sendMessageToAPI(currentMessage)
-        
-        // Remove the processed message from queue
-        setMessageQueue(prev => prev.slice(1))
-      } catch (error) {
-        console.error('Error processing queued message:', error)
-        // Remove the failed message from queue to prevent infinite loop
-        setMessageQueue(prev => prev.slice(1))
-      }
+    try {
+      await sendMessageToAPI(currentMessage)
+    } catch (error) {
+      console.error('Error processing queued message:', error)
+    } finally {
+      // Remove the processed message from queue (whether success or failure)
+      setMessageQueue(prev => prev.slice(1))
+      setIsProcessingQueue(false)
     }
-    
-    setIsProcessingQueue(false)
   }, [messageQueue, isProcessingQueue])
 
   // Send message to API
