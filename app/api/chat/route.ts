@@ -120,9 +120,10 @@ export async function POST(request: NextRequest) {
     // Build enhanced messages with profile context
     const lastUserMessage = typedPayload.messages[typedPayload.messages.length - 1].content;
     const conversationHistory = typedPayload.messages.slice(0, -1);
-    
-    // Log potential jailbreak attempts for security monitoring
-    if (isJailbreakAttempt(lastUserMessage)) {
+
+    // Check for jailbreak attempts - log for security monitoring
+    const isJailbreak = isJailbreakAttempt(lastUserMessage);
+    if (isJailbreak) {
       console.warn('[Security] Potential jailbreak attempt detected:', {
         clientIp,
         queryLength: lastUserMessage.length,
