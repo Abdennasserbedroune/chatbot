@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
-import { buildChatMessages, isJailbreakAttempt } from '@/lib/prompt';
+import { buildChatMessages, isJailbreakAttempt, isOutOfScopeRequest, isProjectInquiry, generateOutOfScopeResponse, generateProjectInquiryResponse } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
@@ -157,6 +157,82 @@ export async function POST(request: NextRequest) {
       console.warn('[Security] Potential jailbreak attempt detected:', {
         clientIp,
         queryLength: lastUserMessage.length,
+      });
+    }
+
+    // Check for out-of-scope requests and return denial response
+    if (isOutOfScopeRequest(lastUserMessage)) {
+      console.info('[Guardrails] Out-of-scope request detected and blocked:', {
+        clientIp,
+        query: lastUserMessage.substring(0, 100) + (lastUserMessage.length > 100 ? '...' : ''),
+      });
+      
+      const denialResponse = generateOutOfScopeResponse(language);
+      
+      // Create readable stream for the denial response
+      const encoder = new TextEncoder();
+      const readableStream = new ReadableStream({
+        async start(controller) {
+          // Stream the denial response character by character for consistency
+          for (let i = 0; i < denialResponse.length; i++) {
+            const chunk = denialResponse[i];
+            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
+            controller.enqueue(encoder.encode(data));
+            // Small delay for character-by-character effect
+            await new Promise(resolve => setTimeout(resolve, 10));
+          }
+          
+          // Send completion signal
+          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
+          controller.enqueue(encoder.encode(done));
+          controller.close();
+        }
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
+    }
+
+    // Check for project inquiries and return email redirect response
+    if (isProjectInquiry(lastUserMessage)) {
+      console.info('[Guardrails] Project inquiry detected and redirected:', {
+        clientIp,
+        query: lastUserMessage.substring(0, 100) + (lastUserMessage.length > 100 ? '...' : ''),
+      });
+      
+      const projectResponse = generateProjectInquiryResponse(language);
+      
+      // Create readable stream for the project response
+      const encoder = new TextEncoder();
+      const readableStream = new ReadableStream({
+        async start(controller) {
+          // Stream the project response character by character for consistency
+          for (let i = 0; i < projectResponse.length; i++) {
+            const chunk = projectResponse[i];
+            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
+            controller.enqueue(encoder.encode(data));
+            // Small delay for character-by-character effect
+            await new Promise(resolve => setTimeout(resolve, 10));
+          }
+          
+          // Send completion signal
+          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
+          controller.enqueue(encoder.encode(done));
+          controller.close();
+        }
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
       });
     }
 

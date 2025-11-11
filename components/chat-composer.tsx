@@ -7,9 +7,10 @@ interface ChatComposerProps {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   isLoading: boolean
+  queueLength?: number
 }
 
-export function ChatComposer({ input, handleInputChange, isLoading }: ChatComposerProps) {
+export function ChatComposer({ input, handleInputChange, isLoading, queueLength = 0 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-resize textarea
@@ -41,7 +42,7 @@ export function ChatComposer({ input, handleInputChange, isLoading }: ChatCompos
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything..."
+            placeholder={isLoading ? "Processing..." : "Ask me anything..."}
             disabled={isLoading}
             rows={1}
             className="flex-1 px-4 py-3 bg-transparent border-0 resize-none focus:outline-none focus:ring-0 text-foreground dark:text-dark-foreground placeholder-muted-foreground dark:placeholder-dark-muted-foreground disabled:opacity-50"
@@ -63,7 +64,11 @@ export function ChatComposer({ input, handleInputChange, isLoading }: ChatCompos
         </div>
         
         <div className="mt-2 text-xs text-muted-foreground dark:text-dark-muted-foreground text-center">
-          Press Enter to send, Shift+Enter for new line
+          {isLoading ? (
+            queueLength > 1 ? `Processing ${queueLength} messages...` : 'Processing your message...'
+          ) : (
+            'Press Enter to send, Shift+Enter for new line'
+          )}
         </div>
       </div>
     </div>
