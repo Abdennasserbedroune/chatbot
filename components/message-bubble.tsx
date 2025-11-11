@@ -19,12 +19,13 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   }
 
   useEffect(() => {
-    // For streaming messages, show content immediately
+    // For streaming messages, show content immediately (character-by-character is handled by streaming)
     if (message.id === 'streaming') {
       setDisplayedText(message.content)
       return
     }
 
+    // For completed assistant messages that are latest, show typing animation
     if (message.role === 'assistant' && isLatest && message.id !== 'streaming') {
       setDisplayedText('')
       
@@ -41,6 +42,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
       
       typeNextChar()
     } else {
+      // For user messages and non-latest assistant messages, show content immediately
       setDisplayedText(message.content)
     }
   }, [message.content, message.role, isLatest, message.id])

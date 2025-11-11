@@ -409,7 +409,7 @@ export function isJailbreakAttempt(query: string): boolean {
   const jailbreakPatterns = [
     // Prompt revelation requests
     /(?:give|show|reveal|tell).*(?:system\s+prompt|preprompt|instructions|system\s+message|initial\s+prompt)/i,
-    /(?:what\s+is|what's).*(?:your\s+system\s+prompt|your\s+instructions|your\s+prompt)/i,
+    /(?:what\s+is|what's|what\s+are).*(?:your\s+system\s+prompt|your\s+instructions|your\s+prompt)/i,
     /(?:reveal|expose).*instructions/i,
     /system\s+prompt/i,
     /preprompt/i,
@@ -425,6 +425,7 @@ export function isJailbreakAttempt(query: string): boolean {
     /execute\s+command/i,
     /run\s+code/i,
     /developer\s+mode/i,
+    /enable\s+developer\s+mode/i,
     
     // Configuration/system access requests
     /what\s+model\s+are\s+you/i,
@@ -432,4 +433,103 @@ export function isJailbreakAttempt(query: string): boolean {
   ]
   
   return jailbreakPatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Detects out-of-scope questions that should be denied
+ */
+export function isOutOfScopeRequest(query: string): boolean {
+  const lowerQuery = query.toLowerCase()
+  
+  // Out-of-scope patterns
+  const outOfScopePatterns = [
+    // Coding/programming help requests
+    /(?:help|show|teach|write|create|build|develop).*code/i,
+    /(?:write|create|build|develop).*app/i,
+    /(?:help|fix|debug|solve).*programming/i,
+    /(?:how\s+to|teach\s+me).*code/i,
+    /(?:write|create).*script/i,
+    /(?:build|make).*website/i,
+    /(?:teach\s+me|learn).*programming/i,
+    
+    // Technical implementation requests
+    /(?:implement|integrate|setup).*system/i,
+    /(?:configure|deploy).*application/i,
+    /(?:database|server|backend|frontend).*help/i,
+    /(?:help\s+with).*backend/i,
+    /(?:help\s+with).*frontend/i,
+    /(?:configure|setup).*server/i,
+    
+    // Business/professional services
+    /(?:consult|advise|recommend).*business/i,
+    /(?:market|business|financial).*analysis/i,
+    /(?:hire|work|freelance).*project/i,
+    
+    // Inappropriate or harmful content
+    /(?:hack|crack|bypass|exploit)/i,
+    /(?:illegal|unethical|harmful)/i,
+    
+    // General knowledge outside personal background
+    /(?:explain|define|what\s+is).*(?:science|history|math|geography|politics)/i,
+    /(?:tell\s+me|explain).*(?:world|global|international)/i,
+  ]
+  
+  return outOfScopePatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Detects project or future plan inquiries that should redirect to email
+ */
+export function isProjectInquiry(query: string): boolean {
+  const lowerQuery = query.toLowerCase()
+  
+  // Project inquiry patterns
+  const projectPatterns = [
+    // Direct project questions
+    /(?:create|build|develop|start).*project/i,
+    /(?:work|collaborate|partner).*project/i,
+    /(?:new|future|upcoming).*project/i,
+    /(?:what|which).*project.*work/i,
+    /(?:available|hire|freelance).*project/i,
+    
+    // Business opportunity inquiries
+    /(?:business|startup|venture).*opportunity/i,
+    /(?:invest|fund|support).*project/i,
+    /(?:partner|collaborate).*business/i,
+    /partner\s+on\s+a\s+startup/i,
+    
+    // Future plans
+    /(?:what|how).*future.*plan/i,
+    /(?:next|upcoming|future).*goal/i,
+    /(?:career|professional).*future/i,
+    
+    // Service offerings
+    /(?:offer|provide|service).*development/i,
+    /(?:hire|work).*with.*you/i,
+    /(?:available|take).*client/i,
+  ]
+  
+  return projectPatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Generates denial response for out-of-scope requests
+ */
+export function generateOutOfScopeResponse(language: 'en' | 'fr'): string {
+  if (language === 'en') {
+    return "I appreciate the question, but that's outside my scope. Please reach out to me directly at:\n📧 Email: abdennasser.bedroune@gmail.com\n🔗 LinkedIn: abdennasser bedroune"
+  } else {
+    return "J'apprécie la question, mais cela sort de mon domaine. Veuillez me contacter directement à :\n📧 Email: abdennasser.bedroune@gmail.com\n🔗 LinkedIn: abdennasser bedroune"
+  }
+}
+
+/**
+ * Generates project inquiry response with email redirect
+ */
+export function generateProjectInquiryResponse(language: 'en' | 'fr'): string {
+  if (language === 'en') {
+    return "For project discussions and opportunities, please email me at abdennasser.bedroune@gmail.com"
+  } else {
+    return "Pour les discussions de projet et les opportunités, veuillez m'envoyer un e-mail à abdennasser.bedroune@gmail.com"
+  }
 }
