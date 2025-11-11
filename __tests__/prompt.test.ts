@@ -104,7 +104,7 @@ describe('Prompt Builder', () => {
       expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('What is React?');
       expect(prompt).toContain('React is a JavaScript library');
-      expect(prompt).toContain('ADDITIONAL CONTEXT');
+      expect(prompt).toContain('AVAILABLE PROFILE DETAILS');
     });
 
     it('should build system prompt in French', () => {
@@ -125,18 +125,18 @@ describe('Prompt Builder', () => {
       expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('Qu\'est-ce que React?');
       expect(prompt).toContain('React est une bibliothèque JavaScript');
-      expect(prompt).toContain('CONTEXTE ADDITIONNEL');
+      expect(prompt).toContain('DÉTAILS DE PROFIL DISPONIBLES');
     });
 
     it('should include guardrails when configured', () => {
       const prompt = buildSystemPrompt([], { includeGuardrails: true, language: 'en' });
-      expect(prompt).toContain('Additional Guardrails');
-      expect(prompt).toContain('DO NOT fabricate');
+      expect(prompt).toContain('Additional Safety Rules');
+      expect(prompt).toContain('Don\'t make up information');
     });
 
     it('should exclude guardrails when configured', () => {
       const prompt = buildSystemPrompt([], { includeGuardrails: false, language: 'en' });
-      expect(prompt).not.toContain('Additional Guardrails');
+      expect(prompt).not.toContain('Additional Safety Rules');
     });
 
     it('should handle empty entries gracefully', () => {
