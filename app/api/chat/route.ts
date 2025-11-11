@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
-import { buildChatMessages } from '@/lib/prompt';
+import { buildChatMessages, isJailbreakAttempt } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
@@ -120,6 +120,14 @@ export async function POST(request: NextRequest) {
     // Build enhanced messages with profile context
     const lastUserMessage = typedPayload.messages[typedPayload.messages.length - 1].content;
     const conversationHistory = typedPayload.messages.slice(0, -1);
+    
+    // Log potential jailbreak attempts for security monitoring
+    if (isJailbreakAttempt(lastUserMessage)) {
+      console.warn('[Security] Potential jailbreak attempt detected:', {
+        clientIp,
+        queryLength: lastUserMessage.length,
+      });
+    }
 
     let enhancedMessages: ChatMessage[];
     try {
