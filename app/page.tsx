@@ -5,7 +5,6 @@ import { detectLanguage } from '@/lib/languageDetection'
 import { ChatHeader } from '@/components/chat-header'
 import { MessageList } from '@/components/message-list'
 import { ChatComposer } from '@/components/chat-composer'
-import { TypingIndicator } from '@/components/typing-indicator'
 import { useAssistantState } from '@/lib/useAssistantState'
 import type { ChatMessage } from '@/types/chat'
 
@@ -16,7 +15,6 @@ export default function ChatPage() {
   const [streamingText, setStreamingText] = useState('')
   const [language, setLanguage] = useState<'en' | 'fr'>('en')
   const [userName, setUserName] = useState<string>('')
-  const [lastMessageRef, setLastMessageRef] = useState<string>('')
   
   const assistantState = useAssistantState()
   const status = assistantState.current
@@ -30,7 +28,9 @@ export default function ChatPage() {
   const handleSendMessage = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
-      if (!input.trim() || isLoading) return
+      if (!input.trim() || isLoading) {
+        return
+      }
 
       // Detect language from user message
       const detectedLang = detectLanguage(input)
@@ -47,20 +47,22 @@ export default function ChatPage() {
         role: 'user',
         content: input,
       }
-      setMessages(prev => [...prev, userMessage])
-      setLastMessageRef(input)
+      const newMessages = [...messages, userMessage]
+      setMessages(newMessages)
       setInput('')
       setIsLoading(true)
       setStreamingText('')
 
       try {
-        // Build conversation history
-        const conversationHistory: ChatMessage[] = messages.map((msg) => ({
-          role: msg.role,
-          content: msg.content,
-        }))
+        // Build conversation history (excluding system messages)
+        const conversationHistory: ChatMessage[] = messages
+          .filter(msg => msg.role !== 'system')
+          .map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+          }))
 
-        // Send to API
+        // Send to API with new messages array that includes the user message
         const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
@@ -191,9 +193,9 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-background dark:bg-dark-background">
       <ChatHeader
-              status={status}
-              isLoading={isLoading}
-            />
+        status={status}
+        isLoading={isLoading}
+      />
       
       <main className="flex-1 overflow-hidden">
         <MessageList
@@ -203,17 +205,13 @@ export default function ChatPage() {
         />
       </main>
 
-      <footer className="border-t border-border dark:border-dark-border bg-card dark:bg-dark-card">
-        <form onSubmit={handleSendMessage} className="relative">
+      <footer className="border-t border-border dark:border-dark-border bg-card dark:bg-dark-card z-10">
+        <form onSubmit={handleSendMessage} className="w-full">
           <ChatComposer
             input={input}
             handleInputChange={handleInputChange}
             isLoading={isLoading}
           />
-          
-          {isLoading && (
-            <TypingIndicator />
-          )}
         </form>
       </footer>
     </div>

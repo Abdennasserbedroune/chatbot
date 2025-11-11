@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChatMessage } from '@/types/chat'
 import { MessageBubble } from './message-bubble'
 import { TypingIndicator } from './typing-indicator'
@@ -21,14 +21,38 @@ const suggestionPrompts = [
 export function MessageList({ messages, isLoading, streamingText = '' }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true)
+  const previousMessageCountRef = useRef(messages.length)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // Handle scroll events - disable auto-scroll when user scrolls up
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    const container = containerRef.current
+    if (!container) return
+
+    const handleScroll = () => {
+      // Check if user has scrolled near the bottom
+      const isNearBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight < 100
+      setShouldAutoScroll(isNearBottom)
+    }
+
+    container.addEventListener('scroll', handleScroll)
+    return () => container.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Auto-scroll only on new messages, not when user scrolls up
+  useEffect(() => {
+    const messageCountIncreased = messages.length > previousMessageCountRef.current
+    previousMessageCountRef.current = messages.length
+
+    if (messageCountIncreased && shouldAutoScroll) {
+      scrollToBottom()
+    }
+  }, [messages, shouldAutoScroll])
 
   const handleSuggestionClick = (prompt: string) => {
     // Create a custom event that the parent can listen for
@@ -38,11 +62,13 @@ export function MessageList({ messages, isLoading, streamingText = '' }: Message
 
   return (
     <div 
+      id="messages-container"
       ref={containerRef}
-      className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6"
+      className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 lg:px-8 py-6"
       role="region"
       aria-label="Messages"
       aria-live="polite"
+      aria-atomic="false"
     >
       {messages.length === 0 ? (
         <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
@@ -72,7 +98,7 @@ export function MessageList({ messages, isLoading, streamingText = '' }: Message
           </div>
         </div>
       ) : (
-        <>
+        <div className="flex flex-col gap-6">
           {messages.map((message, index) => (
             <MessageBubble
               key={message.id || index}
@@ -99,7 +125,7 @@ export function MessageList({ messages, isLoading, streamingText = '' }: Message
               </div>
             </div>
           )}
-        </>
+        </div>
       )}
       
       <div ref={messagesEndRef} />

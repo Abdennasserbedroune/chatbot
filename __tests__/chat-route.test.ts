@@ -20,6 +20,7 @@ jest.mock('@/lib/prompt', () => ({
       { role: 'user' as const, content: userMessage },
     ];
   }),
+  isJailbreakAttempt: jest.fn().mockReturnValue(false),
 }));
 
 // Helper function to safely consume a readable stream (with timeout)

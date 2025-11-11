@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import type { ChatMessage } from '@/types/chat'
-import { TypingIndicator } from './typing-indicator'
 
 interface MessageBubbleProps {
   message: ChatMessage & { id?: string }
@@ -11,12 +10,11 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const [displayedText, setDisplayedText] = useState('')
-  const [isTyping, setIsTyping] = useState(false)
 
   // Variable speed character reveal based on content length
   const getTypingSpeed = (content: string) => {
-    if (content.length < 50) return 15 // Fast for short responses
-    if (content.length > 200) return 50 // Slow for long responses
+    if (content.length < 50) return 20 // Fast for short responses
+    if (content.length > 200) return 40 // Slow for long responses
     return 30 // Medium for regular responses
   }
 
@@ -24,12 +22,10 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
     // For streaming messages, show content immediately
     if (message.id === 'streaming') {
       setDisplayedText(message.content)
-      setIsTyping(true)
       return
     }
 
     if (message.role === 'assistant' && isLatest && message.id !== 'streaming') {
-      setIsTyping(true)
       setDisplayedText('')
       
       let currentIndex = 0
@@ -40,20 +36,16 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
           setDisplayedText(message.content.slice(0, currentIndex + 1))
           currentIndex++
           setTimeout(typeNextChar, speed)
-        } else {
-          setIsTyping(false)
         }
       }
       
       typeNextChar()
     } else {
       setDisplayedText(message.content)
-      setIsTyping(false)
     }
   }, [message.content, message.role, isLatest, message.id])
 
   const isUser = message.role === 'user'
-  const showTypingIndicator = isUser ? false : (isLatest && isTyping)
 
   return (
     <div 
@@ -73,13 +65,12 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
         role={isUser ? 'user-message' : 'assistant-message'}
         aria-label={`${isUser ? 'User' : 'Assistant'} message`}
       >
-        <div className="text-sm leading-relaxed">
+        <div className="text-sm leading-relaxed break-words">
           {isUser ? (
             <p>{message.content}</p>
           ) : (
-            <div>
+            <div className="whitespace-pre-wrap break-words">
               {displayedText}
-              {showTypingIndicator && <TypingIndicator inline />}
             </div>
           )}
         </div>

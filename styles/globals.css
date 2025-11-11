@@ -25,7 +25,34 @@
 
 /* Custom component styles */
 @layer components {
-  /* Scrollbar styling */
+  /* Global scrollbar styling - custom webkit scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 107, 53, 0.3);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 107, 53, 0.5);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb {
+    background: rgba(255, 107, 53, 0.4);
+  }
+  
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 107, 53, 0.6);
+  }
+  
+  /* Custom scrollbar class for backward compatibility */
   .custom-scrollbar::-webkit-scrollbar {
     @apply w-2;
   }
@@ -43,9 +70,34 @@
     @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-900;
   }
   
+  /* Z-Index hierarchy for layout */
+  header {
+    @apply z-20;
+  }
+  
+  #messages-container {
+    @apply z-0;
+  }
+  
+  footer {
+    @apply z-10;
+  }
+  
+  /* Message container scrolling fixes */
+  #messages-container {
+    @apply flex flex-col gap-6 overflow-y-auto overflow-x-hidden;
+    height: calc(100vh - 200px);
+    @apply px-4 sm:px-6 lg:px-8 py-6 pb-20;
+    scroll-behavior: smooth;
+  }
+  
   /* Message bubble base with dark mode */
   .message-bubble {
-    @apply max-w-[80%] px-4 py-2 rounded-2xl shadow-sm;
+    @apply max-w-3xl px-4 py-3 rounded-2xl shadow-sm;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    overflow: visible;
   }
   
   /* User message bubble */
