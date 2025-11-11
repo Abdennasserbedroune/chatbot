@@ -15,6 +15,8 @@ export default function ChatPage() {
   const [streamingText, setStreamingText] = useState('')
   const [language, setLanguage] = useState<'en' | 'fr'>('en')
   const [userName, setUserName] = useState<string>('')
+  const [messageQueue, setMessageQueue] = useState<{ content: string; language: 'en' | 'fr' }[]>([])
+  const [isProcessingQueue, setIsProcessingQueue] = useState(false)
   
   const assistantState = useAssistantState()
   const status = assistantState.current
@@ -25,32 +27,14 @@ export default function ChatPage() {
     setInput(e.target.value)
   }, [])
 
-  const handleSendMessage = useCallback(
-    async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      if (!input.trim() || isLoading) {
-        return
-      }
-
-      // Detect language from user message
-      const detectedLang = detectLanguage(input)
-      if (detectedLang !== language) {
-        setLanguage(detectedLang)
-      }
-
-      // Update assistant status based on input
-      const newStatus = getStatusFromContent(input)
-      setStatus(newStatus)
-
+  const processMessage = useCallback(
+    async (messageContent: string, messageLanguage: 'en' | 'fr') => {
       // Add user message
       const userMessage: ChatMessage = {
         role: 'user',
-        content: input,
+        content: messageContent,
       }
-      const newMessages = [...messages, userMessage]
-      setMessages(newMessages)
-      setInput('')
-      setIsLoading(true)
+      setMessages(prev => [...prev, userMessage])
       setStreamingText('')
 
       try {
@@ -70,7 +54,7 @@ export default function ChatPage() {
           },
           body: JSON.stringify({
             messages: [...conversationHistory, userMessage],
-            language: detectedLang,
+            language: messageLanguage,
             userName: userName,
           }),
         })
@@ -134,12 +118,62 @@ export default function ChatPage() {
       } catch (err) {
         console.error('Chat error:', err)
         // You could add error state handling here
-      } finally {
-        setIsLoading(false)
-        setStreamingText('')
       }
     },
-    [messages, language, userName, input, isLoading, getStatusFromContent, setStatus]
+    [messages, userName]
+  )
+
+  const processQueue = useCallback(async () => {
+    if (isProcessingQueue || messageQueue.length === 0) {
+      return
+    }
+
+    setIsProcessingQueue(true)
+    setIsLoading(true)
+
+    try {
+      while (messageQueue.length > 0) {
+        const nextMessage = messageQueue[0]
+        setMessageQueue(prev => prev.slice(1))
+        
+        await processMessage(nextMessage.content, nextMessage.language)
+      }
+    } finally {
+      setIsProcessingQueue(false)
+      setIsLoading(false)
+      setStreamingText('')
+    }
+  }, [messageQueue, isProcessingQueue, processMessage])
+
+  // Process queue when it has messages and we're not already processing
+  useEffect(() => {
+    if (messageQueue.length > 0 && !isProcessingQueue && !isLoading) {
+      processQueue()
+    }
+  }, [messageQueue, isProcessingQueue, isLoading, processQueue])
+
+  const handleSendMessage = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      if (!input.trim()) {
+        return
+      }
+
+      // Detect language from user message
+      const detectedLang = detectLanguage(input)
+      if (detectedLang !== language) {
+        setLanguage(detectedLang)
+      }
+
+      // Update assistant status based on input
+      const newStatus = getStatusFromContent(input)
+      setStatus(newStatus)
+
+      // Add message to queue
+      setMessageQueue(prev => [...prev, { content: input, language: detectedLang }])
+      setInput('')
+    },
+    [input, language, getStatusFromContent, setStatus]
   )
 
   // Extract user name from conversation if needed
@@ -211,6 +245,7 @@ export default function ChatPage() {
             input={input}
             handleInputChange={handleInputChange}
             isLoading={isLoading}
+            queueLength={messageQueue.length}
           />
         </form>
       </footer>
