@@ -10,8 +10,8 @@
         "fr": "Qui êtes-vous ?"
       },
       "answer": {
-        "en": "I'm Abdennasser, an AI Integration Engineer at beewant. I bridge the gap between AI models and real-world applications, building workflows that connect data, models, and user experiences into seamless systems.",
-        "fr": "Je suis Abdennasser, Ingénieur d'Intégration IA chez beewant. Je fais le pont entre les modèles d'IA et les applications réelles, en construisant des workflows qui relient les données, les modèles et les expériences utilisateurs en systèmes fluides."
+        "en": "I'm Abdennasser, 26, born in Ouarzazate and I live in Marrakech, Morocco. I'm an AI Integration Engineer at beewant. I bridge the gap between AI models and real-world applications, building workflows that connect data, models, and user experiences into seamless systems.",
+        "fr": "Je suis Abdennasser, 26 ans, né à Ouarzazate et j'habite à Marrakech, Maroc. Je suis Ingénieur d'Intégration IA chez beewant. Je fais le pont entre les modèles d'IA et les applications réelles, en construisant des workflows qui relient les données, les modèles et les expériences utilisateurs en systèmes fluides."
       },
       "tags": ["about", "introduction", "personal"]
     },
@@ -23,8 +23,8 @@
         "fr": "Qu'est-ce qui vous motive ?"
       },
       "answer": {
-        "en": "I am driven by the desire to solve problems that matter and to continuously learn and grow. Building products that positively impact users and contribute to society fuels my passion for software development.",
-        "fr": "Je suis motivé par le désir de résoudre des problèmes qui comptent et d'apprendre et de grandir continuellement. Créer des produits qui ont un impact positif sur les utilisateurs et contribuent à la société alimente ma passion pour le développement logiciel."
+        "en": "I am driven by the desire to solve problems that matter and to keep learning. I love building products that feel useful, carry a Moroccan touch, and genuinely help people.",
+        "fr": "Je suis motivé par l'envie de résoudre des problèmes qui comptent et de continuer à apprendre. J'adore créer des produits utiles, avec une touche marocaine, qui aident vraiment les gens."
       },
       "tags": ["motivation", "about", "values"]
     },
@@ -36,8 +36,8 @@
         "fr": "Quel est votre parcours éducatif ?"
       },
       "answer": {
-        "en": "I studied law at Cadi Ayyad University in Marrakech, then became a self-taught developer. I completed the ALX Software Engineering bootcamp, which gave me strong foundations in algorithms, data structures, and full-stack development. I believe in continuous learning and hands-on experience.",
-        "fr": "J'ai étudié le droit à l'Université Cadi Ayyad à Marrakech, puis je suis devenu développeur autodidacte. J'ai complété le bootcamp d'ingénierie logicielle ALX, qui m'a donné des bases solides en algorithmes, structures de données et développement full-stack. Je crois en l'apprentissage continu et l'expérience pratique."
+        "en": "I studied law at Cadi Ayyad University in Marrakech, then taught myself to code. Completed the ALX Software Engineering bootcamp, which gave me solid foundations in algorithms, data structures, and full-stack development. Hands-on learning beats theory every time.",
+        "fr": "J'ai étudié le droit à l'Université Cadi Ayyad à Marrakech, puis je me suis formé en autodidacte au code. J'ai complété le bootcamp d'ingénierie logicielle ALX, qui m'a donné des bases solides en algorithmes, structures de données et développement full-stack. L'apprentissage pratique vaut toujours mieux que la théorie."
       },
       "tags": ["education", "background", "learning"]
     },
@@ -62,8 +62,8 @@
         "fr": "Quelles sont vos compétences techniques fondamentales ?"
       },
       "answer": {
-        "en": "I specialize in AI workflow orchestration (n8n, LangChain, Flowise, Zapier, Temporal), AI frameworks (Hugging Face, OpenAI APIs, Ollama, LangGraph), and full-stack development (JavaScript/TypeScript, Python, React, Next.js). I work with APIs (REST, GraphQL, WebSockets), cloud platforms (Docker, Vercel, AWS), and focus on connecting AI models to real applications.",
-        "fr": "Je me spécialise dans l'orchestration de workflows IA (n8n, LangChain, Flowise, Zapier, Temporal), les frameworks IA (Hugging Face, API OpenAI, Ollama, LangGraph), et le développement full-stack (JavaScript/TypeScript, Python, React, Next.js). Je travaille avec les API (REST, GraphQL, WebSockets), les plateformes cloud (Docker, Vercel, AWS), et je me concentre sur la connexion des modèles IA aux applications réelles."
+        "en": "I specialize in AI workflow orchestration (n8n, LangChain, Flowise, Zapier, Temporal), AI frameworks (Hugging Face, OpenAI APIs, Ollama, LangGraph), and full-stack development. JavaScript/TypeScript for integration logic, Python for model interfacing. React, Next.js, and similar frameworks. I work with APIs (REST, GraphQL, WebSockets, webhooks), cloud platforms (Docker, Vercel, Lovable, Render, AWS). Systems thinking about how data, models, and UX interact. Debugging integrations, prompt engineering, and documentation.",
+        "fr": "Je me spécialise dans l'orchestration de workflows IA (n8n, LangChain, Flowise, Zapier, Temporal), les frameworks IA (Hugging Face, API OpenAI, Ollama, LangGraph) et le développement full-stack. JavaScript/TypeScript pour la logique d'intégration, Python pour l'interfaçage de modèles. React, Next.js et frameworks similaires. Je travaille avec les API (REST, GraphQL, WebSockets, webhooks) et les plateformes cloud (Docker, Vercel, Lovable, Render, AWS). Réflexion systémique sur l'interaction données/modèles/UX, débogage d'intégrations, prompt engineering et documentation."
       },
       "tags": ["skills", "technical", "programming"]
     },
@@ -75,8 +75,8 @@
         "fr": "Quelles compétences relationnelles possédez-vous ?"
       },
       "answer": {
-        "en": "I excel in cross-functional communication—translating between data scientists, designers, and product teams. Strong problem-solving, debugging integrations, systems thinking about data/model/UX interaction, and documentation. I bridge technical and non-technical stakeholders effectively.",
-        "fr": "J'excelle dans la communication interfonctionnelle—je traduis entre data scientists, designers et équipes produit. Solide résolution de problèmes, débogage d'intégrations, réflexion systémique sur l'interaction données/modèle/UX, et documentation. Je fais le pont entre parties prenantes techniques et non-techniques efficacement."
+        "en": "I excel in cross-functional communication—translating between data scientists, designers, and product teams. Strong problem-solving, debugging integrations, systems thinking about data/model/UX interaction, and documentation. I bridge technical and non-technical stakeholders smoothly.",
+        "fr": "J'excelle dans la communication interfonctionnelle—je traduis entre data scientists, designers et équipes produit. Solide résolution de problèmes, débogage d'intégrations, réflexion systémique sur l'interaction données/modèle/UX et documentation. Je fais le pont entre parties prenantes techniques et non-techniques avec aisance."
       },
       "tags": ["skills", "soft-skills", "communication"]
     },
@@ -88,8 +88,8 @@
         "fr": "Êtes-vous compétent en DevOps et infrastructure ?"
       },
       "answer": {
-        "en": "Yes, I work with Docker for containerization, deploy on Vercel, Render, and AWS. I handle CI/CD pipelines, manage API deployments, and debug integration issues. My focus is on getting AI models and workflows production-ready with reliable infrastructure.",
-        "fr": "Oui, je travaille avec Docker pour la conteneurisation, je déploie sur Vercel, Render et AWS. Je gère les pipelines CI/CD, administre les déploiements d'API, et débogue les problèmes d'intégration. Mon focus est de rendre les modèles IA et workflows prêts pour la production avec une infrastructure fiable."
+        "en": "Yes, I work with Docker for containerization and deploy on Vercel, Lovable, Render, and AWS. I handle CI/CD pipelines, manage API deployments, and debug integration issues. My focus is on getting AI models and workflows production-ready with reliable infrastructure.",
+        "fr": "Oui, je travaille avec Docker pour la conteneurisation et je déploie sur Vercel, Lovable, Render et AWS. Je gère les pipelines CI/CD, administre les déploiements d'API et je débogue les problèmes d'intégration. Mon objectif est de rendre les modèles IA et workflows prêts pour la production avec une infrastructure fiable."
       },
       "tags": ["skills", "devops", "infrastructure"]
     },
@@ -101,8 +101,8 @@
         "fr": "Parlez-moi de votre projet de chatbot IA"
       },
       "answer": {
-        "en": "Abdennasser AI is an intelligent chatbot integrating LLaMA via Groq's low-latency API. Custom system prompt for personality alignment, React/Next.js frontend for smooth interaction, real-time streaming responses with contextual accuracy. Stack: Groq API, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact: Responsive chatbot automating recruiter interactions and FAQ replies.",
-        "fr": "Abdennasser AI est un chatbot intelligent intégrant LLaMA via l'API basse latence de Groq. Prompt système personnalisé pour l'alignement de la personnalité, frontend React/Next.js pour une interaction fluide, réponses en streaming temps réel avec précision contextuelle. Stack: API Groq, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact: Chatbot réactif automatisant les interactions recruteurs et réponses FAQ."
+        "en": "Abdennasser AI is an intelligent chatbot that integrates LLaMA via Groq's low-latency API. I designed a custom system prompt to keep the personality aligned, built a React/Next.js frontend for smooth interaction, and stream real-time responses with contextual accuracy. Stack: Groq API, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact: Responsive chatbot that automates recruiter conversations and FAQ replies while staying on-brand.",
+        "fr": "Abdennasser AI est un chatbot intelligent qui intègre LLaMA via l'API basse latence de Groq. J'ai conçu un prompt système personnalisé pour garder la personnalité cohérente, développé un frontend React/Next.js fluide et diffusé des réponses en temps réel avec une précision contextuelle. Stack : API Groq, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact : Chatbot réactif qui automatise les échanges avec les recruteurs et les réponses aux FAQ tout en restant fidèle à la marque."
       },
       "tags": ["projects", "ai", "chatbot", "groq"]
     },
@@ -114,8 +114,8 @@
         "fr": "C'est quoi Fanpocket ?"
       },
       "answer": {
-        "en": "Fanpocket is the AFCON 2025 Companion App with dynamic frontend for live updates, scores, schedules, team info. Integrated APIs for live football data and map visualization. Interactive map showing stadium locations and travel routes. Travel recommendations: attractions, restaurants, cultural sites. Mobile and desktop optimized. Stack: Next.js, Node.js, REST APIs, Mapbox/Leaflet, Vercel. Impact: Reliable, user-friendly AFCON 2025 companion for fans exploring Morocco.",
-        "fr": "Fanpocket est l'application compagnon AFCON 2025 avec frontend dynamique pour mises à jour en direct, scores, calendriers, infos équipes. API intégrées pour données football en direct et visualisation carte. Carte interactive montrant emplacements stades et itinéraires voyage. Recommandations voyage : attractions, restaurants, sites culturels. Optimisé mobile et desktop. Stack: Next.js, Node.js, API REST, Mapbox/Leaflet, Vercel. Impact: Compagnon AFCON 2025 fiable et convivial pour fans explorant le Maroc."
+        "en": "Fanpocket is my AFCON 2025 Companion App. Built a dynamic frontend for live updates—scores, schedules, team info—integrating APIs for real-time football data and map visualization. Interactive map shows stadium locations and travel routes. Added recommendations for attractions, restaurants, and cultural sites. Optimized for mobile and desktop. Stack: Next.js, Node.js, REST APIs, Mapbox/Leaflet, Vercel. Impact: A reliable, user-friendly companion for fans exploring Morocco during AFCON 2025.",
+        "fr": "Fanpocket est mon application compagnon AFCON 2025. J'ai développé un frontend dynamique pour les mises à jour en direct—scores, calendriers, infos équipes—en intégrant des API pour les données football en temps réel et la visualisation cartographique. Une carte interactive affiche les emplacements des stades et les itinéraires de voyage. J'ai ajouté des recommandations pour les attractions, restaurants et sites culturels. Optimisé mobile et desktop. Stack : Next.js, Node.js, API REST, Mapbox/Leaflet, Vercel. Impact : Un compagnon fiable et convivial pour les fans explorant le Maroc pendant la CAN 2025."
       },
       "tags": ["projects", "afcon", "fanpocket", "sports"]
     },
@@ -176,11 +176,11 @@
       "topic": "languages",
       "question": {
         "en": "What spoken languages do you speak?",
-        "fr": "Quelles langues parlées parlez-vous ?"
+        "fr": "Quelles langues parlez-vous ?"
       },
       "answer": {
-        "en": "I am fluent in English and French, and have working proficiency in Spanish. This multilingual background enables me to work effectively with international teams and clients.",
-        "fr": "Je suis couramment fluide en anglais et en français, et j'ai une compétence fonctionnelle en espagnol. Cette formation multilingue me permet de travailler efficacement avec des équipes et des clients internationaux."
+        "en": "I speak Arabic, French, and English every day. Switching between them lets me collaborate smoothly with Moroccan teams, international partners, and anyone who needs clear communication.",
+        "fr": "Je parle l'arabe, le français et l'anglais au quotidien. Passer de l'une à l'autre me permet de collaborer naturellement avec des équipes marocaines, des partenaires internationaux et toute personne qui a besoin d'une communication claire."
       },
       "tags": ["languages", "communication", "international"]
     },
@@ -491,8 +491,8 @@
         "fr": "C'est quoi TrueTale ?"
       },
       "answer": {
-        "en": "TrueTale is a literary social platform connecting writers and readers. User authentication with writer/reader profiles and follow system. Book marketplace for authors to upload, list, and sell works. Interactive feed for posts, discussions, and reviews. Book management, rating, commenting, recommendation features. Scalable frontend and backend. Stack: Next.js, Node.js, PostgreSQL, REST APIs, Vercel. Impact: Community-driven platform enabling authors to monetize their work and readers to discover new voices.",
-        "fr": "TrueTale est une plateforme sociale littéraire connectant écrivains et lecteurs. Authentification utilisateur avec profils écrivain/lecteur et système de suivi. Marketplace de livres pour auteurs télécharger, lister et vendre œuvres. Fil interactif pour posts, discussions et critiques. Gestion livres, notation, commentaires, fonctionnalités recommandations. Frontend et backend scalables. Stack: Next.js, Node.js, PostgreSQL, API REST, Vercel. Impact: Plateforme communautaire permettant aux auteurs de monétiser leur travail et aux lecteurs de découvrir de nouvelles voix."
+        "en": "TrueTale is a literary social platform that connects writers and readers. I built authentication with dedicated writer and reader profiles plus a follow system. There's a book marketplace where authors upload, list, and sell their work, and an interactive feed for posts, discussions, and reviews. Book management, ratings, comments, and smart recommendations keep the community lively. Scalable frontend and backend. Stack: Next.js, Node.js, PostgreSQL, REST APIs, Vercel. Impact: Community-driven platform that helps authors monetise their work and readers discover new voices.",
+        "fr": "TrueTale est une plateforme sociale littéraire qui relie écrivains et lecteurs. J'ai mis en place une authentification avec profils dédiés écrivain et lecteur, plus un système d'abonnement. Une marketplace de livres permet aux auteurs de téléverser, lister et vendre leurs œuvres, tandis qu'un fil interactif porte les publications, discussions et critiques. Gestion des livres, notes, commentaires et recommandations intelligentes animent la communauté. Frontend et backend scalables. Stack : Next.js, Node.js, PostgreSQL, API REST, Vercel. Impact : Une plateforme communautaire qui aide les auteurs à monétiser leurs œuvres et les lecteurs à découvrir de nouvelles voix."
       },
       "tags": ["projects", "truetale", "social", "marketplace"]
     },
@@ -517,8 +517,8 @@
         "fr": "Parlez-moi de Pathwise"
       },
       "answer": {
-        "en": "Pathwise is an AI-driven career platform. Multiple AI models integration (Groq APIs + custom fine-tuned models). Chatbot interface for personalized CV review and interview coaching. Chat-free direct recommendation system. Job suggestion system matching users to opportunities. Scalable frontend and backend. Stack: Groq APIs, Open-Source AI Models (Custom Trained), Next.js, Node.js, Vercel. Impact: AI-driven platform for CV improvement, interview prep, and job discovery.",
-        "fr": "Pathwise est une plateforme carrière pilotée par IA. Intégration de multiples modèles IA (API Groq + modèles fine-tunés personnalisés). Interface chatbot pour révision CV personnalisée et coaching entretien. Système de recommandation direct sans chat. Système de suggestion d'emplois associant utilisateurs aux opportunités. Frontend et backend scalables. Stack: API Groq, Modèles IA Open-Source (Entraînés sur mesure), Next.js, Node.js, Vercel. Impact: Plateforme IA pour amélioration CV, préparation entretiens et découverte d'emplois."
+        "en": "Pathwise is an AI-driven career platform. I integrated multiple AI models—Groq APIs plus custom fine-tuned models—and built a chatbot interface for personalised CV review and interview coaching. Added a chat-free direct recommendation system and a job suggestion engine that matches users to opportunities. Scalable frontend and backend. Stack: Groq APIs, Open-Source AI Models (Custom Trained), Next.js, Node.js, Vercel. Impact: An AI-powered platform that helps people improve their CVs, prepare for interviews, and discover the right jobs.",
+        "fr": "Pathwise est une plateforme carrière pilotée par IA. J'ai intégré plusieurs modèles IA—API Groq et modèles fine-tunés sur mesure—et développé une interface chatbot pour révision CV personnalisée et coaching entretien. J'ai ajouté un système de recommandation direct sans chat et un moteur de suggestion d'emplois qui associe les utilisateurs aux opportunités. Frontend et backend scalables. Stack : API Groq, Modèles IA Open-Source (Entraînés sur mesure), Next.js, Node.js, Vercel. Impact : Une plateforme IA qui aide les gens à améliorer leurs CV, se préparer aux entretiens et découvrir les bons emplois."
       },
       "tags": ["projects", "pathwise", "ai", "career"]
     },
