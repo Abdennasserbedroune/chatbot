@@ -1,9 +1,14 @@
 import React from 'react'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
+import { ThemeProvider } from '@/lib/contexts/ThemeContext'
 import '../styles/globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+})
 
 export const metadata: Metadata = {
   title: 'Abdennasser AI',
@@ -16,11 +21,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className={inter.className}>
-        <div id="root">
-          {children}
-        </div>
+        <ThemeProvider>
+          <div id="root">
+            {children}
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )
