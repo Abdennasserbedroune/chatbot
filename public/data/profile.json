@@ -10,8 +10,8 @@
         "fr": "Qui êtes-vous ?"
       },
       "answer": {
-        "en": "I am a full-stack developer passionate about creating elegant solutions to complex problems. With expertise in modern web technologies, I focus on building scalable applications that deliver exceptional user experiences.",
-        "fr": "Je suis un développeur full-stack passionné par la création de solutions élégantes aux problèmes complexes. Avec une expertise en technologies web modernes, je me concentre sur la création d'applications scalables qui offrent des expériences utilisateur exceptionnelles."
+        "en": "I'm Abdennasser, an AI Integration Engineer at beewant. I bridge the gap between AI models and real-world applications, building workflows that connect data, models, and user experiences into seamless systems.",
+        "fr": "Je suis Abdennasser, Ingénieur d'Intégration IA chez beewant. Je fais le pont entre les modèles d'IA et les applications réelles, en construisant des workflows qui relient les données, les modèles et les expériences utilisateurs en systèmes fluides."
       },
       "tags": ["about", "introduction", "personal"]
     },
@@ -36,8 +36,8 @@
         "fr": "Quel est votre parcours éducatif ?"
       },
       "answer": {
-        "en": "I hold a Bachelor's degree in Computer Science from a reputable university, where I gained solid foundations in algorithms, data structures, and software engineering principles. I have complemented this with continuous professional development through online courses and certifications.",
-        "fr": "J'ai une licence en informatique d'une université réputée, où j'ai acquis des bases solides en algorithmes, structures de données et principes d'ingénierie logicielle. J'ai complété cela par un développement professionnel continu grâce à des cours en ligne et des certifications."
+        "en": "I studied law at Cadi Ayyad University in Marrakech, then became a self-taught developer. I completed the ALX Software Engineering bootcamp, which gave me strong foundations in algorithms, data structures, and full-stack development. I believe in continuous learning and hands-on experience.",
+        "fr": "J'ai étudié le droit à l'Université Cadi Ayyad à Marrakech, puis je suis devenu développeur autodidacte. J'ai complété le bootcamp d'ingénierie logicielle ALX, qui m'a donné des bases solides en algorithmes, structures de données et développement full-stack. Je crois en l'apprentissage continu et l'expérience pratique."
       },
       "tags": ["education", "background", "learning"]
     },
@@ -49,10 +49,10 @@
         "fr": "Avez-vous poursuivi des certifications avancées ?"
       },
       "answer": {
-        "en": "Yes, I have completed several certifications including AWS Solutions Architect, Kubernetes Administration, and various DevOps specializations. These certifications have deepened my understanding of cloud infrastructure and deployment practices.",
-        "fr": "Oui, j'ai complété plusieurs certifications, notamment AWS Solutions Architect, Kubernetes Administration et diverses spécialisations DevOps. Ces certifications ont approfondi ma compréhension de l'infrastructure cloud et des pratiques de déploiement."
+        "en": "I focus on practical learning through building real projects. I've completed courses in AI/ML fundamentals, LangChain, prompt engineering, and API integration. I stay current by experimenting with new AI frameworks and workflow tools, and documenting what I learn along the way.",
+        "fr": "Je me concentre sur l'apprentissage pratique en construisant de vrais projets. J'ai complété des cours en fondamentaux IA/ML, LangChain, prompt engineering et intégration API. Je reste à jour en expérimentant avec les nouveaux frameworks IA et outils de workflow, et en documentant ce que j'apprends."
       },
-      "tags": ["education", "certifications", "cloud"]
+      "tags": ["education", "certifications", "ai"]
     },
     {
       "id": "skills-01",
@@ -62,8 +62,8 @@
         "fr": "Quelles sont vos compétences techniques fondamentales ?"
       },
       "answer": {
-        "en": "My core technical skills include TypeScript, React, Node.js, Python, and database design. I have deep experience with modern frontend frameworks, backend development, and microservices architecture. I also excel in cloud platforms like AWS and GCP.",
-        "fr": "Mes compétences techniques fondamentales incluent TypeScript, React, Node.js, Python et la conception de bases de données. J'ai une expérience approfondie des frameworks frontend modernes, du développement backend et de l'architecture des microservices. J'excelle également dans les plates-formes cloud comme AWS et GCP."
+        "en": "I specialize in AI workflow orchestration (n8n, LangChain, Flowise, Zapier, Temporal), AI frameworks (Hugging Face, OpenAI APIs, Ollama, LangGraph), and full-stack development (JavaScript/TypeScript, Python, React, Next.js). I work with APIs (REST, GraphQL, WebSockets), cloud platforms (Docker, Vercel, AWS), and focus on connecting AI models to real applications.",
+        "fr": "Je me spécialise dans l'orchestration de workflows IA (n8n, LangChain, Flowise, Zapier, Temporal), les frameworks IA (Hugging Face, API OpenAI, Ollama, LangGraph), et le développement full-stack (JavaScript/TypeScript, Python, React, Next.js). Je travaille avec les API (REST, GraphQL, WebSockets), les plateformes cloud (Docker, Vercel, AWS), et je me concentre sur la connexion des modèles IA aux applications réelles."
       },
       "tags": ["skills", "technical", "programming"]
     },
@@ -75,8 +75,8 @@
         "fr": "Quelles compétences relationnelles possédez-vous ?"
       },
       "answer": {
-        "en": "I excel in communication, problem-solving, and collaborative teamwork. I have strong mentoring abilities and experience leading technical discussions. My analytical mindset combined with creativity helps me approach challenges from multiple angles.",
-        "fr": "J'excelle en communication, résolution de problèmes et travail d'équipe collaboratif. J'ai de fortes capacités de mentorat et une expérience en direction de discussions techniques. Mon esprit analytique combiné à la créativité m'aide à aborder les défis sous plusieurs angles."
+        "en": "I excel in cross-functional communication—translating between data scientists, designers, and product teams. Strong problem-solving, debugging integrations, systems thinking about data/model/UX interaction, and documentation. I bridge technical and non-technical stakeholders effectively.",
+        "fr": "J'excelle dans la communication interfonctionnelle—je traduis entre data scientists, designers et équipes produit. Solide résolution de problèmes, débogage d'intégrations, réflexion systémique sur l'interaction données/modèle/UX, et documentation. Je fais le pont entre parties prenantes techniques et non-techniques efficacement."
       },
       "tags": ["skills", "soft-skills", "communication"]
     },
@@ -88,8 +88,8 @@
         "fr": "Êtes-vous compétent en DevOps et infrastructure ?"
       },
       "answer": {
-        "en": "Yes, I have extensive experience with Docker, Kubernetes, CI/CD pipelines, and infrastructure-as-code using Terraform. I understand container orchestration, monitoring, and log aggregation practices for production systems.",
-        "fr": "Oui, j'ai une expérience considérable avec Docker, Kubernetes, les pipelines CI/CD et l'infrastructure en tant que code utilisant Terraform. Je comprends les pratiques d'orchestration de conteneurs, de surveillance et d'agrégation de journaux pour les systèmes de production."
+        "en": "Yes, I work with Docker for containerization, deploy on Vercel, Render, and AWS. I handle CI/CD pipelines, manage API deployments, and debug integration issues. My focus is on getting AI models and workflows production-ready with reliable infrastructure.",
+        "fr": "Oui, je travaille avec Docker pour la conteneurisation, je déploie sur Vercel, Render et AWS. Je gère les pipelines CI/CD, administre les déploiements d'API, et débogue les problèmes d'intégration. Mon focus est de rendre les modèles IA et workflows prêts pour la production avec une infrastructure fiable."
       },
       "tags": ["skills", "devops", "infrastructure"]
     },
@@ -97,27 +97,27 @@
       "id": "projects-01",
       "topic": "projects",
       "question": {
-        "en": "Can you describe a significant project you've led?",
-        "fr": "Pouvez-vous décrire un projet important que vous avez dirigé ?"
+        "en": "Tell me about your AI Chatbot project",
+        "fr": "Parlez-moi de votre projet de chatbot IA"
       },
       "answer": {
-        "en": "I led the development of a real-time analytics platform that processed millions of events daily. The project involved designing a scalable microservices architecture, implementing data pipelines with Kafka, and creating interactive dashboards with React. The system achieved 99.99% uptime.",
-        "fr": "J'ai dirigé le développement d'une plateforme d'analyse en temps réel qui traitait des millions d'événements quotidiennement. Le projet impliquait de concevoir une architecture de microservices scalable, de mettre en œuvre des pipelines de données avec Kafka et de créer des tableaux de bord interactifs avec React. Le système a atteint 99,99% de disponibilité."
+        "en": "Abdennasser AI is an intelligent chatbot integrating LLaMA via Groq's low-latency API. Custom system prompt for personality alignment, React/Next.js frontend for smooth interaction, real-time streaming responses with contextual accuracy. Stack: Groq API, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact: Responsive chatbot automating recruiter interactions and FAQ replies.",
+        "fr": "Abdennasser AI est un chatbot intelligent intégrant LLaMA via l'API basse latence de Groq. Prompt système personnalisé pour l'alignement de la personnalité, frontend React/Next.js pour une interaction fluide, réponses en streaming temps réel avec précision contextuelle. Stack: API Groq, LLaMA, Next.js, Node.js, TypeScript, Vercel. Impact: Chatbot réactif automatisant les interactions recruteurs et réponses FAQ."
       },
-      "tags": ["projects", "leadership", "architecture"]
+      "tags": ["projects", "ai", "chatbot", "groq"]
     },
     {
       "id": "projects-02",
       "topic": "projects",
       "question": {
-        "en": "What's a recent project that showcases your skills?",
-        "fr": "Quel est un projet récent qui met en avant vos compétences ?"
+        "en": "What's Fanpocket?",
+        "fr": "C'est quoi Fanpocket ?"
       },
       "answer": {
-        "en": "Recently, I developed a machine learning pipeline integration tool that allows teams to deploy ML models with single commands. The project demonstrates expertise in Python, Docker, Kubernetes, and CI/CD automation. It improved deployment times by 80%.",
-        "fr": "Récemment, j'ai développé un outil d'intégration de pipeline d'apprentissage automatique qui permet aux équipes de déployer des modèles ML avec des commandes uniques. Le projet démontre une expertise en Python, Docker, Kubernetes et l'automatisation CI/CD. Il a amélioré les temps de déploiement de 80%."
+        "en": "Fanpocket is the AFCON 2025 Companion App with dynamic frontend for live updates, scores, schedules, team info. Integrated APIs for live football data and map visualization. Interactive map showing stadium locations and travel routes. Travel recommendations: attractions, restaurants, cultural sites. Mobile and desktop optimized. Stack: Next.js, Node.js, REST APIs, Mapbox/Leaflet, Vercel. Impact: Reliable, user-friendly AFCON 2025 companion for fans exploring Morocco.",
+        "fr": "Fanpocket est l'application compagnon AFCON 2025 avec frontend dynamique pour mises à jour en direct, scores, calendriers, infos équipes. API intégrées pour données football en direct et visualisation carte. Carte interactive montrant emplacements stades et itinéraires voyage. Recommandations voyage : attractions, restaurants, sites culturels. Optimisé mobile et desktop. Stack: Next.js, Node.js, API REST, Mapbox/Leaflet, Vercel. Impact: Compagnon AFCON 2025 fiable et convivial pour fans explorant le Maroc."
       },
-      "tags": ["projects", "ml", "automation"]
+      "tags": ["projects", "afcon", "fanpocket", "sports"]
     },
     {
       "id": "experience-01",
@@ -166,8 +166,8 @@
         "fr": "Quels langages de programmation maîtrisez-vous ?"
       },
       "answer": {
-        "en": "I am proficient in TypeScript, JavaScript, Python, Go, and Java. I have production experience with all of these and continuously adapt to new languages and tools as projects require.",
-        "fr": "Je suis compétent en TypeScript, JavaScript, Python, Go et Java. J'ai une expérience de production avec tous ces langages et m'adapte continuellement aux nouveaux langages et outils selon les besoins du projet."
+        "en": "I'm proficient in JavaScript/TypeScript for integration logic and frontend work, and Python for model interfacing and data manipulation. These two languages cover most of my AI integration work. I pick up other tools as projects require.",
+        "fr": "Je suis compétent en JavaScript/TypeScript pour la logique d'intégration et le travail frontend, et Python pour l'interfaçage de modèles et la manipulation de données. Ces deux langages couvrent l'essentiel de mon travail d'intégration IA. J'apprends d'autres outils selon les besoins des projets."
       },
       "tags": ["languages", "programming", "technical"]
     },
@@ -465,8 +465,8 @@
         "fr": "Comment les gens peuvent-ils vous contacter ?"
       },
       "answer": {
-        "en": "You can reach me via email at contact@myprofile.com or connect with me on LinkedIn at linkedin.com/in/myprofile. I also maintain a personal website and blog where you can find more about my work and thoughts.",
-        "fr": "Vous pouvez me contacter par e-mail à contact@myprofile.com ou me connecter sur LinkedIn à linkedin.com/in/myprofile. Je maintiens aussi un site web personnel et un blog où vous pouvez en savoir plus sur mon travail et mes pensées."
+        "en": "Best way is email: Abdennasser.bedroune@gmail.com. I'm also on LinkedIn and GitHub. For detailed technical discussions or project inquiries, email is preferred—I respond within 24-48 hours.",
+        "fr": "Le meilleur moyen est l'email : Abdennasser.bedroune@gmail.com. Je suis aussi sur LinkedIn et GitHub. Pour des discussions techniques détaillées ou demandes de projet, l'email est préféré—je réponds sous 24-48 heures."
       },
       "tags": ["contact", "communication", "social"]
     },
@@ -478,8 +478,8 @@
         "fr": "Êtes-vous disponible pour du conseil ou de la collaboration ?"
       },
       "answer": {
-        "en": "Yes, I'm open to consulting opportunities and technical collaboration. I'm especially interested in projects involving scalable architecture, DevOps practices, or mentoring teams. Feel free to reach out to discuss potential opportunities.",
-        "fr": "Oui, je suis ouvert aux opportunités de conseil et de collaboration technique. Je m'intéresse particulièrement aux projets impliquant une architecture scalable, des pratiques DevOps ou le mentorat d'équipes. N'hésitez pas à me contacter pour discuter des opportunités potentielles."
+        "en": "Yes, I'm open to AI integration projects, workflow automation consulting, and technical collaboration. Especially interested in connecting AI models to real applications, building chatbots, or designing intelligent workflows. Reach out via email: Abdennasser.bedroune@gmail.com",
+        "fr": "Oui, je suis ouvert aux projets d'intégration IA, conseil en automatisation de workflows, et collaboration technique. Particulièrement intéressé par connecter les modèles IA aux applications réelles, créer des chatbots, ou concevoir des workflows intelligents. Contactez-moi par email : Abdennasser.bedroune@gmail.com"
       },
       "tags": ["contact", "opportunities", "collaboration"]
     },
@@ -487,14 +487,14 @@
       "id": "projects-03",
       "topic": "projects",
       "question": {
-        "en": "Tell me about a challenging project you've worked on.",
-        "fr": "Parlez-moi d'un projet difficile sur lequel vous avez travaillé."
+        "en": "What is TrueTale?",
+        "fr": "C'est quoi TrueTale ?"
       },
       "answer": {
-        "en": "I worked on a complex microservices migration for a legacy monolithic application serving millions of users. The challenge was maintaining 100% uptime while gradually moving components to microservices. Through careful planning and feature flags, we completed the migration in phases over 18 months without service interruption.",
-        "fr": "J'ai travaillé sur une migration complexe de microservices pour une application monolithique héritée servant des millions d'utilisateurs. Le défi était de maintenir 100% de disponibilité tout en déplaçant progressivement les composants vers les microservices. Grâce à une planification minutieuse et aux feature flags, nous avons complété la migration en phases sur 18 mois sans interruption de service."
+        "en": "TrueTale is a literary social platform connecting writers and readers. User authentication with writer/reader profiles and follow system. Book marketplace for authors to upload, list, and sell works. Interactive feed for posts, discussions, and reviews. Book management, rating, commenting, recommendation features. Scalable frontend and backend. Stack: Next.js, Node.js, PostgreSQL, REST APIs, Vercel. Impact: Community-driven platform enabling authors to monetize their work and readers to discover new voices.",
+        "fr": "TrueTale est une plateforme sociale littéraire connectant écrivains et lecteurs. Authentification utilisateur avec profils écrivain/lecteur et système de suivi. Marketplace de livres pour auteurs télécharger, lister et vendre œuvres. Fil interactif pour posts, discussions et critiques. Gestion livres, notation, commentaires, fonctionnalités recommandations. Frontend et backend scalables. Stack: Next.js, Node.js, PostgreSQL, API REST, Vercel. Impact: Plateforme communautaire permettant aux auteurs de monétiser leur travail et aux lecteurs de découvrir de nouvelles voix."
       },
-      "tags": ["projects", "microservices", "migration", "challenge"]
+      "tags": ["projects", "truetale", "social", "marketplace"]
     },
     {
       "id": "skills-04",
@@ -508,6 +508,19 @@
         "fr": "Je suis un fervent partisan des tests complets, y compris les tests unitaires, les tests d'intégration et les tests de bout en bout. Je vise une couverture de code élevée (80%+) et j'utilise des outils comme Jest, Testing Library et Cypress. Le développement piloté par les tests a considérablement amélioré la qualité du code dans mes projets."
       },
       "tags": ["skills", "testing", "quality-assurance"]
+    },
+    {
+      "id": "projects-04",
+      "topic": "projects",
+      "question": {
+        "en": "Tell me about Pathwise",
+        "fr": "Parlez-moi de Pathwise"
+      },
+      "answer": {
+        "en": "Pathwise is an AI-driven career platform. Multiple AI models integration (Groq APIs + custom fine-tuned models). Chatbot interface for personalized CV review and interview coaching. Chat-free direct recommendation system. Job suggestion system matching users to opportunities. Scalable frontend and backend. Stack: Groq APIs, Open-Source AI Models (Custom Trained), Next.js, Node.js, Vercel. Impact: AI-driven platform for CV improvement, interview prep, and job discovery.",
+        "fr": "Pathwise est une plateforme carrière pilotée par IA. Intégration de multiples modèles IA (API Groq + modèles fine-tunés personnalisés). Interface chatbot pour révision CV personnalisée et coaching entretien. Système de recommandation direct sans chat. Système de suggestion d'emplois associant utilisateurs aux opportunités. Frontend et backend scalables. Stack: API Groq, Modèles IA Open-Source (Entraînés sur mesure), Next.js, Node.js, Vercel. Impact: Plateforme IA pour amélioration CV, préparation entretiens et découverte d'emplois."
+      },
+      "tags": ["projects", "pathwise", "ai", "career"]
     },
     {
       "id": "tools-03",
