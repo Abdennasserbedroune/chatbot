@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { StatusBadge } from './status-badge'
 import type { AssistantStatus } from '@/lib/useAssistantState'
+import { layout } from '@/lib/designTokens'
 
 interface ChatHeaderProps {
   status: AssistantStatus
@@ -12,6 +13,7 @@ interface ChatHeaderProps {
 
 export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
   const [isDark, setIsDark] = useState(false)
+  const headerSpec = layout.header
 
   useEffect(() => {
     // Check for saved preference or default to light mode
@@ -36,14 +38,23 @@ export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
   }
 
   return (
-    <header className="w-full bg-card dark:bg-dark-card border-b border-border dark:border-dark-border z-20">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <header className="w-full bg-minimal-card dark:bg-minimal-dark-card border-b border-minimal-border dark:border-minimal-dark-border z-20">
+      <div className="w-full" style={{ paddingLeft: `${headerSpec.paddingX}px`, paddingRight: `${headerSpec.paddingX}px` }}>
+        <div 
+          className="flex items-center justify-between"
+          style={{ height: `${headerSpec.height}px` }}
+        >
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-foreground dark:text-dark-foreground">
+            <h1 
+              className="font-semibold text-minimal-primary dark:text-minimal-dark-primary"
+              style={{ fontSize: `${18}px` }}
+            >
               Abdennasser AI
             </h1>
-            <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground">
+            <p 
+              className="text-minimal-secondary dark:text-minimal-dark-secondary"
+              style={{ fontSize: `${14}px` }}
+            >
               Your personal assistant
             </p>
             {(isLoading || status !== 'idle') && (

@@ -17,6 +17,7 @@ export default function MinimalChat(): React.ReactElement {
   const [userName, setUserName] = useState<string>('')
   const [messageQueue, setMessageQueue] = useState<string[]>([])
   const [isProcessingQueue, setIsProcessingQueue] = useState(false)
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
   
   const assistantState = useAssistantState()
   const status = assistantState.current
@@ -46,6 +47,9 @@ export default function MinimalChat(): React.ReactElement {
   // Send message to API
   const sendMessageToAPI = useCallback(async (messageContent: string) => {
     try {
+      // Set message lock to prevent duplicate submissions
+      setIsWaitingForResponse(true)
+      
       // Detect language from user message
       const detectedLang = detectLanguage(messageContent)
       if (detectedLang !== language) {
@@ -146,12 +150,14 @@ export default function MinimalChat(): React.ReactElement {
         setStreamingText('')
       }
       
-      // Ensure loading state is cleared
+      // Ensure loading state is cleared and unlock message input
       setIsLoading(false)
+      setIsWaitingForResponse(false)
     } catch (error) {
-      // Clean up state on error
+      // Clean up state on error and unlock message input
       setStreamingText('')
       setIsLoading(false)
+      setIsWaitingForResponse(false)
       console.error('Error sending message:', error)
       // Re-throw to be handled by the queue processor
       throw error
@@ -179,7 +185,7 @@ export default function MinimalChat(): React.ReactElement {
   const handleSendMessage = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
-      if (!input.trim() || isLoading) {
+      if (!input.trim() || isLoading || isWaitingForResponse) {
         return
       }
 
@@ -187,7 +193,7 @@ export default function MinimalChat(): React.ReactElement {
       setMessageQueue(prev => [...prev, input.trim()])
       setInput('')
     },
-    [input, isLoading]
+    [input, isLoading, isWaitingForResponse]
   )
 
   // Extract user name from conversation if needed
@@ -259,6 +265,7 @@ export default function MinimalChat(): React.ReactElement {
             input={input}
             handleInputChange={handleInputChange}
             isLoading={isLoading}
+            isWaitingForResponse={isWaitingForResponse}
             queueLength={messageQueue.length}
           />
         </form>

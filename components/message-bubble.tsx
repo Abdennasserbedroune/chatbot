@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { ChatMessage } from '@/types/chat'
+import { components } from '@/lib/designTokens'
 
 interface MessageBubbleProps {
   message: ChatMessage & { id?: string }
@@ -10,6 +11,9 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const [displayedText, setDisplayedText] = useState('')
+  const messageSpec = components.message
+  const isUser = message.role === 'user'
+  const spec = isUser ? messageSpec.user : messageSpec.bot
 
   // Variable speed character reveal based on content length
   const getTypingSpeed = (content: string) => {
@@ -47,27 +51,32 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
     }
   }, [message.content, message.role, isLatest, message.id])
 
-  const isUser = message.role === 'user'
-
   return (
     <div 
-      className={`
-        flex ${isUser ? 'justify-end' : 'justify-start'}
-        animate-in slide-in-from-bottom fade-in duration-200
-      `}
+      className={`flex ${spec.alignment} animate-in slide-in-from-bottom fade-in duration-200`}
     >
       <div 
         className={`
-          max-w-3xl px-4 py-3 rounded-2xl
           ${isUser 
-            ? 'bg-primary text-primary-foreground rounded-br-sm' 
-            : 'bg-card dark:bg-dark-card border border-border dark:border-dark-border rounded-bl-sm'
+            ? 'bg-minimal-user-msg dark:bg-minimal-dark-user-msg text-minimal-primary dark:text-minimal-dark-primary' 
+            : 'bg-minimal-bot-msg dark:bg-minimal-dark-bot-msg text-minimal-primary dark:text-minimal-dark-primary'
           }
         `}
+        style={{
+          padding: `${spec.padding}px`,
+          borderRadius: `${spec.radius}px`,
+          maxWidth: `${spec.maxWidthPercent}%`,
+        }}
         role={isUser ? 'user-message' : 'assistant-message'}
         aria-label={`${isUser ? 'User' : 'Assistant'} message`}
       >
-        <div className="text-sm leading-relaxed break-words">
+        <div 
+          className="break-words"
+          style={{
+            fontSize: '16px',
+            lineHeight: '1.6',
+          }}
+        >
           {isUser ? (
             <p>{message.content}</p>
           ) : (

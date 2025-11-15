@@ -2,15 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MinimalChat Design System v1.0 - CSS Variables */
+:root {
+  /* Typography */
+  --font-family-base: Inter, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-display: 28px;
+  
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  
+  --line-height-tight: 1.1;
+  --line-height-normal: 1.4;
+  --line-height-relaxed: 1.6;
+  
+  /* Spacing & Grid */
+  --spacing-base: 8px;
+  --radius-small: 6px;
+  --radius-medium: 12px;
+  --radius-large: 20px;
+}
+
 /* Custom base styles */
 @layer base {
   html {
     scroll-behavior: smooth;
+    font-family: var(--font-family-base);
   }
   
   body {
-    @apply bg-white dark:bg-dark-background text-gray-900 dark:text-dark-foreground antialiased;
+    @apply bg-minimal-bg dark:bg-minimal-dark-bg text-minimal-primary dark:text-minimal-dark-primary antialiased;
     transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
   }
   
   /* Dark mode scrollbar */
@@ -142,6 +172,53 @@
 
 /* Custom utilities */
 @layer utilities {
+  /* MinimalChat Typography Utilities */
+  .text-xs-minimal {
+    font-size: var(--font-size-xs);
+    line-height: var(--line-height-normal);
+  }
+  
+  .text-sm-minimal {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-normal);
+  }
+  
+  .text-md-minimal {
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
+  }
+  
+  .text-lg-minimal {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-normal);
+  }
+  
+  .text-xl-minimal {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-normal);
+  }
+  
+  .text-display-minimal {
+    font-size: var(--font-size-display);
+    line-height: var(--line-height-tight);
+  }
+  
+  .font-regular {
+    font-weight: var(--font-weight-regular);
+  }
+  
+  .font-medium-minimal {
+    font-weight: var(--font-weight-medium);
+  }
+  
+  .font-semibold-minimal {
+    font-weight: var(--font-weight-semibold);
+  }
+  
+  .font-bold-minimal {
+    font-weight: var(--font-weight-bold);
+  }
+  
   .text-balance {
     text-wrap: balance;
   }
