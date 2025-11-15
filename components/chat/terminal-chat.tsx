@@ -14,6 +14,7 @@ export default function TerminalChat(): React.ReactElement {
   const [userName, setUserName] = useState<string>('')
   const [messageQueue, setMessageQueue] = useState<string[]>([])
   const [isProcessingQueue, setIsProcessingQueue] = useState(false)
+  const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const assistantState = useAssistantState()
@@ -52,6 +53,9 @@ export default function TerminalChat(): React.ReactElement {
   // Send message to API
   const sendMessageToAPI = async (messageContent: string) => {
     try {
+      // Set message lock to prevent duplicate submissions
+      setIsWaitingForResponse(true)
+      
       // Detect language from user message
       const detectedLang = detectLanguage(messageContent)
       if (detectedLang !== language) {
@@ -152,12 +156,14 @@ export default function TerminalChat(): React.ReactElement {
         setStreamingText('')
       }
       
-      // Ensure loading state is cleared
+      // Ensure loading state is cleared and unlock message input
       setIsLoading(false)
+      setIsWaitingForResponse(false)
     } catch (error) {
-      // Clean up state on error
+      // Clean up state on error and unlock message input
       setStreamingText('')
       setIsLoading(false)
+      setIsWaitingForResponse(false)
       console.error('Error sending message:', error)
       // Re-throw to be handled by the queue processor
       throw error
@@ -216,7 +222,7 @@ export default function TerminalChat(): React.ReactElement {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!input.trim() || isLoading) return
+    if (!input.trim() || isLoading || isWaitingForResponse) return
 
     // Add message to queue instead of sending immediately
     setMessageQueue(prev => [...prev, input.trim()])
@@ -305,11 +311,11 @@ export default function TerminalChat(): React.ReactElement {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
               className="flex-1 bg-transparent border-none outline-none text-white placeholder-[#00ff41]/30"
-              disabled={isLoading}
+              disabled={isLoading || isWaitingForResponse}
             />
             <button
               type="submit"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || isWaitingForResponse || !input.trim()}
               className="px-4 py-2 bg-[#00ff41]/10 hover:bg-[#00ff41]/20 border border-[#00ff41]/30 rounded text-[#00ff41] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               Send

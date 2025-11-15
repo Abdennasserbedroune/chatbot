@@ -34,7 +34,29 @@ module.exports = {
         },
       },
       colors: {
-        // Premium Orange Theme
+        // MinimalChat Design System v1.0 - Light Theme
+        'minimal-bg': '#FFFFFF',
+        'minimal-surface': '#F7F7F7',
+        'minimal-card': '#FFFFFF',
+        'minimal-primary': '#000000',
+        'minimal-secondary': '#666666',
+        'minimal-border': '#E5E5E5',
+        'minimal-input-bg': '#F0F0F0',
+        'minimal-user-msg': '#EDEDED',
+        'minimal-bot-msg': '#FFFFFF',
+        
+        // MinimalChat Design System v1.0 - Dark Theme
+        'minimal-dark-bg': '#0C0C0C',
+        'minimal-dark-surface': '#161616',
+        'minimal-dark-card': '#1F1F1F',
+        'minimal-dark-primary': '#FFFFFF',
+        'minimal-dark-secondary': '#A3A3A3',
+        'minimal-dark-border': '#2A2A2A',
+        'minimal-dark-input-bg': '#1A1A1A',
+        'minimal-dark-user-msg': '#262626',
+        'minimal-dark-bot-msg': '#1A1A1A',
+        
+        // Premium Orange Theme (backward compatibility)
         primary: {
           DEFAULT: '#FF6B35',
           50: '#FFF5F0',
@@ -51,14 +73,14 @@ module.exports = {
         },
         'primary-foreground': '#FFFFFF',
         
-        // Dark mode colors
+        // Dark mode colors (backward compatibility)
         'dark-background': '#0A0A0A',
         'dark-foreground': '#FFFFFF',
         'dark-card': '#1A1A1A',
         'dark-muted-foreground': '#666666',
         'dark-border': '#2A2A2A',
         
-        // Light mode colors
+        // Light mode colors (backward compatibility)
         background: '#FFFFFF',
         foreground: '#1A1A1A',
         card: '#F5F5F5',
