@@ -18,6 +18,7 @@ export default function MinimalChat(): React.ReactElement {
   const [messageQueue, setMessageQueue] = useState<string[]>([])
   const [isProcessingQueue, setIsProcessingQueue] = useState(false)
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
+  const [cooldownTimeoutId, setCooldownTimeoutId] = useState<NodeJS.Timeout | null>(null)
   
   const assistantState = useAssistantState()
   const status = assistantState.current
@@ -49,6 +50,13 @@ export default function MinimalChat(): React.ReactElement {
     try {
       // Set message lock to prevent duplicate submissions
       setIsWaitingForResponse(true)
+      
+      // Set cooldown timeout (4 seconds) as fallback if response doesn't come back
+      const timeoutId = setTimeout(() => {
+        setIsWaitingForResponse(false)
+        console.log('[Cooldown] Button re-enabled after 4-second timeout')
+      }, 4000)
+      setCooldownTimeoutId(timeoutId)
       
       // Detect language from user message
       const detectedLang = detectLanguage(messageContent)
@@ -150,10 +158,22 @@ export default function MinimalChat(): React.ReactElement {
         setStreamingText('')
       }
       
+      // Clear cooldown timeout since response was received
+      if (cooldownTimeoutId) {
+        clearTimeout(cooldownTimeoutId)
+        setCooldownTimeoutId(null)
+      }
+      
       // Ensure loading state is cleared and unlock message input
       setIsLoading(false)
       setIsWaitingForResponse(false)
     } catch (error) {
+      // Clear cooldown timeout on error
+      if (cooldownTimeoutId) {
+        clearTimeout(cooldownTimeoutId)
+        setCooldownTimeoutId(null)
+      }
+      
       // Clean up state on error and unlock message input
       setStreamingText('')
       setIsLoading(false)
@@ -162,7 +182,7 @@ export default function MinimalChat(): React.ReactElement {
       // Re-throw to be handled by the queue processor
       throw error
     }
-  }, [messages, language, userName, getStatusFromContent, setStatus])
+  }, [messages, language, userName, getStatusFromContent, setStatus, cooldownTimeoutId])
 
   // Reset loading state when streaming completes
   useEffect(() => {
