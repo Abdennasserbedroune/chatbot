@@ -15,7 +15,7 @@ export default function TerminalChat(): React.ReactElement {
   const [messageQueue, setMessageQueue] = useState<string[]>([])
   const [isProcessingQueue, setIsProcessingQueue] = useState(false)
   const [isWaitingForResponse, setIsWaitingForResponse] = useState(false)
-  const [cooldownTimeoutId, setCooldownTimeoutId] = useState<NodeJS.Timeout | null>(null)
+  const [cooldownTimeoutId, setCooldownTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null)
   
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const assistantState = useAssistantState()

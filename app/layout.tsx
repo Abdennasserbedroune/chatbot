@@ -1,7 +1,6 @@
 import React from 'react'
 import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import { ThemeProvider } from '@/lib/contexts/ThemeContext'
 import '../styles/globals.css'
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
@@ -11,8 +10,8 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Abdennasser AI',
-  description: 'Your personal assistant',
+  title: 'Portfolio Assistant - Abdennasser Bedroune',
+  description: 'AI-powered assistant to explore my professional experience, skills, and projects',
 }
 
 export default function RootLayout({
@@ -23,11 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className={inter.className}>
-        <ThemeProvider>
-          <div id="root">
-            {children}
-          </div>
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   )
