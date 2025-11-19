@@ -110,14 +110,11 @@ export function MessageList({ messages, isLoading, streamingText = '' }: Message
           {streamingText && (
             <div className="flex justify-start">
               <div className="max-w-3xl">
-                <MessageBubble
-                  message={{ role: 'assistant', content: streamingText, id: 'streaming' }}
-                  isLatest={true}
-                />
+                <TypingIndicator />
               </div>
             </div>
           )}
-          
+
           {isLoading && !streamingText && (
             <div className="flex justify-start">
               <div className="max-w-3xl">
