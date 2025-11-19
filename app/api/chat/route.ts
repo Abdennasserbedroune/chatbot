@@ -149,7 +149,9 @@ export async function POST(request: NextRequest) {
 
     // Build enhanced messages with profile context
     const lastUserMessage = sanitizedMessages[sanitizedMessages.length - 1].content;
-    const conversationHistory = sanitizedMessages.slice(0, -1);
+    // Only keep last 2 messages in context (last user + last assistant message)
+    // This prevents prompt overload as per API configuration
+    const conversationHistory = sanitizedMessages.slice(0, -1).slice(-2);
 
     // Check for jailbreak attempts - log for security monitoring
     const isJailbreak = isJailbreakAttempt(lastUserMessage);
