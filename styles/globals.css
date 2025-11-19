@@ -55,16 +55,24 @@
   
   html {
     scroll-behavior: smooth;
+    /* Fallback font stack for browsers that don't support var() */
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     font-family: var(--font-family-base);
   }
   
   body {
     @apply antialiased;
-    background-color: var(--color-bg);
-    color: var(--color-primary);
+    /* Fallback colors */
+    background-color: #ffffff;
+    color: #000000;
+    /* CSS variables with fallbacks */
+    background-color: var(--color-bg, #ffffff);
+    color: var(--color-primary, #000000);
     transition: background-color 0.2s ease, color 0.2s ease;
-    font-size: var(--font-size-md);
-    line-height: var(--line-height-normal);
+    font-size: 16px;
+    font-size: var(--font-size-md, 16px);
+    line-height: 1.4;
+    line-height: var(--line-height-normal, 1.4);
     margin: 0;
     padding: 0;
   }
@@ -245,11 +253,20 @@
     font-weight: var(--font-weight-bold);
   }
   
+  /* Text wrapping with fallbacks */
   .text-balance {
+    /* Fallback for older browsers */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    /* Modern browsers */
     text-wrap: balance;
   }
   
   .text-pretty {
+    /* Fallback for older browsers */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    /* Modern browsers */
     text-wrap: pretty;
   }
   
@@ -266,14 +283,33 @@
     animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   
-  /* Glass morphism effect */
+  /* Glass morphism effect with fallback */
   .glass {
+    /* Fallback for browsers without backdrop-filter support */
+    background-color: rgba(255, 255, 255, 0.95);
+    /* Modern browsers */
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.8);
   }
   
+  @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+    .glass {
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+  }
+  
   .dark .glass {
+    /* Fallback for browsers without backdrop-filter support */
+    background-color: rgba(31, 41, 55, 0.95);
+    /* Modern browsers */
     background-color: rgba(31, 41, 55, 0.8);
+  }
+  
+  @supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+    .dark .glass {
+      background-color: rgba(31, 41, 55, 0.8);
+    }
   }
   
   /* Gradient text */

@@ -7,7 +7,6 @@ import TypingIndicator from './TypingIndicator'
 
 interface MessageListProps {
   messages: Message[]
-  streamingText?: string
   isTyping?: boolean
 }
 
@@ -55,14 +54,14 @@ function BotAvatar() {
   )
 }
 
-export default function MessageList({ messages, streamingText, isTyping }: MessageListProps): React.ReactElement {
+export default function MessageList({ messages, isTyping }: MessageListProps): React.ReactElement {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, streamingText, isTyping])
+  }, [messages, isTyping])
 
-  if (messages.length === 0 && !streamingText && !isTyping) {
+  if (messages.length === 0 && !isTyping) {
     return (
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="text-center max-w-2xl">
@@ -81,12 +80,14 @@ export default function MessageList({ messages, streamingText, isTyping }: Messa
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-8">
+    <div className="flex-1 overflow-y-auto px-4 py-8" role="log" aria-live="polite" aria-label="Chat messages">
       <div className="max-w-3xl mx-auto space-y-6">
         {messages.map((message) => (
           <div
             key={message.id}
             className={`flex gap-3 ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}
+            role="article"
+            aria-label={`${message.role === 'user' ? 'User' : 'Assistant'} message`}
           >
             {message.role === 'user' ? <UserAvatar /> : <BotAvatar />}
             <div
@@ -106,22 +107,10 @@ export default function MessageList({ messages, streamingText, isTyping }: Messa
         ))}
         
         {isTyping && (
-          <div className="flex gap-3 flex-row">
+          <div className="flex gap-3 flex-row" role="status" aria-label="Assistant is typing">
             <BotAvatar />
             <div className="rounded-2xl px-4 py-3 bg-gray-100 dark:bg-gray-700">
               <TypingIndicator />
-            </div>
-          </div>
-        )}
-        
-        {streamingText && (
-          <div className="flex gap-3 flex-row">
-            <BotAvatar />
-            <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100">
-              <div className="whitespace-pre-wrap break-words">
-                {streamingText}
-                <span className="inline-block w-0.5 h-4 ml-0.5 bg-gray-900 dark:bg-gray-100 animate-pulse" />
-              </div>
             </div>
           </div>
         )}

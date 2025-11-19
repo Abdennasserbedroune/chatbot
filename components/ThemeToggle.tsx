@@ -3,17 +3,18 @@
 import React, { useEffect, useState } from 'react'
 
 export default function ThemeToggle(): React.ReactElement {
-  const [isDark, setIsDark] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [isDark, setIsDark] = useState<boolean | null>(null)
 
   useEffect(() => {
-    setMounted(true)
     // Check localStorage first, then system preference
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme) {
-      setIsDark(savedTheme === 'dark')
-      if (savedTheme === 'dark') {
+      const isDarkMode = savedTheme === 'dark'
+      setIsDark(isDarkMode)
+      if (isDarkMode) {
         document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
       }
     } else {
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -25,6 +26,8 @@ export default function ThemeToggle(): React.ReactElement {
   }, [])
 
   const toggleTheme = () => {
+    if (isDark === null) return
+    
     const newIsDark = !isDark
     setIsDark(newIsDark)
     
@@ -37,7 +40,12 @@ export default function ThemeToggle(): React.ReactElement {
     }
   }
 
-  if (!mounted) return <div className="w-10 h-10" />
+  // Don't render until mounted (prevents hydration mismatch)
+  if (isDark === null) {
+    return (
+      <div className="fixed top-6 right-6 z-50 w-10 h-10" aria-hidden="true" />
+    )
+  }
 
   return (
     <button

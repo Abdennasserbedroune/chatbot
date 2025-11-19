@@ -9,10 +9,22 @@ import { createRateLimiter } from '@/lib/rateLimiter';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
-// Initialize Groq client
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+// Initialize Groq client with error handling
+let groq: Groq | null = null;
+let groqInitError: string | null = null;
+
+try {
+  if (!process.env.GROQ_API_KEY) {
+    groqInitError = 'GROQ_API_KEY environment variable is not set';
+  } else {
+    groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+} catch (error) {
+  groqInitError = error instanceof Error ? error.message : 'Failed to initialize Groq SDK';
+  console.error('Groq SDK initialization error:', error);
+}
 
 // Create a singleton rate limiter (30 requests per minute per IP - Groq free tier)
 const rateLimiter = createRateLimiter({
@@ -80,6 +92,18 @@ function getClientIp(request: NextRequest): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if Groq client is initialized
+    if (groqInitError || !groq) {
+      return NextResponse.json(
+        {
+          error: 'Service configuration error',
+          code: 'SERVICE_UNAVAILABLE',
+          details: groqInitError || 'Groq SDK not initialized',
+        },
+        { status: 503 }
+      );
+    }
+
     // Check rate limit
     const clientIp = getClientIp(request);
     if (!rateLimiter.isAllowed(clientIp, 1)) {
@@ -138,6 +162,19 @@ export async function POST(request: NextRequest) {
     }
 
     const typedPayload = payload as ChatRequestPayload;
+
+    // Validate message content length (prevent token overload)
+    const lastMessage = typedPayload.messages[typedPayload.messages.length - 1];
+    if (lastMessage.content.length > 4096) {
+      return NextResponse.json(
+        {
+          error: 'Message too long',
+          code: 'INVALID_MESSAGE_LENGTH',
+          details: 'Message content must not exceed 4096 characters',
+        },
+        { status: 400 }
+      );
+    }
 
     // Filter to last 2 messages for context limit
     const contextMessages = typedPayload.messages.slice(-2);
