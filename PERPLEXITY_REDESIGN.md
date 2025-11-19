@@ -1,4 +1,4 @@
-# Perplexity-Style Frontend Redesign
+# Frontend Redesign
 
 ## Overview
 Complete frontend refactor implementing a clean Perplexity-style interface while maintaining full backend compatibility.
