@@ -8,6 +8,7 @@ import ChatInput from './ChatInput'
 export default function ChatInterface(): React.ReactElement {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
   const [streamingText, setStreamingText] = useState('')
   const [cooldownActive, setCooldownActive] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -24,13 +25,14 @@ export default function ChatInterface(): React.ReactElement {
     }
     setMessages((prev) => [...prev, userMessage])
     setIsLoading(true)
+    setIsTyping(true)
     setCooldownActive(true)
     setError(null)
 
-    // Set 3-second cooldown
+    // Set 2-second cooldown (reduced from 3s)
     const cooldownTimeout = setTimeout(() => {
       setCooldownActive(false)
-    }, 3000)
+    }, 2000)
 
     try {
       // Prepare messages for API (last 2 messages only for context)
@@ -90,16 +92,19 @@ export default function ChatInterface(): React.ReactElement {
               if (parsed.type === 'content') {
                 accumulatedText += parsed.data
                 setStreamingText(accumulatedText)
+                setIsTyping(false)
               } else if (parsed.type === 'done') {
-                // Add assistant message
+                // Add assistant message with typing animation
                 const assistantMessage: Message = {
                   id: `assistant-${Date.now()}`,
                   role: 'assistant',
                   content: accumulatedText,
                   timestamp: new Date(),
+                  isTyping: true,
                 }
                 setMessages((prev) => [...prev, assistantMessage])
                 setStreamingText('')
+                setIsTyping(false)
                 accumulatedText = ''
               } else if (parsed.type === 'error') {
                 throw new Error(parsed.error || 'Stream error')
@@ -117,6 +122,7 @@ export default function ChatInterface(): React.ReactElement {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred'
       setError(errorMessage)
       setStreamingText('')
+      setIsTyping(false)
       
       // Add error message to chat
       const errorMsg: Message = {
@@ -139,7 +145,7 @@ export default function ChatInterface(): React.ReactElement {
           {error}
         </div>
       )}
-      <MessageList messages={messages} streamingText={streamingText} />
+      <MessageList messages={messages} streamingText={streamingText} isTyping={isTyping} />
       <ChatInput 
         onSend={handleSend} 
         disabled={cooldownActive || isLoading} 

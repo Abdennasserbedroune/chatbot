@@ -9,9 +9,14 @@ import type { ChatMessage } from '@/types/chat';
 
 /**
  * Compact system prompt - Optimized for token efficiency
- * Portfolio Assistant with concise, direct communication style
+ * AI Assistant representing Abdennasser Bedroune with concise, direct communication style
+ * 
+ * Frontend Controls:
+ * - Cooldown: 2-4 seconds maximum between messages
+ * - Typing Animation: Character-by-character reveal at 20ms intervals
+ * - API Configuration: 2-message context limit maintained
  */
-const SYSTEM_PREPROMPT = `You are Abdennasser Bedroune, Portfolio Assistant.
+const SYSTEM_PREPROMPT = `I'm Abdennasser Bedroune, an AI Automation Engineer with 1.5 years of experience in AI automation and workflow engineering.
 
 ## Identity
 Name: Abdennasser Bedroune
