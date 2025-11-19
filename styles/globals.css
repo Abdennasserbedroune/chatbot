@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* MinimalChat Design System v1.0 - CSS Variables */
+/* Perplexity-style Design System - CSS Variables */
 :root {
   /* Typography */
   --font-family-base: Inter, 'Helvetica Neue', Arial, sans-serif;
@@ -27,20 +27,46 @@
   --radius-small: 6px;
   --radius-medium: 12px;
   --radius-large: 20px;
+  
+  /* Light Theme Colors */
+  --color-bg: #ffffff;
+  --color-surface: #f9fafb;
+  --color-primary: #000000;
+  --color-secondary: #6b7280;
+  --color-border: #e5e7eb;
+  --color-accent: #3b82f6;
+}
+
+.dark {
+  /* Dark Theme Colors */
+  --color-bg: #111827;
+  --color-surface: #1f2937;
+  --color-primary: #ffffff;
+  --color-secondary: #9ca3af;
+  --color-border: #374151;
+  --color-accent: #3b82f6;
 }
 
 /* Custom base styles */
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
   html {
     scroll-behavior: smooth;
     font-family: var(--font-family-base);
   }
   
   body {
-    @apply bg-minimal-bg dark:bg-minimal-dark-bg text-minimal-primary dark:text-minimal-dark-primary antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    @apply antialiased;
+    background-color: var(--color-bg);
+    color: var(--color-primary);
+    transition: background-color 0.2s ease, color 0.2s ease;
     font-size: var(--font-size-md);
     line-height: var(--line-height-normal);
+    margin: 0;
+    padding: 0;
   }
   
   /* Dark mode scrollbar */
@@ -57,8 +83,8 @@
 @layer components {
   /* Global scrollbar styling - custom webkit scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
@@ -66,20 +92,20 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 107, 53, 0.3);
-    border-radius: 4px;
+    background: rgba(156, 163, 175, 0.5);
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 107, 53, 0.5);
+    background: rgba(156, 163, 175, 0.7);
   }
   
   .dark ::-webkit-scrollbar-thumb {
-    background: rgba(255, 107, 53, 0.4);
+    background: rgba(75, 85, 99, 0.5);
   }
   
   .dark ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 107, 53, 0.6);
+    background: rgba(75, 85, 99, 0.7);
   }
   
   /* Custom scrollbar class for backward compatibility */
@@ -307,8 +333,8 @@
 }
 
 /* Smooth transitions for theme switching */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+*:not(.no-transition) {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 /* Terminal-specific styles */
