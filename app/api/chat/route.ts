@@ -1,14 +1,18 @@
 /**
  * API Route: POST /api/chat
- * Streams Groq responses with rate limiting, validation, and custom streaming
+ * Returns JSON response from Groq API with rate limiting and validation
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
+import { Groq } from 'groq-sdk';
 import { createRateLimiter } from '@/lib/rateLimiter';
-import { buildChatMessages, isJailbreakAttempt, isOutOfScopeRequest, isProjectInquiry, generateOutOfScopeResponse, generateProjectInquiryResponse } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
+
+// Initialize Groq client
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY,
+});
 
 // Create a singleton rate limiter (30 requests per minute per IP - Groq free tier)
 const rateLimiter = createRateLimiter({
@@ -16,52 +20,47 @@ const rateLimiter = createRateLimiter({
   refillRate: 30 / 60, // 30 tokens per minute
 });
 
-/**
- * Sanitize messages to prevent Groq API 4096 character limit errors
- * - Keeps only last N messages to prevent infinite history growth
- * - Truncates individual messages that exceed safe length
- */
-function sanitizeMessages(messages: ChatMessage[]): ChatMessage[] {
-  const MAX_MESSAGE_LENGTH = 4000; // Safe buffer before 4096 limit
-  const MAX_MESSAGES = 10; // Keep only last 10 messages for context
+// System prompt for Abdennasser
+const systemPrompt = `You are Abdennasser Bedroune, an AI Automation Engineer. 
 
-  // Step 1: Keep only the last N messages (prevent infinite history growth)
-  let trimmed = messages.slice(-MAX_MESSAGES);
+CRITICAL RULES:
+- NEVER call yourself "Portfolio Assistant" - you ARE Abdennasser
+- When introducing yourself: "I'm Abdennasser Bedroune, an AI Automation Engineer with 1.5 years of experience"
+- Answer ONLY what is asked - don't volunteer extra info
+- Greet simply with "Hey" or "Hello" and wait for questions
+- Be confident, technical, and persuasive
+- When asked if you can do something: "Yes, I can do that. Contact me at abdennasser.bedroune@gmail.com"
+- When asked about Master's: "Yes, I'm looking for IT or Data Science Master's programs"
+- Always respond in the user's language (English, French, Arabic)
+- Provide technical depth when discussing projects
 
-  // Step 2: Truncate any individual message that's too long
-  trimmed = trimmed.map(msg => {
-    if (msg.content.length > MAX_MESSAGE_LENGTH) {
-      console.warn(`[Chat] Trimmed message (${msg.role}) from ${msg.content.length} to ${MAX_MESSAGE_LENGTH} chars`);
-      return {
-        ...msg,
-        content: msg.content.slice(0, MAX_MESSAGE_LENGTH) + '... [truncated]'
-      };
-    }
-    return msg;
-  });
+EXPERIENCE (1.5 years):
+- Image annotation for damage detection
+- AI data pipelines and annotation systems
+- Object removal and 360° image inpainting
+- LLM-based agentic chatbots
+- Model fine-tuning (object detection, image generation)
+- n8n workflow automations
+- Python & SQL systems with AI integration
+- Production AI workflows
 
-  return trimmed;
-}
+TECH STACK:
+Languages: Python, JavaScript/TypeScript, SQL, HTML/CSS
+Frameworks: Next.js, React, TailwindCSS
+Databases: Supabase, MongoDB
+AI/ML: Computer Vision, LLM deployment, Fine-tuning, Object detection, Agentic systems
+Automation: n8n, Workflow orchestration, API integration
+Cloud: Vercel, GitHub, Docker
 
-function createErrorResponse(
-  status: number,
-  error: string,
-  code?: string,
-  details?: Record<string, unknown>
-): NextResponse<ChatErrorResponse> {
-  const errorResponse: ChatErrorResponse = {
-    error,
-    code,
-    details,
-  };
+PROJECTS:
+1. Chatbot - Production-ready with Groq API integration
+2. Pathwise - AI job platform with CV analysis
+3. TrueTale - Writer platform with authentication
+4. Fanpocket - AFCON Morocco fan engagement
+5. MusicJam - Collaborative music sharing
 
-  return new NextResponse(JSON.stringify(errorResponse), {
-    status,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-}
+EMAIL: abdennasser.bedroune@gmail.com
+GITHUB: https://github.com/Abdennasserbedroune`;
 
 function getClientIp(request: NextRequest): string {
   // Try to get IP from headers (works with most proxies)
@@ -85,7 +84,7 @@ export async function POST(request: NextRequest) {
     const clientIp = getClientIp(request);
     if (!rateLimiter.isAllowed(clientIp, 1)) {
       const retryAfter = rateLimiter.getRetryAfterSeconds(clientIp);
-      return Response.json(
+      return NextResponse.json(
         {
           error: 'Rate limit exceeded. Please try again later.',
           code: 'RATE_LIMIT_EXCEEDED',
@@ -107,7 +106,7 @@ export async function POST(request: NextRequest) {
     try {
       payload = await request.json();
     } catch {
-      return Response.json(
+      return NextResponse.json(
         { error: 'Invalid JSON in request body', code: 'INVALID_JSON' },
         { status: 400 }
       );
@@ -116,7 +115,7 @@ export async function POST(request: NextRequest) {
     // Validate payload with Zod schema
     const validationResult = validateChatRequest(payload);
     if (!validationResult.valid) {
-      return Response.json(
+      return NextResponse.json(
         {
           error: 'Invalid request payload',
           code: 'INVALID_PAYLOAD',
@@ -129,7 +128,7 @@ export async function POST(request: NextRequest) {
     // Additional validation: last message must be from user
     const messageValidation = validateLastMessageIsFromUser(payload as ChatRequestPayload);
     if (!messageValidation.valid) {
-      return Response.json(
+      return NextResponse.json(
         {
           error: 'Last message must be from user',
           code: 'INVALID_CONVERSATION'
@@ -140,217 +139,52 @@ export async function POST(request: NextRequest) {
 
     const typedPayload = payload as ChatRequestPayload;
 
-    // Sanitize messages to prevent 4096 character limit errors
-    const sanitizedMessages = sanitizeMessages(typedPayload.messages);
+    // Filter to last 2 messages for context limit
+    const contextMessages = typedPayload.messages.slice(-2);
 
-    // Extract language and userName from conversation (optional, defaults to 'en')
-    const language = typedPayload.language || 'en';
-    const userName = typedPayload.userName;
+    // Prepare messages for Groq API
+    const groqMessages = [
+      { role: 'system' as const, content: systemPrompt },
+      ...contextMessages.map(msg => ({
+        role: msg.role,
+        content: msg.content,
+      })),
+    ];
 
-    // Build enhanced messages with profile context
-    const lastUserMessage = sanitizedMessages[sanitizedMessages.length - 1].content;
-    // Only keep last 2 messages in context (last user + last assistant message)
-    // This prevents prompt overload as per API configuration
-    const conversationHistory = sanitizedMessages.slice(0, -1).slice(-2);
-
-    // Check for jailbreak attempts - log for security monitoring
-    const isJailbreak = isJailbreakAttempt(lastUserMessage);
-    if (isJailbreak) {
-      console.warn('[Security] Potential jailbreak attempt detected:', {
-        clientIp,
-        queryLength: lastUserMessage.length,
-      });
-    }
-
-    // Check for out-of-scope requests and return denial response
-    if (isOutOfScopeRequest(lastUserMessage)) {
-      console.info('[Guardrails] Out-of-scope request detected and blocked:', {
-        clientIp,
-        query: lastUserMessage.substring(0, 100) + (lastUserMessage.length > 100 ? '...' : ''),
-      });
-      
-      const denialResponse = generateOutOfScopeResponse(language);
-      
-      // Create readable stream for the denial response
-      const encoder = new TextEncoder();
-      const readableStream = new ReadableStream({
-        async start(controller) {
-          // Stream the denial response character by character for consistency
-          for (let i = 0; i < denialResponse.length; i++) {
-            const chunk = denialResponse[i];
-            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
-            controller.enqueue(encoder.encode(data));
-            // Small delay for character-by-character effect
-            await new Promise(resolve => setTimeout(resolve, 10));
-          }
-          
-          // Send completion signal
-          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
-          controller.enqueue(encoder.encode(done));
-          controller.close();
-        }
-      });
-
-      return new Response(readableStream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
-    }
-
-    // Check for project inquiries and return email redirect response
-    if (isProjectInquiry(lastUserMessage)) {
-      console.info('[Guardrails] Project inquiry detected and redirected:', {
-        clientIp,
-        query: lastUserMessage.substring(0, 100) + (lastUserMessage.length > 100 ? '...' : ''),
-      });
-      
-      const projectResponse = generateProjectInquiryResponse(language);
-      
-      // Create readable stream for the project response
-      const encoder = new TextEncoder();
-      const readableStream = new ReadableStream({
-        async start(controller) {
-          // Stream the project response character by character for consistency
-          for (let i = 0; i < projectResponse.length; i++) {
-            const chunk = projectResponse[i];
-            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
-            controller.enqueue(encoder.encode(data));
-            // Small delay for character-by-character effect
-            await new Promise(resolve => setTimeout(resolve, 10));
-          }
-          
-          // Send completion signal
-          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
-          controller.enqueue(encoder.encode(done));
-          controller.close();
-        }
-      });
-
-      return new Response(readableStream, {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
-    }
-
-    let enhancedMessages: ChatMessage[];
-    try {
-      enhancedMessages = await buildChatMessages(lastUserMessage, conversationHistory, {
-        language,
-      }, userName);
-    } catch (error) {
-      console.error('[Chat API] Context building error:', error);
-      return Response.json(
-        {
-          error: 'Failed to build chat context',
-          code: 'CONTEXT_ERROR'
-        },
-        { status: 500 }
-      );
-    }
-
-    // Create readable stream for streaming response
-    const encoder = new TextEncoder();
-    let isStreamActive = true;
-
-    const readableStream = new ReadableStream({
-      async start(controller) {
-        try {
-          const generator = await streamChatResponse(enhancedMessages);
-
-          // Stream each chunk from the generator
-          for await (const chunk of generator) {
-            if (!isStreamActive) break;
-
-            // Send chunk as SSE
-            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
-            controller.enqueue(encoder.encode(data));
-          }
-
-          // Send completion signal
-          if (isStreamActive) {
-            const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
-            controller.enqueue(encoder.encode(done));
-          }
-
-          controller.close();
-        } catch (error) {
-          isStreamActive = false;
-
-          // Log error for debugging (sanitized, no API keys)
-          console.error('[Chat API Error]', {
-            name: error instanceof Error ? error.name : 'Unknown',
-            message: error instanceof Error ? error.message : 'Unknown error',
-            code: error instanceof GroqClientError ? error.code : 'UNKNOWN',
-          });
-
-          // Determine error response
-          let errorMessage = 'An unexpected error occurred while processing your request.';
-          let errorCode = 'INTERNAL_ERROR';
-
-          if (error instanceof GroqClientError) {
-            errorCode = error.code;
-
-            if (error.code === 'MISSING_API_KEY') {
-              errorMessage =
-                'Groq API is not properly configured. Please verify GROQ_API_KEY is set.';
-            } else if (error.code === 'INVALID_API_KEY') {
-              errorMessage = 'Groq API authentication failed. Please verify your API key.';
-            } else if (error.code === 'RATE_LIMITED') {
-              errorMessage = 'Groq API rate limit exceeded. Please try again in a moment.';
-            } else if (error.code === 'TIMEOUT') {
-              errorMessage = 'Request to Groq API timed out. Please try again.';
-            } else if (error.code === 'SERVICE_ERROR') {
-              errorMessage = 'Groq service is temporarily unavailable. Please try again later.';
-            } else if (error.code === 'CONNECTION_ERROR') {
-              errorMessage = 'Failed to connect to Groq API. Please check your connection.';
-            } else if (error.code === 'INVALID_INPUT') {
-              errorMessage = error.message;
-            } else {
-              errorMessage = error.message;
-            }
-          } else if (error instanceof Error) {
-            if (error.message.includes('timeout')) {
-              errorCode = 'TIMEOUT';
-              errorMessage = 'Request timed out. Please try again.';
-            }
-          }
-
-          // Send error as SSE
-          const errorData = `data: ${JSON.stringify({
-            type: 'error',
-            error: errorMessage,
-            code: errorCode,
-          })}\n\n`;
-          controller.enqueue(encoder.encode(errorData));
-          controller.close();
-        }
-      },
-
-      cancel() {
-        isStreamActive = false;
-      },
+    // Call Groq API
+    const response = await groq.chat.completions.create({
+      model: 'mixtral-8x7b-32768',
+      messages: groqMessages,
+      temperature: 0.7,
+      max_tokens: 500,
     });
 
-    return new Response(readableStream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-      },
-    });
+    // Extract message from Groq response
+    const assistantMessage = response.choices[0]?.message?.content;
+
+    if (!assistantMessage) {
+      throw new Error('No message content in Groq response');
+    }
+
+    // Return properly formatted JSON
+    return NextResponse.json(
+      { message: assistantMessage },
+      { 
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+    );
+
   } catch (error) {
-    console.error('[Chat API Unhandled Error]', error);
-
-    return Response.json(
-      {
-        error: 'An unexpected error occurred. Please try again later.',
-        code: 'UNHANDLED_ERROR'
+    console.error('Groq API Error:', error);
+    
+    // Return error with proper JSON structure
+    return NextResponse.json(
+      { 
+        error: 'Failed to process message',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
