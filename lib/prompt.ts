@@ -8,7 +8,7 @@ import type { ProfileEntry } from '@/types/profile';
 import type { ChatMessage } from '@/types/chat';
 
 /**
- * Compact system prompt - Optimized for token efficiency
+ * Compact system prompt - Optimized for token efficiency with guardrails
  * Contains essential personality, identity, and conversation guidance
  */
 const SYSTEM_PREPROMPT = `You are Abdennasser, 26, from Ouarzazate, Morocco. Data Analyst at Beewant.
@@ -36,6 +36,14 @@ Critical Rules:
 - Never contradict previous statements
 - If uncertain, say so - don't make up information
 - Don't dump unnecessary info - elaborate only when it adds value
+
+Scope and Guardrails:
+- ONLY answer questions about Abdennasser's background, skills, projects, and interests
+- For coding/technical questions outside his expertise: politely decline and suggest relevant resources
+- For out-of-scope requests (unrelated topics, inappropriate content): "I appreciate the question, but that's outside my scope. Please reach out to me directly at: 📧 Email: abdennasser.bedroune@gmail.com 🔗 LinkedIn: abdennasser bedroune"
+- For project creation requests, collaborations, or business inquiries: "For project discussions and opportunities, please email me at abdennasser.bedroune@gmail.com"
+- NEVER provide coding help, tutorials, or technical assistance beyond sharing Abdennasser's experience
+- NEVER answer questions about other people, companies, or general knowledge
 
 Use profile context below naturally when relevant to user's question. Never force it unprompted.`;
 
@@ -432,4 +440,100 @@ export function isJailbreakAttempt(query: string): boolean {
   ]
   
   return jailbreakPatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Detects if a query is about creating projects, collaborations, or business opportunities
+ */
+export function isProjectInquiry(query: string): boolean {
+  const lowerQuery = query.toLowerCase()
+  
+  const projectInquiryPatterns = [
+    // Project creation and collaboration
+    /(?:create|build|develop|make).*(?:project|app|website|software)/i,
+    /(?:help|work|collaborate|partner).*(?:project|development)/i,
+    /(?:let's|let us).*(?:create|build|develop)/i,
+    /(?:interested in|want to).*(?:work|collaborate|partner)/i,
+    /(?:hire|freelance|contract|job|opportunity)/i,
+    /(?:collaborate|work together)/i,
+    
+    // Business and professional inquiries
+    /(?:business|company|startup|venture)/i,
+    /(?:investment|funding|invest)/i,
+    /(?:consulting|advice|mentorship)/i,
+    
+    // Technical help requests (outside personal experience)
+    /(?:help me|can you).*(?:code|program|debug|fix)/i,
+    /(?:how to|tutorial|guide).*(?:code|program|develop)/i,
+    /(?:teach|show me).*(?:code|programming)/i,
+    
+    // French patterns
+    /(?:créer|développer|construire).*(?:projet|app|site|logiciel)/i,
+    /(?:aide|travailler|collaborer).*(?:projet|développement)/i,
+    /(?:embaucher|freelance|contrat|emploi|opportunité)/i,
+    /(?:entreprise|société|startup)/i,
+  ]
+  
+  return projectInquiryPatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Detects if a query is out of scope (completely unrelated to Abdennasser)
+ */
+export function isOutOfScope(query: string): boolean {
+  const lowerQuery = query.toLowerCase()
+  
+  // Topics that are completely out of scope
+  const outOfScopePatterns = [
+    // General knowledge questions
+    /(?:what is|what's|who is|when did|where is|how to).*(?:weather|news|politics|sports|history|geography)/i,
+    /(?:who is).*(?:president|prime minister|king|queen|leader)/i,
+    /(?:tell me about|explain).*(?:world|global|international)/i,
+    
+    // Academic/educational topics unrelated to personal experience
+    /(?:explain|teach|what is).*(?:math|science|physics|chemistry|biology|literature|philosophy)/i,
+    /(?:help with|solve).*(?:homework|assignment|exam|test)/i,
+    
+    // Medical, legal, financial advice
+    /(?:diagnose|symptom|treatment|medicine|health|medical)/i,
+    /(?:legal advice|law|court|lawsuit|legal help)/i,
+    /(?:financial advice|investment|stock|tax|invest)/i,
+    
+    // Entertainment and pop culture (unless related to personal interests)
+    /(?:what's|who is).*(?:trending|viral|celebrity|movie|tv show)/i,
+    /(?:recommend|suggest).*(?:book|movie|music|restaurant)/i,
+    
+    // Technical questions about other technologies
+    /(?:how to|fix|solve).*(?:python|java|javascript|react|vue|angular)/i,
+    /(?:compare|difference).*(?:framework|library|language)/i,
+    
+    // French patterns
+    /(?:quel temps|metéo|politique|sports|histoire|géographie)/i,
+    /(?:aide|explique).*(?:maths|science|physique|chimie|biologie)/i,
+    /(?:conseil|médical|légal|financier)/i,
+  ]
+  
+  return outOfScopePatterns.some(pattern => pattern.test(lowerQuery))
+}
+
+/**
+ * Generates appropriate response for out-of-scope requests
+ */
+export function getOutOfScopeResponse(language: 'en' | 'fr'): string {
+  if (language === 'en') {
+    return "I appreciate the question, but that's outside my scope. Please reach out to me directly at:\n📧 Email: abdennasser.bedroune@gmail.com\n🔗 LinkedIn: abdennasser bedroune"
+  } else {
+    return "J'apprécie la question, mais cela sort de mon domaine. Veuillez me contacter directement :\n📧 Email : abdennasser.bedroune@gmail.com\n🔗 LinkedIn : abdennasser bedroune"
+  }
+}
+
+/**
+ * Generates appropriate response for project inquiries
+ */
+export function getProjectInquiryResponse(language: 'en' | 'fr'): string {
+  if (language === 'en') {
+    return "For project discussions and opportunities, please email me at abdennasser.bedroune@gmail.com"
+  } else {
+    return "Pour les discussions de projet et les opportunités, veuillez m'envoyer un e-mail à abdennasser.bedroune@gmail.com"
+  }
 }

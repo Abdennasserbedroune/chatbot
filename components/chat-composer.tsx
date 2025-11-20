@@ -7,9 +7,10 @@ interface ChatComposerProps {
   input: string
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
   isLoading: boolean
+  queueLength?: number
 }
 
-export function ChatComposer({ input, handleInputChange, isLoading }: ChatComposerProps) {
+export function ChatComposer({ input, handleInputChange, isLoading, queueLength = 0 }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   // Auto-resize textarea
@@ -64,6 +65,11 @@ export function ChatComposer({ input, handleInputChange, isLoading }: ChatCompos
         
         <div className="mt-2 text-xs text-muted-foreground dark:text-dark-muted-foreground text-center">
           Press Enter to send, Shift+Enter for new line
+          {queueLength > 0 && (
+            <span className="ml-2 text-primary dark:text-primary">
+              {queueLength} message{queueLength > 1 ? 's' : ''} in queue
+            </span>
+          )}
         </div>
       </div>
     </div>

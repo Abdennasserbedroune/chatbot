@@ -19,12 +19,26 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   }
 
   useEffect(() => {
-    // For streaming messages, show content immediately
+    // For streaming messages, show character-by-character reveal as content arrives
     if (message.id === 'streaming') {
-      setDisplayedText(message.content)
+      setDisplayedText('')
+      
+      let currentIndex = 0
+      const speed = getTypingSpeed(message.content)
+      
+      const typeNextChar = () => {
+        if (currentIndex < message.content.length) {
+          setDisplayedText(message.content.slice(0, currentIndex + 1))
+          currentIndex++
+          setTimeout(typeNextChar, speed)
+        }
+      }
+      
+      typeNextChar()
       return
     }
 
+    // For completed assistant messages (latest), show typing animation
     if (message.role === 'assistant' && isLatest && message.id !== 'streaming') {
       setDisplayedText('')
       
@@ -41,6 +55,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
       
       typeNextChar()
     } else {
+      // For user messages and older assistant messages, show full content immediately
       setDisplayedText(message.content)
     }
   }, [message.content, message.role, isLatest, message.id])

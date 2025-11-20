@@ -6,6 +6,14 @@ import { NextRequest } from 'next/server';
 import { POST, OPTIONS } from '@/app/api/chat/route';
 import * as groqClient from '@/lib/groqClient';
 import { RateLimiter } from '@/lib/rateLimiter';
+import { 
+  buildChatMessages, 
+  isJailbreakAttempt, 
+  isProjectInquiry, 
+  isOutOfScope, 
+  getProjectInquiryResponse, 
+  getOutOfScopeResponse 
+} from '@/lib/prompt';
 import type { ChatRequestPayload, ChatMessage } from '@/types/chat';
 
 // Mock the groq client
@@ -21,6 +29,10 @@ jest.mock('@/lib/prompt', () => ({
     ];
   }),
   isJailbreakAttempt: jest.fn().mockReturnValue(false),
+  isProjectInquiry: jest.fn().mockReturnValue(false),
+  isOutOfScope: jest.fn().mockReturnValue(false),
+  getProjectInquiryResponse: jest.fn().mockReturnValue('For project discussions and opportunities, please email me at abdennasser.bedroune@gmail.com'),
+  getOutOfScopeResponse: jest.fn().mockReturnValue('I appreciate the question, but that\'s outside my scope. Please reach out to me directly at:\n📧 Email: abdennasser.bedroune@gmail.com\n🔗 LinkedIn: abdennasser bedroune'),
 }));
 
 // Helper function to safely consume a readable stream (with timeout)

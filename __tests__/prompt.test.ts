@@ -12,6 +12,10 @@ import {
   isSimpleFactQuestion,
   isProjectQuery,
   isJailbreakAttempt,
+  isProjectInquiry,
+  isOutOfScope,
+  getOutOfScopeResponse,
+  getProjectInquiryResponse,
   DEFAULT_PROMPT_CONFIG,
 } from '@/lib/prompt';
 
@@ -126,7 +130,7 @@ describe('Optimized Prompt Builder', () => {
         },
       ];
 
-      const prompt = buildSystemPrompt(entries, { language: 'en' });
+      const prompt = buildSystemPrompt(entries, { language: 'en', maxSystemPromptChars: 3000 });
       expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('What is React?');
       expect(prompt).toContain('React is a JavaScript library');
@@ -147,7 +151,7 @@ describe('Optimized Prompt Builder', () => {
         },
       ];
 
-      const prompt = buildSystemPrompt(entries, { language: 'fr' });
+      const prompt = buildSystemPrompt(entries, { language: 'fr', maxSystemPromptChars: 3000 });
       expect(prompt).toContain('Abdennasser');
       expect(prompt).toContain('Qu\'est-ce que React?');
       expect(prompt).toContain('React est une bibliothèque JavaScript');
@@ -155,14 +159,14 @@ describe('Optimized Prompt Builder', () => {
     });
 
     it('should include user name when provided', () => {
-      const prompt = buildSystemPrompt([], { language: 'en' }, 'John');
+      const prompt = buildSystemPrompt([], { language: 'en', maxSystemPromptChars: 3000 }, 'John');
       expect(prompt).toContain('User Context');
       expect(prompt).toContain('John');
     });
 
     it('should handle empty entries gracefully', () => {
-      const prompt = buildSystemPrompt([], { language: 'en' });
-      expect(prompt).toContain('No specific profile info available');
+      const prompt = buildSystemPrompt([], { language: 'en', maxSystemPromptChars: 3000 });
+      expect(prompt).toContain('Profile Context: No specific profile info available');
     });
 
     it('should respect maxSystemPromptChars limit', () => {
@@ -285,9 +289,11 @@ describe('Optimized Prompt Builder', () => {
         { role: 'assistant' as const, content: 'Hello!' },
       ];
 
-      const messages = await buildChatMessages('Tell me about React', history);
+      const messages = await buildChatMessages('Tell me about React', history, {
+        maxSystemPromptChars: 3000 // Increase limit to accommodate guardrails
+      });
       const systemMessage = messages.find(m => m.role === 'system');
-      expect(systemMessage?.content).toContain('Sarah');
+      expect(systemMessage?.content).toContain("User's name is Sarah");
     });
   });
 
@@ -498,6 +504,90 @@ describe('Optimized Prompt Builder', () => {
       const userMessage = messages.find(m => m.role === 'user');
       expect(userMessage?.content.length).toBeLessThanOrEqual(503); // 500 + '...'
       expect(userMessage?.content).toContain('...');
+    });
+  });
+
+  describe('Guardrails and Scope', () => {
+    describe('isProjectInquiry', () => {
+      it('should detect project creation requests', () => {
+        expect(isProjectInquiry('Can you help me create a website?')).toBe(true);
+        expect(isProjectInquiry('Let\'s build an app together')).toBe(true);
+        expect(isProjectInquiry('I want to develop a project')).toBe(true);
+      });
+
+      it('should detect collaboration requests', () => {
+        expect(isProjectInquiry('I want to work with you on a project')).toBe(true);
+        expect(isProjectInquiry('Let\'s collaborate on something')).toBe(true);
+        expect(isProjectInquiry('Are you available for freelance work?')).toBe(true);
+      });
+
+      it('should detect technical help requests', () => {
+        expect(isProjectInquiry('Can you help me code this?')).toBe(true);
+        expect(isProjectInquiry('How do I build a React app?')).toBe(true);
+        expect(isProjectInquiry('Teach me programming')).toBe(true);
+      });
+
+      it('should allow personal questions', () => {
+        expect(isProjectInquiry('What are your hobbies?')).toBe(false);
+        expect(isProjectInquiry('Tell me about yourself')).toBe(false);
+        expect(isProjectInquiry('What projects have you worked on?')).toBe(false);
+      });
+    });
+
+    describe('isOutOfScope', () => {
+      it('should detect general knowledge questions', () => {
+        expect(isOutOfScope('What is the weather like today?')).toBe(true);
+        expect(isOutOfScope('Tell me about world politics')).toBe(true);
+        expect(isOutOfScope('Who is the president of France?')).toBe(true);
+      });
+
+      it('should detect academic questions', () => {
+        expect(isOutOfScope('Can you help with my math homework?')).toBe(true);
+        expect(isOutOfScope('Explain quantum physics')).toBe(true);
+        expect(isOutOfScope('Teach me about biology')).toBe(true);
+      });
+
+      it('should detect professional advice requests', () => {
+        expect(isOutOfScope('Can you give me medical advice?')).toBe(true);
+        expect(isOutOfScope('I need legal help')).toBe(true);
+        expect(isOutOfScope('Should I invest in stocks?')).toBe(true);
+      });
+
+      it('should allow personal and experience questions', () => {
+        expect(isOutOfScope('What do you do for work?')).toBe(false);
+        expect(isOutOfScope('Tell me about your background')).toBe(false);
+        expect(isOutOfScope('What are your interests?')).toBe(false);
+      });
+    });
+
+    describe('getOutOfScopeResponse', () => {
+      it('should return English response', () => {
+        const response = getOutOfScopeResponse('en');
+        expect(response).toContain('outside my scope');
+        expect(response).toContain('abdennasser.bedroune@gmail.com');
+        expect(response).toContain('LinkedIn');
+      });
+
+      it('should return French response', () => {
+        const response = getOutOfScopeResponse('fr');
+        expect(response).toContain('domaine');
+        expect(response).toContain('abdennasser.bedroune@gmail.com');
+        expect(response).toContain('LinkedIn');
+      });
+    });
+
+    describe('getProjectInquiryResponse', () => {
+      it('should return English response', () => {
+        const response = getProjectInquiryResponse('en');
+        expect(response).toContain('project discussions');
+        expect(response).toContain('abdennasser.bedroune@gmail.com');
+      });
+
+      it('should return French response', () => {
+        const response = getProjectInquiryResponse('fr');
+        expect(response).toContain('projet');
+        expect(response).toContain('abdennasser.bedroune@gmail.com');
+      });
     });
   });
 });

@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { streamChatResponse, GroqClientError } from '@/lib/groqClient';
 import { createRateLimiter } from '@/lib/rateLimiter';
-import { buildChatMessages, isJailbreakAttempt } from '@/lib/prompt';
+import { buildChatMessages, isJailbreakAttempt, isProjectInquiry, isOutOfScope, getProjectInquiryResponse, getOutOfScopeResponse } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
@@ -157,6 +157,57 @@ export async function POST(request: NextRequest) {
       console.warn('[Security] Potential jailbreak attempt detected:', {
         clientIp,
         queryLength: lastUserMessage.length,
+      });
+    }
+
+    // Check for out-of-scope requests and project inquiries
+    if (isOutOfScope(lastUserMessage)) {
+      const outOfScopeResponse = getOutOfScopeResponse(language);
+      
+      // Create a simple text response for out-of-scope requests
+      const encoder = new TextEncoder();
+      const readableStream = new ReadableStream({
+        start(controller) {
+          const data = `data: ${JSON.stringify({ type: 'content', data: outOfScopeResponse })}\n\n`;
+          controller.enqueue(encoder.encode(data));
+          
+          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
+          controller.enqueue(encoder.encode(done));
+          controller.close();
+        },
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
+    }
+
+    if (isProjectInquiry(lastUserMessage)) {
+      const projectInquiryResponse = getProjectInquiryResponse(language);
+      
+      // Create a simple text response for project inquiries
+      const encoder = new TextEncoder();
+      const readableStream = new ReadableStream({
+        start(controller) {
+          const data = `data: ${JSON.stringify({ type: 'content', data: projectInquiryResponse })}\n\n`;
+          controller.enqueue(encoder.encode(data));
+          
+          const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
+          controller.enqueue(encoder.encode(done));
+          controller.close();
+        },
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
       });
     }
 
