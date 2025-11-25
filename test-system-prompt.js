@@ -12,9 +12,9 @@ async function testSystemPrompt() {
     console.log('=== SYSTEM PROMPT TEST ===');
     console.log('Number of messages:', messages.length);
     console.log('First message role:', messages[0].role);
-    console.log('System prompt contains Nass Er:', messages[0].content.includes('Nass Er'));
-    console.log('System prompt contains rules:', messages[0].content.includes('RULES:'));
-    console.log('System prompt contains decline message:', messages[0].content.includes('I\'m here to answer questions about Nass Er\'s work'));
+    console.log('System prompt contains Beewant:', messages[0].content.includes('Beewant'));
+    console.log('System prompt contains Marrakech:', messages[0].content.includes('Marrakech'));
+    console.log('System prompt contains Critical Rules:', messages[0].content.includes('Critical Rules:'));
     
     console.log('\n=== SYSTEM PROMPT CONTENT ===');
     console.log(messages[0].content);
