@@ -6,7 +6,9 @@ This document summarizes the complete implementation of a multilingual profile d
 
 ## What Was Implemented
 
-### 1. Data Storage (`public/data/profile.json`)
+### 1. Data Storage (`data/profile.json`)
+
+**Note**: Previously located at `public/data/profile.json`, now moved to `data/profile.json` for Vercel serverless compatibility.
 
 - **40 Q&A entries** covering 18 topics:
   - about (2 entries)
@@ -66,8 +68,8 @@ Comprehensive utilities including:
 - `clearProfileCache()`: Force reload
 
 **Features:**
-- Client-side: Uses `fetch` to load from `/data/profile.json`
-- Server-side: Uses `fs/promises` to load from file system
+- Direct JSON import: Uses `import profileData from '@/data/profile.json'`
+- Vercel serverless compatible (no filesystem access)
 - Automatic caching after first load
 - Comprehensive validation on load
 
@@ -188,13 +190,12 @@ npm run lint        # Run ESLint
 
 ```
 project/
-├── public/
-│   └── data/
-│       └── profile.json          # 40 Q&A entries (bilingual)
+├── data/
+│   └── profile.json              # 40 Q&A entries (bilingual) - Vercel compatible
 ├── types/
 │   └── profile.ts                # TypeScript interfaces
 ├── lib/
-│   ├── profile.ts                # Main helper library
+│   ├── profile.ts                # Main helper library (uses direct import)
 │   └── profileValidation.ts      # Validation utilities
 ├── pages/
 │   ├── index.tsx                 # Home page
@@ -218,10 +219,10 @@ project/
 
 ## Acceptance Criteria Met
 
-✅ **JSON file readable at `/public/data/profile.json`**
+✅ **JSON file readable at `/data/profile.json`**
 - 40+ entries with complete bilingual content
 - Structured with id, topic, question (en/fr), answer (en/fr), tags
-- Valid JSON format, accessible via fetch or fs
+- Valid JSON format, embedded via direct import
 
 ✅ **TypeScript build succeeds**
 - All types defined in `types/profile.ts`
@@ -284,7 +285,7 @@ Potential improvements:
 ## Troubleshooting
 
 **Profile validation fails on startup:**
-- Check `/public/data/profile.json` syntax
+- Check `/data/profile.json` syntax
 - Ensure all required fields are present
 - Verify bilingual fields (en/fr) are non-empty
 - Ensure at least 40 unique entries with unique IDs

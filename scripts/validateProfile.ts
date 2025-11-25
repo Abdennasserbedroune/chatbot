@@ -4,7 +4,7 @@
  */
 
 import { validateProfileData } from '@/lib/profile';
-import profileData from '@/public/data/profile.json';
+import profileData from '@/data/profile.json';
 
 console.log('Validating profile data...\n');
 

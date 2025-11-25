@@ -4,6 +4,7 @@
  */
 
 import { ProfileData, ProfileEntry, ValidationResult, ValidationError } from '@/types/profile';
+import profileDataRaw from '@/data/profile.json';
 
 /**
  * Cache for loaded profile data
@@ -184,40 +185,16 @@ export function validateProfileData(data: unknown): ValidationResult {
 }
 
 /**
- * Loads profile data from the JSON file
- * Uses fetch on client-side and fs on server-side
+ * Loads profile data from the imported JSON module
+ * Uses direct import for both client and server (Vercel serverless compatible)
  */
 async function loadProfileData(): Promise<ProfileData> {
   if (profileCache) {
     return profileCache;
   }
 
-  let data: unknown;
-
-  // Check if we're in a Node.js environment
-  if (typeof window === 'undefined') {
-    // Server-side: use fs/promises
-    try {
-      const fs = await import('fs/promises');
-      const path = await import('path');
-      const filePath = path.join(process.cwd(), 'public', 'data', 'profile.json');
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      data = JSON.parse(fileContent);
-    } catch (error) {
-      throw new Error(`Failed to load profile data from server: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  } else {
-    // Client-side: use fetch
-    try {
-      const response = await fetch('/data/profile.json');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      data = await response.json();
-    } catch (error) {
-      throw new Error(`Failed to load profile data from client: ${error instanceof Error ? error.message : String(error)}`);
-    }
-  }
+  // Use the imported profile data directly (no filesystem or fetch needed)
+  const data: unknown = profileDataRaw;
 
   // Validate the loaded data
   const validation = validateProfileData(data);

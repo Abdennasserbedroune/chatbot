@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load the profile data
-const profilePath = path.join(__dirname, '../public/data/profile.json');
+const profilePath = path.join(__dirname, '../data/profile.json');
 const profileData = JSON.parse(fs.readFileSync(profilePath, 'utf-8'));
 
 console.log('Validating profile data...\n');
