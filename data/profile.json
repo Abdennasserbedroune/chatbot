@@ -1,0 +1,526 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-01T00:00:00Z",
+  "entries": [
+    {
+      "id": "about-01",
+      "topic": "about",
+      "question": {
+        "en": "Who are you?",
+        "fr": "Qui êtes-vous ?"
+      },
+      "answer": {
+        "en": "I am a full-stack developer passionate about creating elegant solutions to complex problems. With expertise in modern web technologies, I focus on building scalable applications that deliver exceptional user experiences.",
+        "fr": "Je suis un développeur full-stack passionné par la création de solutions élégantes aux problèmes complexes. Avec une expertise en technologies web modernes, je me concentre sur la création d'applications scalables qui offrent des expériences utilisateur exceptionnelles."
+      },
+      "tags": ["about", "introduction", "personal"]
+    },
+    {
+      "id": "about-02",
+      "topic": "about",
+      "question": {
+        "en": "What drives you?",
+        "fr": "Qu'est-ce qui vous motive ?"
+      },
+      "answer": {
+        "en": "I am driven by the desire to solve problems that matter and to continuously learn and grow. Building products that positively impact users and contribute to society fuels my passion for software development.",
+        "fr": "Je suis motivé par le désir de résoudre des problèmes qui comptent et d'apprendre et de grandir continuellement. Créer des produits qui ont un impact positif sur les utilisateurs et contribuent à la société alimente ma passion pour le développement logiciel."
+      },
+      "tags": ["motivation", "about", "values"]
+    },
+    {
+      "id": "education-01",
+      "topic": "education",
+      "question": {
+        "en": "What is your educational background?",
+        "fr": "Quel est votre parcours éducatif ?"
+      },
+      "answer": {
+        "en": "I hold a Bachelor's degree in Computer Science from a reputable university, where I gained solid foundations in algorithms, data structures, and software engineering principles. I have complemented this with continuous professional development through online courses and certifications.",
+        "fr": "J'ai une licence en informatique d'une université réputée, où j'ai acquis des bases solides en algorithmes, structures de données et principes d'ingénierie logicielle. J'ai complété cela par un développement professionnel continu grâce à des cours en ligne et des certifications."
+      },
+      "tags": ["education", "background", "learning"]
+    },
+    {
+      "id": "education-02",
+      "topic": "education",
+      "question": {
+        "en": "Have you pursued any advanced certifications?",
+        "fr": "Avez-vous poursuivi des certifications avancées ?"
+      },
+      "answer": {
+        "en": "Yes, I have completed several certifications including AWS Solutions Architect, Kubernetes Administration, and various DevOps specializations. These certifications have deepened my understanding of cloud infrastructure and deployment practices.",
+        "fr": "Oui, j'ai complété plusieurs certifications, notamment AWS Solutions Architect, Kubernetes Administration et diverses spécialisations DevOps. Ces certifications ont approfondi ma compréhension de l'infrastructure cloud et des pratiques de déploiement."
+      },
+      "tags": ["education", "certifications", "cloud"]
+    },
+    {
+      "id": "skills-01",
+      "topic": "skills",
+      "question": {
+        "en": "What are your core technical skills?",
+        "fr": "Quelles sont vos compétences techniques fondamentales ?"
+      },
+      "answer": {
+        "en": "My core technical skills include TypeScript, React, Node.js, Python, and database design. I have deep experience with modern frontend frameworks, backend development, and microservices architecture. I also excel in cloud platforms like AWS and GCP.",
+        "fr": "Mes compétences techniques fondamentales incluent TypeScript, React, Node.js, Python et la conception de bases de données. J'ai une expérience approfondie des frameworks frontend modernes, du développement backend et de l'architecture des microservices. J'excelle également dans les plates-formes cloud comme AWS et GCP."
+      },
+      "tags": ["skills", "technical", "programming"]
+    },
+    {
+      "id": "skills-02",
+      "topic": "skills",
+      "question": {
+        "en": "What soft skills do you possess?",
+        "fr": "Quelles compétences relationnelles possédez-vous ?"
+      },
+      "answer": {
+        "en": "I excel in communication, problem-solving, and collaborative teamwork. I have strong mentoring abilities and experience leading technical discussions. My analytical mindset combined with creativity helps me approach challenges from multiple angles.",
+        "fr": "J'excelle en communication, résolution de problèmes et travail d'équipe collaboratif. J'ai de fortes capacités de mentorat et une expérience en direction de discussions techniques. Mon esprit analytique combiné à la créativité m'aide à aborder les défis sous plusieurs angles."
+      },
+      "tags": ["skills", "soft-skills", "communication"]
+    },
+    {
+      "id": "skills-03",
+      "topic": "skills",
+      "question": {
+        "en": "Are you proficient in DevOps and infrastructure?",
+        "fr": "Êtes-vous compétent en DevOps et infrastructure ?"
+      },
+      "answer": {
+        "en": "Yes, I have extensive experience with Docker, Kubernetes, CI/CD pipelines, and infrastructure-as-code using Terraform. I understand container orchestration, monitoring, and log aggregation practices for production systems.",
+        "fr": "Oui, j'ai une expérience considérable avec Docker, Kubernetes, les pipelines CI/CD et l'infrastructure en tant que code utilisant Terraform. Je comprends les pratiques d'orchestration de conteneurs, de surveillance et d'agrégation de journaux pour les systèmes de production."
+      },
+      "tags": ["skills", "devops", "infrastructure"]
+    },
+    {
+      "id": "projects-01",
+      "topic": "projects",
+      "question": {
+        "en": "Can you describe a significant project you've led?",
+        "fr": "Pouvez-vous décrire un projet important que vous avez dirigé ?"
+      },
+      "answer": {
+        "en": "I led the development of a real-time analytics platform that processed millions of events daily. The project involved designing a scalable microservices architecture, implementing data pipelines with Kafka, and creating interactive dashboards with React. The system achieved 99.99% uptime.",
+        "fr": "J'ai dirigé le développement d'une plateforme d'analyse en temps réel qui traitait des millions d'événements quotidiennement. Le projet impliquait de concevoir une architecture de microservices scalable, de mettre en œuvre des pipelines de données avec Kafka et de créer des tableaux de bord interactifs avec React. Le système a atteint 99,99% de disponibilité."
+      },
+      "tags": ["projects", "leadership", "architecture"]
+    },
+    {
+      "id": "projects-02",
+      "topic": "projects",
+      "question": {
+        "en": "What's a recent project that showcases your skills?",
+        "fr": "Quel est un projet récent qui met en avant vos compétences ?"
+      },
+      "answer": {
+        "en": "Recently, I developed a machine learning pipeline integration tool that allows teams to deploy ML models with single commands. The project demonstrates expertise in Python, Docker, Kubernetes, and CI/CD automation. It improved deployment times by 80%.",
+        "fr": "Récemment, j'ai développé un outil d'intégration de pipeline d'apprentissage automatique qui permet aux équipes de déployer des modèles ML avec des commandes uniques. Le projet démontre une expertise en Python, Docker, Kubernetes et l'automatisation CI/CD. Il a amélioré les temps de déploiement de 80%."
+      },
+      "tags": ["projects", "ml", "automation"]
+    },
+    {
+      "id": "experience-01",
+      "topic": "experience",
+      "question": {
+        "en": "How many years of professional experience do you have?",
+        "fr": "Combien d'années d'expérience professionnelle avez-vous ?"
+      },
+      "answer": {
+        "en": "I have over 8 years of professional software development experience, working across startups and established tech companies. This diverse experience has given me exposure to different development methodologies, team structures, and business domains.",
+        "fr": "J'ai plus de 8 ans d'expérience professionnelle en développement logiciel, travaillant dans des startups et des entreprises technologiques établies. Cette expérience diversifiée m'a exposé à différentes méthodologies de développement, structures d'équipe et domaines d'activité."
+      },
+      "tags": ["experience", "professional", "career"]
+    },
+    {
+      "id": "experience-02",
+      "topic": "experience",
+      "question": {
+        "en": "What types of companies have you worked for?",
+        "fr": "Pour quels types d'entreprises avez-vous travaillé ?"
+      },
+      "answer": {
+        "en": "I have worked for fintech startups, e-commerce platforms, healthcare tech companies, and established tech enterprises. Each experience provided unique challenges and opportunities to solve problems at different scales.",
+        "fr": "J'ai travaillé pour des startups fintech, des plates-formes de commerce électronique, des entreprises de technologie de santé et des grandes entreprises technologiques. Chaque expérience a fourni des défis uniques et des opportunités pour résoudre des problèmes à différentes échelles."
+      },
+      "tags": ["experience", "companies", "industry"]
+    },
+    {
+      "id": "experience-03",
+      "topic": "experience",
+      "question": {
+        "en": "Have you managed engineering teams?",
+        "fr": "Avez-vous géré des équipes d'ingénierie ?"
+      },
+      "answer": {
+        "en": "Yes, I have led teams ranging from 5 to 20 engineers. I focused on fostering a collaborative culture, mentoring junior developers, and implementing best practices in code quality and deployment. My teams consistently delivered high-impact projects on schedule.",
+        "fr": "Oui, j'ai dirigé des équipes de 5 à 20 ingénieurs. Je me suis concentré sur la création d'une culture collaborative, le mentorat des développeurs juniors et la mise en œuvre des meilleures pratiques en matière de qualité du code et de déploiement. Mes équipes ont régulièrement livré des projets à fort impact dans les délais."
+      },
+      "tags": ["experience", "leadership", "management"]
+    },
+    {
+      "id": "languages-01",
+      "topic": "languages",
+      "question": {
+        "en": "What programming languages do you master?",
+        "fr": "Quels langages de programmation maîtrisez-vous ?"
+      },
+      "answer": {
+        "en": "I am proficient in TypeScript, JavaScript, Python, Go, and Java. I have production experience with all of these and continuously adapt to new languages and tools as projects require.",
+        "fr": "Je suis compétent en TypeScript, JavaScript, Python, Go et Java. J'ai une expérience de production avec tous ces langages et m'adapte continuellement aux nouveaux langages et outils selon les besoins du projet."
+      },
+      "tags": ["languages", "programming", "technical"]
+    },
+    {
+      "id": "languages-02",
+      "topic": "languages",
+      "question": {
+        "en": "What spoken languages do you speak?",
+        "fr": "Quelles langues parlées parlez-vous ?"
+      },
+      "answer": {
+        "en": "I am fluent in English and French, and have working proficiency in Spanish. This multilingual background enables me to work effectively with international teams and clients.",
+        "fr": "Je suis couramment fluide en anglais et en français, et j'ai une compétence fonctionnelle en espagnol. Cette formation multilingue me permet de travailler efficacement avec des équipes et des clients internationaux."
+      },
+      "tags": ["languages", "communication", "international"]
+    },
+    {
+      "id": "vision-01",
+      "topic": "vision",
+      "question": {
+        "en": "What is your vision for the future of software development?",
+        "fr": "Quelle est votre vision pour l'avenir du développement logiciel ?"
+      },
+      "answer": {
+        "en": "I envision a future where development is more accessible through better tools and frameworks, where AI assists developers in mundane tasks, and where sustainable practices are prioritized. I believe in creating software that serves humanity responsibly.",
+        "fr": "Je envisage un avenir où le développement est plus accessible grâce à de meilleurs outils et cadres, où l'IA assiste les développeurs dans les tâches banales, et où les pratiques durables sont prioritaires. Je crois en la création de logiciels qui servent l'humanité de manière responsable."
+      },
+      "tags": ["vision", "future", "technology"]
+    },
+    {
+      "id": "vision-02",
+      "topic": "vision",
+      "question": {
+        "en": "How do you contribute to shaping this vision?",
+        "fr": "Comment contribuez-vous à façonner cette vision ?"
+      },
+      "answer": {
+        "en": "I contribute by mentoring junior developers, writing clear and maintainable code, sharing knowledge through blogs and talks, and staying at the forefront of technological innovation. I believe in leading by example and advocating for best practices.",
+        "fr": "Je contribue en mentorant les développeurs juniors, en écrivant du code clair et maintenable, en partageant mes connaissances par des blogs et des présentations, et en restant à l'avant-garde de l'innovation technologique. Je crois en l'exemple du leadership et en plaider pour les meilleures pratiques."
+      },
+      "tags": ["vision", "leadership", "contribution"]
+    },
+    {
+      "id": "tools-01",
+      "topic": "tools",
+      "question": {
+        "en": "What development tools do you prefer?",
+        "fr": "Quels outils de développement préférez-vous ?"
+      },
+      "answer": {
+        "en": "I prefer VS Code for development, Git for version control, Docker for containerization, and Kubernetes for orchestration. For databases, I often use PostgreSQL and Redis. These tools provide a robust and efficient development workflow.",
+        "fr": "Je préfère VS Code pour le développement, Git pour le contrôle de version, Docker pour la conteneurisation et Kubernetes pour l'orchestration. Pour les bases de données, j'utilise souvent PostgreSQL et Redis. Ces outils offrent un flux de travail de développement robuste et efficace."
+      },
+      "tags": ["tools", "development", "workflow"]
+    },
+    {
+      "id": "tools-02",
+      "topic": "tools",
+      "question": {
+        "en": "Do you use cloud services regularly?",
+        "fr": "Utilisez-vous régulièrement les services cloud ?"
+      },
+      "answer": {
+        "en": "Yes, I use AWS extensively, with expertise in EC2, S3, Lambda, RDS, and ECS. I also have experience with GCP services like Compute Engine and Cloud Run. Cloud infrastructure is essential for modern application deployment.",
+        "fr": "Oui, j'utilise extensively AWS, avec une expertise en EC2, S3, Lambda, RDS et ECS. J'ai aussi de l'expérience avec les services GCP comme Compute Engine et Cloud Run. L'infrastructure cloud est essentielle pour le déploiement moderne des applications."
+      },
+      "tags": ["tools", "cloud", "aws"]
+    },
+    {
+      "id": "values-01",
+      "topic": "values",
+      "question": {
+        "en": "What are your core professional values?",
+        "fr": "Quelles sont vos valeurs professionnelles fondamentales ?"
+      },
+      "answer": {
+        "en": "My core values include integrity, continuous learning, collaboration, and responsibility. I believe in writing code that is not just functional but also maintainable, testing thoroughly, and being transparent about limitations and challenges.",
+        "fr": "Mes valeurs fondamentales incluent l'intégrité, l'apprentissage continu, la collaboration et la responsabilité. Je crois en l'écriture de code qui n'est pas seulement fonctionnel mais aussi maintenable, en testant en profondeur et en étant transparent sur les limitations et les défis."
+      },
+      "tags": ["values", "ethics", "professional"]
+    },
+    {
+      "id": "values-02",
+      "topic": "values",
+      "question": {
+        "en": "How do you approach code quality?",
+        "fr": "Comment abordez-vous la qualité du code ?"
+      },
+      "answer": {
+        "en": "I prioritize code quality through comprehensive testing, regular code reviews, and adherence to established standards. I believe clean code is an investment that pays dividends through reduced maintenance and fewer bugs. Documentation and clear naming are equally important.",
+        "fr": "Je priorise la qualité du code par des tests complets, des examens de code réguliers et l'adhésion aux normes établies. Je crois que le code propre est un investissement qui rapporte par la réduction de la maintenance et la réduction des bogues. La documentation et le nommage clair sont tout aussi importants."
+      },
+      "tags": ["values", "quality", "standards"]
+    },
+    {
+      "id": "cv-01",
+      "topic": "cv",
+      "question": {
+        "en": "Can you provide a brief summary for your CV?",
+        "fr": "Pouvez-vous fournir un résumé pour votre CV ?"
+      },
+      "answer": {
+        "en": "Experienced full-stack engineer with 8+ years in software development, specializing in scalable architecture and cloud infrastructure. Proven track record of leading high-impact projects and mentoring engineering teams. Expertise in TypeScript, React, Node.js, Python, and DevOps practices.",
+        "fr": "Ingénieur full-stack expérimenté avec 8+ ans en développement logiciel, spécialisé dans l'architecture scalable et l'infrastructure cloud. Historique prouvé de direction de projets à fort impact et de mentorat d'équipes d'ingénierie. Expertise en TypeScript, React, Node.js, Python et pratiques DevOps."
+      },
+      "tags": ["cv", "summary", "professional"]
+    },
+    {
+      "id": "goals-01",
+      "topic": "goals",
+      "question": {
+        "en": "What are your career goals?",
+        "fr": "Quels sont vos objectifs de carrière ?"
+      },
+      "answer": {
+        "en": "My short-term goal is to deepen expertise in emerging technologies like AI/ML infrastructure and edge computing. Long-term, I aim to lead architectural initiatives that solve complex problems at scale and mentor the next generation of engineers.",
+        "fr": "Mon objectif à court terme est d'approfondir l'expertise dans les technologies émergentes comme l'infrastructure IA/ML et l'informatique en périphérie. À long terme, j'aspire à diriger des initiatives architecturales qui résolvent les problèmes complexes à grande échelle et à former la prochaine génération d'ingénieurs."
+      },
+      "tags": ["goals", "career", "development"]
+    },
+    {
+      "id": "goals-02",
+      "topic": "goals",
+      "question": {
+        "en": "Where do you see yourself in five years?",
+        "fr": "Où vous voyez-vous dans cinq ans ?"
+      },
+      "answer": {
+        "en": "In five years, I see myself as a principal engineer or technical leader, either within a large organization or potentially founding my own venture. I want to have made meaningful contributions to open-source projects and fostered a culture of innovation and excellence.",
+        "fr": "Dans cinq ans, je me vois comme un ingénieur principal ou un leader technique, soit dans une grande organisation soit en créant potentiellement ma propre entreprise. Je veux avoir fait des contributions significatives aux projets open-source et avoir favorisé une culture d'innovation et d'excellence."
+      },
+      "tags": ["goals", "future", "ambition"]
+    },
+    {
+      "id": "future-01",
+      "topic": "future",
+      "question": {
+        "en": "What emerging technologies interest you most?",
+        "fr": "Quelles technologies émergentes vous intéressent le plus ?"
+      },
+      "answer": {
+        "en": "I'm particularly interested in artificial intelligence, particularly large language models and their practical applications. I'm also excited about edge computing, WebAssembly for browser computing, and quantum computing's potential in solving optimization problems.",
+        "fr": "Je m'intéresse particulièrement à l'intelligence artificielle, notamment les grands modèles de langage et leurs applications pratiques. Je suis aussi enthousiaste à propos de l'informatique en périphérie, WebAssembly pour l'informatique en navigateur, et le potentiel du calcul quantique dans la résolution de problèmes d'optimisation."
+      },
+      "tags": ["future", "technology", "innovation"]
+    },
+    {
+      "id": "future-02",
+      "topic": "future",
+      "question": {
+        "en": "How do you stay updated with technology trends?",
+        "fr": "Comment restez-vous à jour avec les tendances technologiques ?"
+      },
+      "answer": {
+        "en": "I stay updated by reading tech blogs, following thought leaders on social media, attending conferences, and experimenting with new tools in side projects. I dedicate time each week to learning and exploring emerging technologies.",
+        "fr": "Je reste à jour en lisant des blogs technologiques, en suivant les leaders d'opinion sur les réseaux sociaux, en assistant aux conférences et en expérimentant les nouveaux outils dans les projets parallèles. Je dédie du temps chaque semaine à l'apprentissage et l'exploration des technologies émergentes."
+      },
+      "tags": ["future", "learning", "continuous"]
+    },
+    {
+      "id": "philosophy-01",
+      "topic": "philosophy",
+      "question": {
+        "en": "What's your philosophy on work-life balance?",
+        "fr": "Quelle est votre philosophie sur l'équilibre travail-vie ?"
+      },
+      "answer": {
+        "en": "I believe work-life balance is essential for long-term productivity and well-being. While I'm passionate about my work, I ensure time for exercise, reading, family, and hobbies. This balance makes me more creative and effective at work.",
+        "fr": "Je crois que l'équilibre travail-vie est essentiel pour la productivité à long terme et le bien-être. Bien que je sois passionné par mon travail, je m'assure de consacrer du temps à l'exercice, à la lecture, à la famille et aux loisirs. Cet équilibre me rend plus créatif et efficace au travail."
+      },
+      "tags": ["philosophy", "balance", "wellbeing"]
+    },
+    {
+      "id": "philosophy-02",
+      "topic": "philosophy",
+      "question": {
+        "en": "How do you approach problem-solving?",
+        "fr": "Comment abordez-vous la résolution de problèmes ?"
+      },
+      "answer": {
+        "en": "I approach problems systematically: first understanding the requirements deeply, breaking complex problems into smaller components, and considering multiple solutions before deciding. I believe in prototyping to validate assumptions and iterating based on feedback.",
+        "fr": "J'aborde les problèmes de manière systématique : d'abord comprendre les exigences en profondeur, décomposer les problèmes complexes en composants plus petits, et considérer plusieurs solutions avant de décider. Je crois en le prototypage pour valider les hypothèses et itérer en fonction des retours."
+      },
+      "tags": ["philosophy", "problem-solving", "methodology"]
+    },
+    {
+      "id": "portfolio-01",
+      "topic": "portfolio",
+      "question": {
+        "en": "Where can people view your portfolio?",
+        "fr": "Où les gens peuvent-ils voir votre portfolio ?"
+      },
+      "answer": {
+        "en": "My portfolio is available at github.com/myprofile and includes 20+ projects showcasing my work across different technologies and domains. Each project includes documentation, code samples, and deployment information.",
+        "fr": "Mon portfolio est disponible sur github.com/myprofile et inclut 20+ projets mettant en avant mon travail dans différentes technologies et domaines. Chaque projet inclut de la documentation, des exemples de code et des informations de déploiement."
+      },
+      "tags": ["portfolio", "projects", "showcase"]
+    },
+    {
+      "id": "portfolio-02",
+      "topic": "portfolio",
+      "question": {
+        "en": "Have you contributed to open source?",
+        "fr": "Avez-vous contribué à l'open source ?"
+      },
+      "answer": {
+        "en": "Yes, I have contributed to several open-source projects including popular frameworks and libraries. My contributions range from bug fixes to feature implementations, and I maintain a few smaller projects that solve specific problems in my domain.",
+        "fr": "Oui, j'ai contribué à plusieurs projets open-source, notamment des frameworks et des bibliothèques populaires. Mes contributions vont de la correction de bogues à la mise en œuvre de fonctionnalités, et je maintiens quelques projets plus petits qui résolvez des problèmes spécifiques dans mon domaine."
+      },
+      "tags": ["portfolio", "open-source", "community"]
+    },
+    {
+      "id": "music-01",
+      "topic": "music",
+      "question": {
+        "en": "Do you have any hobbies outside of work?",
+        "fr": "Avez-vous des loisirs en dehors du travail ?"
+      },
+      "answer": {
+        "en": "Yes, I'm an avid music enthusiast and play guitar in my spare time. I also enjoy reading science fiction novels, hiking, and photography. These activities provide creative outlets and help me recharge away from screens.",
+        "fr": "Oui, je suis un passionné de musique et je joue de la guitare pendant mon temps libre. J'aime aussi lire des romans de science-fiction, faire de la randonnée et de la photographie. Ces activités offrent des débouchés créatifs et m'aident à recharger loin des écrans."
+      },
+      "tags": ["music", "hobbies", "personal"]
+    },
+    {
+      "id": "music-02",
+      "topic": "music",
+      "question": {
+        "en": "How does music influence your work?",
+        "fr": "Comment la musique influence-t-elle votre travail ?"
+      },
+      "answer": {
+        "en": "Music has profoundly influenced my understanding of patterns, rhythm, and structure. It helps me think about code composition similarly to music composition, where clarity and harmony matter. Many times, I code while listening to instrumental music to maintain focus.",
+        "fr": "La musique a profondément influencé ma compréhension des motifs, du rythme et de la structure. Elle m'aide à penser à la composition du code de manière similaire à la composition musicale, où la clarté et l'harmonie comptent. Souvent, je code en écoutant de la musique instrumentale pour rester concentré."
+      },
+      "tags": ["music", "influence", "creativity"]
+    },
+    {
+      "id": "style-01",
+      "topic": "style",
+      "question": {
+        "en": "What's your personal coding style?",
+        "fr": "Quel est votre style de codage personnel ?"
+      },
+      "answer": {
+        "en": "I favor clean, readable code with clear naming conventions and minimal complexity. I follow functional programming principles where appropriate, use type safety extensively, and prefer explicit over implicit. My code prioritizes maintainability over cleverness.",
+        "fr": "Je favorise le code propre et lisible avec des conventions de nommage claires et une complexité minimale. Je suis les principes de programmation fonctionnelle le cas échéant, j'utilise largement la sécurité des types et je préfère l'explicite à l'implicite. Mon code priorise la maintenabilité plutôt que la ruse."
+      },
+      "tags": ["style", "coding", "practices"]
+    },
+    {
+      "id": "style-02",
+      "topic": "style",
+      "question": {
+        "en": "Do you follow established code standards?",
+        "fr": "Suivez-vous les normes de code établies ?"
+      },
+      "answer": {
+        "en": "Absolutely. I strictly adhere to project code standards, use linters and formatters like ESLint and Prettier, and ensure consistent style across teams. I believe consistency is crucial for code maintainability and team productivity.",
+        "fr": "Absolument. Je respecte strictement les normes de code du projet, j'utilise des linters et des formateurs comme ESLint et Prettier, et j'assure un style cohérent dans les équipes. Je crois que la cohérence est cruciale pour la maintenabilité du code et la productivité de l'équipe."
+      },
+      "tags": ["style", "standards", "consistency"]
+    },
+    {
+      "id": "mindset-01",
+      "topic": "mindset",
+      "question": {
+        "en": "How do you approach learning?",
+        "fr": "Comment abordez-vous l'apprentissage ?"
+      },
+      "answer": {
+        "en": "I approach learning with curiosity and humility. I'm never satisfied with my current knowledge level and see every project as an opportunity to learn something new. I also believe in learning by doing and teaching others to reinforce my understanding.",
+        "fr": "J'aborde l'apprentissage avec curiosité et humilité. Je ne suis jamais satisfait de mon niveau de connaissances actuel et je vois chaque projet comme une opportunité d'apprendre quelque chose de nouveau. Je crois aussi en l'apprentissage par la pratique et en l'enseignement aux autres pour renforcer ma compréhension."
+      },
+      "tags": ["mindset", "learning", "growth"]
+    },
+    {
+      "id": "mindset-02",
+      "topic": "mindset",
+      "question": {
+        "en": "How do you handle failure?",
+        "fr": "Comment gérez-vous l'échec ?"
+      },
+      "answer": {
+        "en": "I view failure as a valuable learning opportunity. Rather than dwelling on mistakes, I analyze what went wrong, extract lessons, and apply them moving forward. A resilient mindset helps me bounce back quickly and improve my judgment.",
+        "fr": "Je vois l'échec comme une opportunité d'apprentissage précieuse. Plutôt que de m'attarder sur les erreurs, j'analyse ce qui n'a pas fonctionné, j'extrais des leçons et les applique à l'avenir. Un état d'esprit résilient m'aide à rebondir rapidement et à améliorer mon jugement."
+      },
+      "tags": ["mindset", "resilience", "growth"]
+    },
+    {
+      "id": "contact-01",
+      "topic": "contact",
+      "question": {
+        "en": "How can people reach you?",
+        "fr": "Comment les gens peuvent-ils vous contacter ?"
+      },
+      "answer": {
+        "en": "You can reach me via email at contact@myprofile.com or connect with me on LinkedIn at linkedin.com/in/myprofile. I also maintain a personal website and blog where you can find more about my work and thoughts.",
+        "fr": "Vous pouvez me contacter par e-mail à contact@myprofile.com ou me connecter sur LinkedIn à linkedin.com/in/myprofile. Je maintiens aussi un site web personnel et un blog où vous pouvez en savoir plus sur mon travail et mes pensées."
+      },
+      "tags": ["contact", "communication", "social"]
+    },
+    {
+      "id": "contact-02",
+      "topic": "contact",
+      "question": {
+        "en": "Are you available for consulting or collaboration?",
+        "fr": "Êtes-vous disponible pour du conseil ou de la collaboration ?"
+      },
+      "answer": {
+        "en": "Yes, I'm open to consulting opportunities and technical collaboration. I'm especially interested in projects involving scalable architecture, DevOps practices, or mentoring teams. Feel free to reach out to discuss potential opportunities.",
+        "fr": "Oui, je suis ouvert aux opportunités de conseil et de collaboration technique. Je m'intéresse particulièrement aux projets impliquant une architecture scalable, des pratiques DevOps ou le mentorat d'équipes. N'hésitez pas à me contacter pour discuter des opportunités potentielles."
+      },
+      "tags": ["contact", "opportunities", "collaboration"]
+    },
+    {
+      "id": "projects-03",
+      "topic": "projects",
+      "question": {
+        "en": "Tell me about a challenging project you've worked on.",
+        "fr": "Parlez-moi d'un projet difficile sur lequel vous avez travaillé."
+      },
+      "answer": {
+        "en": "I worked on a complex microservices migration for a legacy monolithic application serving millions of users. The challenge was maintaining 100% uptime while gradually moving components to microservices. Through careful planning and feature flags, we completed the migration in phases over 18 months without service interruption.",
+        "fr": "J'ai travaillé sur une migration complexe de microservices pour une application monolithique héritée servant des millions d'utilisateurs. Le défi était de maintenir 100% de disponibilité tout en déplaçant progressivement les composants vers les microservices. Grâce à une planification minutieuse et aux feature flags, nous avons complété la migration en phases sur 18 mois sans interruption de service."
+      },
+      "tags": ["projects", "microservices", "migration", "challenge"]
+    },
+    {
+      "id": "skills-04",
+      "topic": "skills",
+      "question": {
+        "en": "What about testing practices?",
+        "fr": "Qu'en est-il des pratiques de test ?"
+      },
+      "answer": {
+        "en": "I'm a strong advocate for comprehensive testing including unit tests, integration tests, and end-to-end tests. I aim for high code coverage (80%+) and use tools like Jest, Testing Library, and Cypress. Test-driven development has significantly improved code quality in my projects.",
+        "fr": "Je suis un fervent partisan des tests complets, y compris les tests unitaires, les tests d'intégration et les tests de bout en bout. Je vise une couverture de code élevée (80%+) et j'utilise des outils comme Jest, Testing Library et Cypress. Le développement piloté par les tests a considérablement amélioré la qualité du code dans mes projets."
+      },
+      "tags": ["skills", "testing", "quality-assurance"]
+    },
+    {
+      "id": "tools-03",
+      "topic": "tools",
+      "question": {
+        "en": "What monitoring and logging tools do you use?",
+        "fr": "Quels outils de surveillance et de journalisation utilisez-vous ?"
+      },
+      "answer": {
+        "en": "I have experience with ELK Stack (Elasticsearch, Logstash, Kibana), Grafana for metrics visualization, and Prometheus for monitoring. Datadog is my preferred all-in-one solution for production observability. Proper logging and monitoring are critical for maintaining system reliability.",
+        "fr": "J'ai de l'expérience avec ELK Stack (Elasticsearch, Logstash, Kibana), Grafana pour la visualisation des métriques et Prometheus pour la surveillance. Datadog est ma solution tout-en-un préférée pour l'observabilité en production. Un enregistrement et une surveillance appropriés sont essentiels pour maintenir la fiabilité du système."
+      },
+      "tags": ["tools", "monitoring", "observability"]
+    }
+  ]
+}

@@ -2,16 +2,16 @@
 
 ## Acceptance Criteria
 
-### ✅ JSON file at `/public/data/profile.json` passes validation
+### ✅ JSON file at `/data/profile.json` passes validation
 - **Status**: PASSED
 - **Details**:
-  - File location: `public/data/profile.json`
+  - File location: `data/profile.json` (moved from `public/data/` for Vercel compatibility)
   - Entry count: 40+ entries ✓ (exactly 40)
   - Structure validated: ✓
   - All required fields present: ✓
   - Bilingual content (en/fr) for each entry: ✓
   - Valid JSON syntax: ✓
-  - Readable when dev server runs: ✓
+  - Embedded via direct import: ✓
 
 ### ✅ TypeScript build succeeds with new types and helper utilities
 - **Status**: PASSED
@@ -55,7 +55,7 @@
 ### Files Created
 
 **Core Data**
-- `public/data/profile.json` - 40 Q&A entries with bilingual content
+- `data/profile.json` - 40 Q&A entries with bilingual content (Vercel serverless compatible)
 
 **TypeScript Types & Types**
 - `types/profile.ts` - Interface definitions
@@ -152,9 +152,9 @@ Total: 14 tests PASSED, 0 failed
    - Runtime type validation
 
 3. **Client/Server Compatibility**
-   - Client-side: Fetch from public API
-   - Server-side: Direct file system access
-   - Automatic environment detection
+   - Direct JSON import for both client and server
+   - Vercel serverless compatible (no filesystem access)
+   - Profile data embedded in bundle at build time
 
 4. **Data Validation**
    - Schema validation on load

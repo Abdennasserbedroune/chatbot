@@ -5,7 +5,7 @@
  */
 
 import { validateProfileData } from './profile';
-import profileData from '@/public/data/profile.json';
+import profileData from '@/data/profile.json';
 
 /**
  * Validate profile data and throw error if invalid
@@ -29,7 +29,7 @@ ${errorDetails}
 
 ========================================
 The application cannot start with invalid profile data.
-Please check public/data/profile.json and fix the errors above.
+Please check data/profile.json and fix the errors above.
 ========================================
     `;
 

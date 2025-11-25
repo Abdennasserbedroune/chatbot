@@ -5,7 +5,7 @@
 
 import { validateProfileData, isProfileEntry } from '@/lib/profile';
 import { checkProfileValidation, getValidationStatus } from '@/lib/profileValidation';
-import profileData from '@/public/data/profile.json';
+import profileData from '@/data/profile.json';
 import type { ProfileEntry, ProfileData } from '@/types/profile';
 
 describe('Profile Data', () => {
