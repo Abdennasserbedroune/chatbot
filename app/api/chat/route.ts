@@ -10,25 +10,21 @@ import { buildChatMessages, isJailbreakAttempt } from '@/lib/prompt';
 import { validateChatRequest, validateLastMessageIsFromUser } from '@/lib/chatValidation';
 import type { ChatRequestPayload, ChatMessage, ChatErrorResponse } from '@/types/chat';
 
-// Create a singleton rate limiter (30 requests per minute per IP - Groq free tier)
+// Create a singleton rate limiter (60 requests per minute per IP - Qwen3 free tier)
 const rateLimiter = createRateLimiter({
-  maxTokens: 30,
-  refillRate: 30 / 60, // 30 tokens per minute
+  maxTokens: 60,
+  refillRate: 60 / 60, // 60 tokens per minute
 });
 
 /**
  * Sanitize messages to prevent Groq API 4096 character limit errors
- * - Keeps only last N messages to prevent infinite history growth
- * - Truncates individual messages that exceed safe length
  */
 function sanitizeMessages(messages: ChatMessage[]): ChatMessage[] {
-  const MAX_MESSAGE_LENGTH = 4000; // Safe buffer before 4096 limit
-  const MAX_MESSAGES = 10; // Keep only last 10 messages for context
+  const MAX_MESSAGE_LENGTH = 4000;
+  const MAX_MESSAGES = 10;
 
-  // Step 1: Keep only the last N messages (prevent infinite history growth)
   let trimmed = messages.slice(-MAX_MESSAGES);
 
-  // Step 2: Truncate any individual message that's too long
   trimmed = trimmed.map(msg => {
     if (msg.content.length > MAX_MESSAGE_LENGTH) {
       console.warn(`[Chat] Trimmed message (${msg.role}) from ${msg.content.length} to ${MAX_MESSAGE_LENGTH} chars`);
@@ -64,7 +60,6 @@ function createErrorResponse(
 }
 
 function getClientIp(request: NextRequest): string {
-  // Try to get IP from headers (works with most proxies)
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
     return forwarded.split(',')[0].trim();
@@ -75,13 +70,11 @@ function getClientIp(request: NextRequest): string {
     return ip;
   }
 
-  // Fallback to socket address if available
   return 'unknown';
 }
 
 export async function POST(request: NextRequest) {
   try {
-    // Check rate limit
     const clientIp = getClientIp(request);
     if (!rateLimiter.isAllowed(clientIp, 1)) {
       const retryAfter = rateLimiter.getRetryAfterSeconds(clientIp);
@@ -89,20 +82,15 @@ export async function POST(request: NextRequest) {
         {
           error: 'Rate limit exceeded. Please try again later.',
           code: 'RATE_LIMIT_EXCEEDED',
-          details: {
-            retryAfter,
-          },
+          details: { retryAfter },
         },
         {
           status: 429,
-          headers: {
-            'Retry-After': retryAfter.toString(),
-          },
+          headers: { 'Retry-After': retryAfter.toString() },
         }
       );
     }
 
-    // Parse request body
     let payload: unknown;
     try {
       payload = await request.json();
@@ -113,7 +101,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate payload with Zod schema
     const validationResult = validateChatRequest(payload);
     if (!validationResult.valid) {
       return Response.json(
@@ -126,32 +113,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Additional validation: last message must be from user
     const messageValidation = validateLastMessageIsFromUser(payload as ChatRequestPayload);
     if (!messageValidation.valid) {
       return Response.json(
-        {
-          error: 'Last message must be from user',
-          code: 'INVALID_CONVERSATION'
-        },
+        { error: 'Last message must be from user', code: 'INVALID_CONVERSATION' },
         { status: 400 }
       );
     }
 
     const typedPayload = payload as ChatRequestPayload;
-
-    // Sanitize messages to prevent 4096 character limit errors
     const sanitizedMessages = sanitizeMessages(typedPayload.messages);
-
-    // Extract language and userName from conversation (optional, defaults to 'en')
     const language = typedPayload.language || 'en';
     const userName = typedPayload.userName;
 
-    // Build enhanced messages with profile context
     const lastUserMessage = sanitizedMessages[sanitizedMessages.length - 1].content;
     const conversationHistory = sanitizedMessages.slice(0, -1);
 
-    // Check for jailbreak attempts - log for security monitoring
     const isJailbreak = isJailbreakAttempt(lastUserMessage);
     if (isJailbreak) {
       console.warn('[Security] Potential jailbreak attempt detected:', {
@@ -168,15 +145,11 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error('[Chat API] Context building error:', error);
       return Response.json(
-        {
-          error: 'Failed to build chat context',
-          code: 'CONTEXT_ERROR'
-        },
+        { error: 'Failed to build chat context', code: 'CONTEXT_ERROR' },
         { status: 500 }
       );
     }
 
-    // Create readable stream for streaming response
     const encoder = new TextEncoder();
     let isStreamActive = true;
 
@@ -185,16 +158,14 @@ export async function POST(request: NextRequest) {
         try {
           const generator = await streamChatResponse(enhancedMessages);
 
-          // Stream each chunk from the generator
+          // chunk is { type: 'thinking' | 'content', data: string }
           for await (const chunk of generator) {
             if (!isStreamActive) break;
 
-            // Send chunk as SSE
-            const data = `data: ${JSON.stringify({ type: 'content', data: chunk })}\n\n`;
+            const data = `data: ${JSON.stringify({ type: chunk.type, data: chunk.data })}\n\n`;
             controller.enqueue(encoder.encode(data));
           }
 
-          // Send completion signal
           if (isStreamActive) {
             const done = `data: ${JSON.stringify({ type: 'done' })}\n\n`;
             controller.enqueue(encoder.encode(done));
@@ -204,23 +175,19 @@ export async function POST(request: NextRequest) {
         } catch (error) {
           isStreamActive = false;
 
-          // Log error for debugging (sanitized, no API keys)
           console.error('[Chat API Error]', {
             name: error instanceof Error ? error.name : 'Unknown',
             message: error instanceof Error ? error.message : 'Unknown error',
             code: error instanceof GroqClientError ? error.code : 'UNKNOWN',
           });
 
-          // Determine error response
           let errorMessage = 'An unexpected error occurred while processing your request.';
           let errorCode = 'INTERNAL_ERROR';
 
           if (error instanceof GroqClientError) {
             errorCode = error.code;
-
             if (error.code === 'MISSING_API_KEY') {
-              errorMessage =
-                'Groq API is not properly configured. Please verify GROQ_API_KEY is set.';
+              errorMessage = 'Groq API is not properly configured. Please verify GROQ_API_KEY is set.';
             } else if (error.code === 'INVALID_API_KEY') {
               errorMessage = 'Groq API authentication failed. Please verify your API key.';
             } else if (error.code === 'RATE_LIMITED') {
@@ -243,7 +210,6 @@ export async function POST(request: NextRequest) {
             }
           }
 
-          // Send error as SSE
           const errorData = `data: ${JSON.stringify({
             type: 'error',
             error: errorMessage,
@@ -268,18 +234,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Chat API Unhandled Error]', error);
-
     return Response.json(
-      {
-        error: 'An unexpected error occurred. Please try again later.',
-        code: 'UNHANDLED_ERROR'
-      },
+      { error: 'An unexpected error occurred. Please try again later.', code: 'UNHANDLED_ERROR' },
       { status: 500 }
     );
   }
 }
 
-// Handle other HTTP methods
 export async function OPTIONS(): Promise<NextResponse> {
   return new NextResponse(null, {
     status: 204,

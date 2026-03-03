@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { ChatMessage } from '@/types/chat'
+import { ThinkingBubble } from './thinking-bubble'
 
 interface MessageBubbleProps {
   message: ChatMessage & { id?: string }
@@ -11,15 +12,13 @@ interface MessageBubbleProps {
 export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const [displayedText, setDisplayedText] = useState('')
 
-  // Variable speed character reveal based on content length
   const getTypingSpeed = (content: string) => {
-    if (content.length < 50) return 20 // Fast for short responses
-    if (content.length > 200) return 40 // Slow for long responses
-    return 30 // Medium for regular responses
+    if (content.length < 50) return 20
+    if (content.length > 200) return 40
+    return 30
   }
 
   useEffect(() => {
-    // For streaming messages, show content immediately
     if (message.id === 'streaming') {
       setDisplayedText(message.content)
       return
@@ -27,10 +26,10 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
 
     if (message.role === 'assistant' && isLatest && message.id !== 'streaming') {
       setDisplayedText('')
-      
+
       let currentIndex = 0
       const speed = getTypingSpeed(message.content)
-      
+
       const typeNextChar = () => {
         if (currentIndex < message.content.length) {
           setDisplayedText(message.content.slice(0, currentIndex + 1))
@@ -38,7 +37,7 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
           setTimeout(typeNextChar, speed)
         }
       }
-      
+
       typeNextChar()
     } else {
       setDisplayedText(message.content)
@@ -48,17 +47,25 @@ export function MessageBubble({ message, isLatest }: MessageBubbleProps) {
   const isUser = message.role === 'user'
 
   return (
-    <div 
+    <div
       className={`
-        flex ${isUser ? 'justify-end' : 'justify-start'}
+        flex flex-col ${isUser ? 'items-end' : 'items-start'}
         animate-in slide-in-from-bottom fade-in duration-200
       `}
     >
-      <div 
+      {/* Thinking block — shown above assistant bubble if thinking content exists */}
+      {!isUser && message.thinking && (
+        <div className="mb-2 w-full max-w-3xl">
+          <ThinkingBubble content={message.thinking} isStreaming={false} />
+        </div>
+      )}
+
+      {/* Message bubble */}
+      <div
         className={`
           max-w-3xl px-4 py-3 rounded-2xl
-          ${isUser 
-            ? 'bg-primary text-primary-foreground rounded-br-sm' 
+          ${isUser
+            ? 'bg-primary text-primary-foreground rounded-br-sm'
             : 'bg-card dark:bg-dark-card border border-border dark:border-dark-border rounded-bl-sm'
           }
         `}

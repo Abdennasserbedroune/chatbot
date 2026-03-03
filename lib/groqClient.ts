@@ -2,20 +2,23 @@
  * Groq AI client wrapper
  * Handles Groq API communication with streaming support
  * Uses groq-sdk for proper integration with free tier limits
+ * Model: qwen/qwen3-32b with reasoning_effort (thinking mode)
  */
 
 import Groq from 'groq-sdk';
 import type { ChatMessage } from '@/types/chat';
 
 // Configuration constants
-const GROQ_MODEL = process.env.GROQ_MODEL || 'mixtral-8x7b-32768';
-const GROQ_TIMEOUT = parseInt(process.env.GROQ_TIMEOUT || '30000', 10); // 30 seconds
+const GROQ_MODEL = process.env.GROQ_MODEL || 'qwen/qwen3-32b';
+const GROQ_TIMEOUT = parseInt(process.env.GROQ_TIMEOUT || '30000', 10);
 const GROQ_MAX_RETRIES = parseInt(process.env.GROQ_MAX_RETRIES || '3', 10);
 const GROQ_INITIAL_RETRY_DELAY = parseInt(process.env.GROQ_INITIAL_RETRY_DELAY || '1000', 10);
 
 // Validation constants
 const MAX_MESSAGE_LENGTH = 4096;
 const MIN_MESSAGE_LENGTH = 1;
+
+export type StreamChunk = { type: 'thinking' | 'content'; data: string };
 
 interface GroqClientOptions {
   apiKey?: string;
@@ -63,7 +66,6 @@ function validateMessages(messages: ChatMessage[]): void {
     throw new GroqClientError('Last message must be from the user', 'INVALID_INPUT', 400, false);
   }
 
-  // Validate message lengths
   for (const message of messages) {
     if (message.content.length < MIN_MESSAGE_LENGTH) {
       throw new GroqClientError(
@@ -85,12 +87,8 @@ function validateMessages(messages: ChatMessage[]): void {
 }
 
 function sanitizeMessageContent(content: string): string {
-  // Remove potential prompt injection patterns
-  // This is a basic implementation - adjust based on your specific needs
-  // Remove control characters: 0x00-0x08, 0x0B-0x0C, 0x0E-0x1F, 0x7F
   const charCodes = Array.from(content).filter((char) => {
     const code = char.charCodeAt(0);
-    // Allow printable ASCII (0x20-0x7E) and extended ASCII (0x80+)
     return code >= 0x20 && code !== 0x7f;
   });
   return charCodes.join('').trim();
@@ -100,35 +98,37 @@ async function streamWithRetry(
   client: Groq,
   messages: ChatMessage[],
   retryCount: number = 0
-): Promise<AsyncGenerator<string, void, unknown>> {
+): Promise<AsyncGenerator<StreamChunk, void, unknown>> {
   try {
-    // Convert Groq SDK message format
     const groqMessages = messages.map((msg) => ({
       role: msg.role as 'user' | 'assistant' | 'system',
       content: msg.content,
     }));
 
-    // Create streaming message stream
     const stream = await client.chat.completions.create({
       model: GROQ_MODEL,
       messages: groqMessages as Parameters<typeof client.chat.completions.create>[0]['messages'],
       stream: true,
-      temperature: 0.7,
-      max_tokens: 1024,
-      top_p: 1,
+      temperature: 0.6,
+      max_tokens: 2048,
+      top_p: 0.95,
+      // @ts-ignore - Groq supports reasoning_effort for Qwen3
+      reasoning_effort: 'default',
     });
 
-    // Return async generator
-    return (async function* () {
+    return (async function* (): AsyncGenerator<StreamChunk, void, unknown> {
       for await (const chunk of stream) {
-        const delta = chunk.choices[0]?.delta;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const delta = chunk.choices[0]?.delta as any;
+        if (delta?.reasoning_content) {
+          yield { type: 'thinking', data: delta.reasoning_content };
+        }
         if (delta?.content) {
-          yield delta.content;
+          yield { type: 'content', data: delta.content };
         }
       }
     })();
   } catch (error) {
-    // Determine if error is retryable
     const isRetryable =
       error instanceof Error &&
       ((error.message.includes('timeout') ||
@@ -138,20 +138,17 @@ async function streamWithRetry(
         error.message.includes('503')) as boolean);
 
     if (isRetryable && retryCount < GROQ_MAX_RETRIES) {
-      // Exponential backoff
       const delayMs = GROQ_INITIAL_RETRY_DELAY * Math.pow(2, retryCount);
       await new Promise((resolve) => setTimeout(resolve, delayMs));
       return streamWithRetry(client, messages, retryCount + 1);
     }
 
-    // Parse Groq SDK errors
     let errorCode = 'UNKNOWN_ERROR';
     let statusCode: number | undefined;
     let message = 'An error occurred while processing your request';
 
     if (error instanceof Groq.APIError) {
       statusCode = error.status;
-
       if (error.status === 401) {
         errorCode = 'INVALID_API_KEY';
         message = 'Invalid Groq API key. Please verify your configuration.';
@@ -187,27 +184,21 @@ async function streamWithRetry(
 export async function streamChatResponse(
   messages: ChatMessage[],
   options?: GroqClientOptions
-): Promise<AsyncGenerator<string, void, unknown>> {
-  // Validate input
+): Promise<AsyncGenerator<StreamChunk, void, unknown>> {
   validateMessages(messages);
 
-  // Sanitize message content
   const sanitizedMessages = messages.map((msg) => ({
     ...msg,
     content: sanitizeMessageContent(msg.content),
   }));
 
-  // Create Groq client
   const client = await createGroqClient(options);
-
-  // Stream with retry logic
   return streamWithRetry(client, sanitizedMessages);
 }
 
 export async function validateConnection(apiKey?: string): Promise<boolean> {
   try {
     const client = await createGroqClient({ apiKey });
-    // Make a minimal request to verify connection
     const response = await client.chat.completions.create({
       model: GROQ_MODEL,
       messages: [{ role: 'user' as const, content: 'test' }],
