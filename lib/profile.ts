@@ -64,40 +64,21 @@ function validateEntry(entry: unknown): ValidationError[] {
   const e = entry as Record<string, unknown>;
   const entryId = (e.id as string) || 'unknown';
 
-  // Validate required fields
   if (typeof e.id !== 'string' || e.id.trim() === '') {
-    errors.push({
-      entryId,
-      field: 'id',
-      error: 'id must be a non-empty string'
-    });
+    errors.push({ entryId, field: 'id', error: 'id must be a non-empty string' });
   }
 
   if (typeof e.topic !== 'string' || e.topic.trim() === '') {
-    errors.push({
-      entryId,
-      field: 'topic',
-      error: 'topic must be a non-empty string'
-    });
+    errors.push({ entryId, field: 'topic', error: 'topic must be a non-empty string' });
   }
 
-  // Validate multilingual fields
   errors.push(...validateMultilingualText(e.question, 'question', entryId));
   errors.push(...validateMultilingualText(e.answer, 'answer', entryId));
 
-  // Validate tags
   if (!Array.isArray(e.tags)) {
-    errors.push({
-      entryId,
-      field: 'tags',
-      error: 'tags must be an array'
-    });
+    errors.push({ entryId, field: 'tags', error: 'tags must be an array' });
   } else if (!e.tags.every(tag => typeof tag === 'string')) {
-    errors.push({
-      entryId,
-      field: 'tags',
-      error: 'all tags must be strings'
-    });
+    errors.push({ entryId, field: 'tags', error: 'all tags must be strings' });
   }
 
   return errors;
@@ -112,52 +93,35 @@ export function validateProfileData(data: unknown): ValidationResult {
   if (!data || typeof data !== 'object') {
     return {
       valid: false,
-      errors: [{
-        entryId: 'root',
-        field: 'data',
-        error: 'Profile data must be an object'
-      }]
+      errors: [{ entryId: 'root', field: 'data', error: 'Profile data must be an object' }]
     };
   }
 
   const profileData = data as Record<string, unknown>;
 
-  // Validate version and lastUpdated
   if (typeof profileData.version !== 'string') {
-    errors.push({
-      entryId: 'root',
-      field: 'version',
-      error: 'version must be a string'
-    });
+    errors.push({ entryId: 'root', field: 'version', error: 'version must be a string' });
   }
 
   if (typeof profileData.lastUpdated !== 'string') {
-    errors.push({
-      entryId: 'root',
-      field: 'lastUpdated',
-      error: 'lastUpdated must be a string'
-    });
+    errors.push({ entryId: 'root', field: 'lastUpdated', error: 'lastUpdated must be a string' });
   }
 
-  // Validate entries
   if (!Array.isArray(profileData.entries)) {
-    errors.push({
-      entryId: 'root',
-      field: 'entries',
-      error: 'entries must be an array'
-    });
+    errors.push({ entryId: 'root', field: 'entries', error: 'entries must be an array' });
   } else {
     const entries = profileData.entries as unknown[];
+
     for (const entry of entries) {
       errors.push(...validateEntry(entry));
     }
 
-    // Check for minimum number of entries
-    if (entries.length < 40) {
+    // Require at least 1 entry — removed the arbitrary 40-entry minimum
+    if (entries.length < 1) {
       errors.push({
         entryId: 'root',
         field: 'entries',
-        error: `Profile must contain at least 40 entries, found ${entries.length}`
+        error: `Profile must contain at least 1 entry, found ${entries.length}`
       });
     }
 
@@ -167,11 +131,7 @@ export function validateProfileData(data: unknown): ValidationResult {
       if (typeof entry === 'object' && entry !== null && 'id' in entry) {
         const id = (entry as Record<string, unknown>).id as string;
         if (ids.has(id)) {
-          errors.push({
-            entryId: id,
-            field: 'id',
-            error: `Duplicate entry ID: ${id}`
-          });
+          errors.push({ entryId: id, field: 'id', error: `Duplicate entry ID: ${id}` });
         }
         ids.add(id);
       }
@@ -193,10 +153,8 @@ async function loadProfileData(): Promise<ProfileData> {
     return profileCache;
   }
 
-  // Use the imported profile data directly (no filesystem or fetch needed)
   const data: unknown = profileDataRaw;
 
-  // Validate the loaded data
   const validation = validateProfileData(data);
   if (!validation.valid) {
     const errorMessages = validation.errors
@@ -209,50 +167,32 @@ async function loadProfileData(): Promise<ProfileData> {
   return profileCache;
 }
 
-/**
- * Gets all profile entries
- */
 export async function getProfileEntries(): Promise<ProfileEntry[]> {
   const data = await loadProfileData();
   return data.entries;
 }
 
-/**
- * Gets a single entry by ID
- */
 export async function getProfileEntry(id: string): Promise<ProfileEntry | undefined> {
   const entries = await getProfileEntries();
   return entries.find(entry => entry.id === id);
 }
 
-/**
- * Gets all entries for a specific topic
- */
 export async function getEntriesByTopic(topic: string): Promise<ProfileEntry[]> {
   const entries = await getProfileEntries();
   return entries.filter(entry => entry.topic === topic);
 }
 
-/**
- * Gets all entries with a specific tag
- */
 export async function getEntriesByTag(tag: string): Promise<ProfileEntry[]> {
   const entries = await getProfileEntries();
   return entries.filter(entry => entry.tags.includes(tag));
 }
 
-/**
- * Gets all unique topics
- */
 export async function getTopics(): Promise<string[]> {
   const entries = await getProfileEntries();
   const topics = new Set(entries.map(entry => entry.topic));
   return Array.from(topics).sort();
 }
 
-/**
- * Gets all unique tags
- */
 export async function getAllTags(): Promise<string[]> {
   const entries = await getProfileEntries();
   const tags = new Set<string>();
@@ -262,9 +202,6 @@ export async function getAllTags(): Promise<string[]> {
   return Array.from(tags).sort();
 }
 
-/**
- * Searches entries by text content (case-insensitive)
- */
 export async function searchEntries(query: string, language: 'en' | 'fr' = 'en'): Promise<ProfileEntry[]> {
   const entries = await getProfileEntries();
   const lowerQuery = query.toLowerCase();
@@ -273,31 +210,20 @@ export async function searchEntries(query: string, language: 'en' | 'fr' = 'en')
     const question = entry.question[language].toLowerCase();
     const answer = entry.answer[language].toLowerCase();
     const tags = entry.tags.join(' ').toLowerCase();
-
-    return question.includes(lowerQuery) || 
-           answer.includes(lowerQuery) || 
+    return question.includes(lowerQuery) ||
+           answer.includes(lowerQuery) ||
            tags.includes(lowerQuery);
   });
 }
 
-/**
- * Gets profile data with validation
- * Useful for checking if profile is properly loaded
- */
 export async function getProfileData(): Promise<ProfileData> {
   return loadProfileData();
 }
 
-/**
- * Force reload of profile data (clears cache)
- */
 export function clearProfileCache(): void {
   profileCache = null;
 }
 
-/**
- * Gets profile metadata (version, lastUpdated)
- */
 export async function getProfileMetadata(): Promise<{ version: string; lastUpdated: string; entryCount: number }> {
   const data = await loadProfileData();
   return {
@@ -307,14 +233,9 @@ export async function getProfileMetadata(): Promise<{ version: string; lastUpdat
   };
 }
 
-/**
- * Type guard to check if something is a valid ProfileEntry
- */
 export function isProfileEntry(value: unknown): value is ProfileEntry {
   if (!value || typeof value !== 'object') return false;
-
   const entry = value as Record<string, unknown>;
-
   return (
     typeof entry.id === 'string' &&
     typeof entry.topic === 'string' &&
