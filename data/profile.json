@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "3.0.0",
   "lastUpdated": "2026-03-06T00:00:00Z",
   "entries": [
     {
@@ -10,10 +10,10 @@
         "fr": "Qui êtes-vous ?"
       },
       "answer": {
-        "en": "I am Abdennasser Bedroune, an AI Automation Engineer based in Marrakech, Morocco. I work at Beewant where I build AI-powered systems, automation workflows, and web applications. I have 2 years of professional experience combining applied AI, workflow automation, and full-stack web development.",
-        "fr": "Je suis Abdennasser Bedroune, ingénieur en automatisation IA basé à Marrakech, au Maroc. Je travaille chez Beewant où je conçois des systèmes alimentés par l'IA, des workflows d'automatisation et des applications web. J'ai 2 ans d'expérience professionnelle alliant IA appliquée, automatisation et développement full-stack."
+        "en": "I'm Abdennasser Bedroune, a Web & Automation Engineer based in Marrakech, Morocco. I have 2 years of experience combining AI, automated workflows, and web development. I started my career in law before pivoting fully into tech.",
+        "fr": "Je suis Abdennasser Bedroune, ingénieur web et automatisation basé à Marrakech, au Maroc. J'ai 2 ans d'expérience alliant IA, workflows automatisés et développement web. J'ai commencé par un parcours en droit avant de me reconvertir dans la tech."
       },
-      "tags": ["about", "introduction", "personal", "identity"]
+      "tags": ["about", "introduction", "identity", "personal"]
     },
     {
       "id": "about-02",
@@ -23,10 +23,10 @@
         "fr": "Quel est votre titre de poste ?"
       },
       "answer": {
-        "en": "My title is AI Automation Engineer. I build AI-driven pipelines, LLM-based assistants, automation workflows, and web applications. I am not a data analyst — that is not my field.",
-        "fr": "Mon titre est ingénieur en automatisation IA. Je construis des pipelines IA, des assistants basés sur des LLM, des workflows d'automatisation et des applications web. Je ne suis pas analyste de données."
+        "en": "My title is AI Automation Engineer. I am not a data analyst.",
+        "fr": "Mon titre est ingénieur en automatisation IA. Je ne suis pas analyste de données."
       },
-      "tags": ["about", "job-title", "role", "identity", "ai engineer", "automation engineer"]
+      "tags": ["about", "job-title", "role", "ai engineer", "automation engineer"]
     },
     {
       "id": "about-03",
@@ -36,62 +36,36 @@
         "fr": "D'où venez-vous ?"
       },
       "answer": {
-        "en": "I am from Marrakech, Morocco. I currently live and work there.",
-        "fr": "Je viens de Marrakech, au Maroc. J'y vis et j'y travaille actuellement."
+        "en": "I'm from Marrakech, Morocco.",
+        "fr": "Je viens de Marrakech, au Maroc."
       },
-      "tags": ["about", "location", "personal", "marrakech", "morocco"]
-    },
-    {
-      "id": "education-01",
-      "topic": "education",
-      "question": {
-        "en": "What is your educational background?",
-        "fr": "Quel est votre parcours éducatif ?"
-      },
-      "answer": {
-        "en": "I started with a background in private law before pivoting to technology. I then completed the ALX Africa Software Engineering program — a rigorous panAfrican training built on project-based learning, real problem-solving, and collaborative work. That program gave me solid technical foundations, which I deepened through 2 years of professional work at Beewant and personal projects.",
-        "fr": "J'ai commencé par un parcours en droit privé avant de me réorienter vers le numérique. J'ai ensuite suivi la formation Software Engineering d'ALX Africa — un programme panafricain reconnu pour ses parcours intensifs fondés sur l'apprentissage par projets, la résolution de problèmes concrets et le travail collaboratif. Cette formation a posé les bases de mes compétences techniques, que j'ai ensuite consolidées à travers 2 ans d'expérience professionnelle chez Beewant et des projets personnels."
-      },
-      "tags": ["education", "background", "alx", "alx africa", "software engineering", "formation"]
-    },
-    {
-      "id": "education-02",
-      "topic": "education",
-      "question": {
-        "en": "Are you currently studying? Do you have a Master's degree?",
-        "fr": "Étudiez-vous actuellement ? Avez-vous un Master ?"
-      },
-      "answer": {
-        "en": "I do not have a Master's degree yet. I am currently applying to the Master Management de Projet, Innovation et Transformation Numérique (Master MIT) at IAE Clermont Auvergne in Clermont-Ferrand, France. This multidisciplinary program covers project management, innovation, and digital transformation strategy — which aligns with my goal of evolving toward digital project management and consulting roles.",
-        "fr": "Je n'ai pas encore de Master. Je suis actuellement candidat au Master Management de Projet, Innovation et Transformation Numérique (Master MIT) à l'IAE Clermont Auvergne à Clermont-Ferrand, en France. Ce programme pluridisciplinaire couvre la gestion de projet, l'innovation et la stratégie de transformation numérique — ce qui correspond à mon objectif d'évoluer vers des postes de chef de projet digital ou de consultant en transformation numérique."
-      },
-      "tags": ["education", "master", "IAE", "Clermont Auvergne", "Master MIT", "candidature", "application", "transformation numérique"]
+      "tags": ["about", "location", "marrakech", "morocco"]
     },
     {
       "id": "experience-01",
-      "topic": "experience",
-      "question": {
-        "en": "How many years of experience do you have?",
-        "fr": "Combien d'années d'expérience avez-vous ?"
-      },
-      "answer": {
-        "en": "I have 2 years of professional experience as an AI Automation Engineer at Beewant.",
-        "fr": "J'ai 2 ans d'expérience professionnelle en tant qu'ingénieur en automatisation IA chez Beewant."
-      },
-      "tags": ["experience", "professional", "years", "beewant"]
-    },
-    {
-      "id": "experience-02",
       "topic": "experience",
       "question": {
         "en": "What do you do at Beewant?",
         "fr": "Que faites-vous chez Beewant ?"
       },
       "answer": {
-        "en": "At Beewant, I work on projects mixing applied AI, business workflow automation, and web development. I built a computer vision annotation system, designed AI assistants capable of executing complex multi-step tasks, and automated multiple internal processes using n8n. This work gave me a concrete understanding of how technology transforms organizations.",
-        "fr": "Chez Beewant, je travaille sur des projets mêlant IA appliquée, automatisation de workflows métiers et développement web. J'ai créé un système d'annotation en computer vision, conçu des assistants IA capables d'exécuter des tâches complexes, et automatisé plusieurs processus internes via n8n. Ce travail m'a permis de comprendre concrètement comment la technologie transforme les organisations."
+        "en": "At Beewant (2023 – present) I work as an AI Automation Engineer. My work there includes: building a full pipeline for automatic car damage detection (annotation, structuring, automation); creating image annotation tools and Python scripts to improve dataset quality; deploying a YOLO model to detect sensitive content in street images; developing an AI assistant that handles tasks like order tracking, inventory, emails, and support tickets; automating internal processes with n8n (data, business, and support workflows); and contributing to frontend development on various projects using React and Next.js.",
+        "fr": "Chez Beewant (2023 – en cours) je travaille en tant qu'ingénieur en automatisation IA. Mes missions : création d'un pipeline complet pour la détection automatique de dégâts automobiles (annotation, structuration, automatisation) ; construction d'outils d'annotation d'images et scripts Python pour améliorer la qualité du dataset ; mise en place d'un modèle YOLO pour détecter du contenu sensible dans des images de rues ; développement d'un assistant IA capable d'exécuter des tâches (suivi de commandes, inventaire, emails, tickets) ; automatisation de processus internes via n8n ; participation au développement front sur plusieurs projets React / Next.js."
       },
-      "tags": ["experience", "beewant", "computer-vision", "n8n", "ai-agents", "automation", "workflow"]
+      "tags": ["experience", "beewant", "yolo", "computer-vision", "n8n", "ai-agent", "automation", "annotation", "python"]
+    },
+    {
+      "id": "experience-02",
+      "topic": "experience",
+      "question": {
+        "en": "Have you had other jobs?",
+        "fr": "Avez-vous eu d'autres emplois ?"
+      },
+      "answer": {
+        "en": "Before Beewant I worked as a Content Moderator at Majorel in Marrakech (2022–2023), where I analysed videos and user-submitted content, applied safety rules for a major international platform, and made fast contextual decisions to reduce risk and improve content quality.",
+        "fr": "Avant Beewant, j'ai travaillé comme modérateur de contenu chez Majorel à Marrakech (2022–2023), où j'analysais des vidéos et contenus soumis par les utilisateurs, appliquais les règles de sécurité d'une grande plateforme internationale et prenais des décisions rapides et contextualisées pour réduire les risques."
+      },
+      "tags": ["experience", "majorel", "content-moderation", "previous-job"]
     },
     {
       "id": "projects-01",
@@ -101,10 +75,62 @@
         "fr": "Quels projets personnels avez-vous réalisés ?"
       },
       "answer": {
-        "en": "My main personal projects: Pathwise (an AI-powered resume analysis platform), this portfolio chatbot (a streaming AI chatbot built with Next.js, Groq API, and Supabase), and Orchestr.ai (an n8n workflow manager SaaS). At Beewant I also built a computer vision annotation system and AI task automation agents.",
-        "fr": "Mes principaux projets personnels : Pathwise (une plateforme d'analyse de CV alimentée par l'IA), ce chatbot de portfolio (un chatbot IA en streaming construit avec Next.js, l'API Groq et Supabase), et Orchestr.ai (un SaaS de gestion de workflows n8n). Chez Beewant j'ai aussi construit un système d'annotation en computer vision et des agents d'automatisation de tâches IA."
+        "en": "My personal projects: Pathwise (an interactive educational platform built with Next.js and Supabase), Agentic Chat (a personal AI assistant built with Node.js and Groq/LLMs — this portfolio chatbot), and AFCON WebApp (a web app for the Africa Cup of Nations built with React, Leaflet, and Firebase).",
+        "fr": "Mes projets personnels : Pathwise (une plateforme éducative interactive en Next.js et Supabase), Agentic Chat (un assistant IA personnel en Node.js et Groq/LLMs — ce chatbot de portfolio), et AFCON WebApp (une application web pour la CAN en React, Leaflet et Firebase)."
       },
-      "tags": ["projects", "pathwise", "chatbot", "orchestrai", "n8n", "computer-vision", "portfolio"]
+      "tags": ["projects", "pathwise", "agentic chat", "chatbot", "afcon", "portfolio", "personal"]
+    },
+    {
+      "id": "projects-02",
+      "topic": "projects",
+      "question": {
+        "en": "Tell me about Pathwise.",
+        "fr": "Parlez-moi de Pathwise."
+      },
+      "answer": {
+        "en": "Pathwise is an interactive educational platform I built as a personal project using Next.js and Supabase. It is my own solo project, not something built at Beewant.",
+        "fr": "Pathwise est une plateforme éducative interactive que j'ai construite en tant que projet personnel avec Next.js et Supabase. C'est mon propre projet solo, pas quelque chose réalisé chez Beewant."
+      },
+      "tags": ["projects", "pathwise", "nextjs", "supabase", "solo-project"]
+    },
+    {
+      "id": "projects-03",
+      "topic": "projects",
+      "question": {
+        "en": "Tell me about this chatbot.",
+        "fr": "Parlez-moi de ce chatbot."
+      },
+      "answer": {
+        "en": "This chatbot (also called Agentic Chat) is my personal portfolio chatbot — a solo project I built myself using Next.js, Groq API, and Supabase. It is not a Beewant project.",
+        "fr": "Ce chatbot (aussi appelé Agentic Chat) est mon chatbot de portfolio personnel — un projet solo que j'ai construit moi-même avec Next.js, l'API Groq et Supabase. Ce n'est pas un projet Beewant."
+      },
+      "tags": ["projects", "chatbot", "agentic chat", "nextjs", "groq", "supabase", "solo-project"]
+    },
+    {
+      "id": "education-01",
+      "topic": "education",
+      "question": {
+        "en": "What is your educational background?",
+        "fr": "Quel est votre parcours éducatif ?"
+      },
+      "answer": {
+        "en": "I hold a Bachelor's degree in Private Law from Université Cadi Ayyad, Marrakech (2022), a Baccalauréat in Human Sciences from Ouarzazate (2017), and I completed the ALX Africa Software Engineering program (2023) — an intensive project-based training covering web development, algorithms, backend, and engineering best practices.",
+        "fr": "J'ai une licence en droit privé de l'Université Cadi Ayyad, Marrakech (2022), un baccalauréat en sciences humaines d'Ouarzazate (2017), et j'ai suivi le programme Software Engineering d'ALX Africa (2023) — une formation intensive orientée projets couvrant le développement web, l'algorithmie, le backend et les bonnes pratiques."
+      },
+      "tags": ["education", "alx", "alx africa", "law", "droit", "cadi ayyad", "baccalauréat"]
+    },
+    {
+      "id": "education-02",
+      "topic": "education",
+      "question": {
+        "en": "Are you pursuing a Master's degree?",
+        "fr": "Poursuivez-vous un Master ?"
+      },
+      "answer": {
+        "en": "I am currently applying to Masters programs in digital transformation and IT management. My goal is to get a solid academic foundation and move into higher-responsibility roles in tech — such as digital project manager or transformation consultant. I have not been accepted yet and I am not enrolled in any program at this point.",
+        "fr": "Je suis actuellement candidat à des masters en transformation digitale et management IT. Mon objectif est d'acquérir une base académique solide et d'évoluer vers des rôles à plus forte responsabilité dans la tech — comme chef de projet digital ou consultant en transformation. Je n'ai pas encore été accepté et je ne suis inscrit dans aucun programme pour l'instant."
+      },
+      "tags": ["education", "master", "transformation digitale", "candidature", "application", "studying"]
     },
     {
       "id": "skills-01",
@@ -114,23 +140,10 @@
         "fr": "Quelles sont vos compétences techniques ?"
       },
       "answer": {
-        "en": "My core technical skills: AI integration (Groq, Gemini, OpenAI, DeepSeek APIs), workflow automation (n8n), full-stack web development (Next.js, React, Supabase, PostgreSQL), Python scripting, building LLM-based pipelines and agents, and computer vision systems. I build complete systems end-to-end.",
-        "fr": "Mes compétences techniques principales : intégration d'IA (APIs Groq, Gemini, OpenAI, DeepSeek), automatisation de workflows (n8n), développement web full-stack (Next.js, React, Supabase, PostgreSQL), scripting Python, construction de pipelines et d'agents basés sur des LLM, et systèmes de computer vision. Je construis des systèmes complets de bout en bout."
+        "en": "Frontend: React, Next.js. Backend: Node.js, TypeScript. Databases: MongoDB, Supabase. Automation & AI: n8n, OpenAI API, Groq, automation pipelines. DevOps & Cloud: Vercel, GitHub, Docker.",
+        "fr": "Frontend : React, Next.js. Backend : Node.js, TypeScript. Bases de données : MongoDB, Supabase. Automatisation & IA : n8n, API OpenAI, Groq, pipelines d'automatisation. DevOps & Cloud : Vercel, GitHub, Docker."
       },
-      "tags": ["skills", "technical", "nextjs", "supabase", "python", "n8n", "llm", "groq", "openai", "gemini"]
-    },
-    {
-      "id": "goals-01",
-      "topic": "goals",
-      "question": {
-        "en": "What are your career goals?",
-        "fr": "Quels sont vos objectifs de carrière ?"
-      },
-      "answer": {
-        "en": "Short term: I am applying to the Master MIT at IAE Clermont Auvergne and am looking for internships or work-study positions in AI and digital integration. Long term: I want to become a digital project manager or digital transformation consultant — combining my technical background with strategic project management skills.",
-        "fr": "À court terme : je suis candidat au Master MIT à l'IAE Clermont Auvergne et je recherche des stages ou alternances sur des sujets d'intégration IA et numérique. À long terme : je souhaite devenir chef de projet digital ou consultant en transformation numérique — en combinant mon background technique avec des compétences en gestion de projet stratégique."
-      },
-      "tags": ["goals", "career", "master", "transformation", "consultant", "project-manager", "internship"]
+      "tags": ["skills", "technical", "react", "nextjs", "nodejs", "typescript", "mongodb", "supabase", "n8n", "groq", "docker"]
     },
     {
       "id": "languages-01",
@@ -140,36 +153,23 @@
         "fr": "Quelles langues parlez-vous ?"
       },
       "answer": {
-        "en": "I speak Arabic (native language), French (fluent — I write professionally in French and am applying to a French master's program), and English (fluent — I work and communicate professionally in English daily).",
-        "fr": "Je parle arabe (langue maternelle), français (courant — j'écris professionnellement en français et je suis candidat à un master en France), et anglais (courant — je travaille et communique professionnellement en anglais au quotidien)."
+        "en": "I speak Arabic (native), French (fluent), and English (professional level).",
+        "fr": "Je parle arabe (langue maternelle), français (courant) et anglais (niveau professionnel)."
       },
-      "tags": ["languages", "arabic", "french", "english", "communication", "multilingual"]
+      "tags": ["languages", "arabic", "french", "english"]
     },
     {
-      "id": "background-01",
-      "topic": "background",
+      "id": "goals-01",
+      "topic": "goals",
       "question": {
-        "en": "Why did you switch from law to technology?",
-        "fr": "Pourquoi êtes-vous passé du droit à la technologie ?"
+        "en": "What are your career goals?",
+        "fr": "Quels sont vos objectifs de carrière ?"
       },
       "answer": {
-        "en": "After a first academic path in private law, I chose to pivot to tech because I found genuine professional coherence there. Through the ALX Africa Software Engineering program, I discovered that building software matched both my analytical mindset and my desire to solve concrete, tangible problems — something I hadn't fully found in law.",
-        "fr": "Après un premier parcours en droit privé, j'ai choisi de me réorienter vers les métiers du numérique, un domaine dans lequel j'ai trouvé une véritable cohérence professionnelle. La formation ALX Africa m'a montré que le développement logiciel correspondait à la fois à mon esprit analytique et à mon désir de résoudre des problèmes concrets — ce que je n'avais pas pleinement trouvé dans le droit."
+        "en": "My short-term goal is to join a Master's program in digital transformation to build a stronger academic foundation. Long term, I want to move into digital project management or digital transformation consulting — combining my hands-on technical background with strategic and managerial skills.",
+        "fr": "Mon objectif à court terme est de rejoindre un master en transformation digitale pour acquérir une base académique solide. À long terme, je veux évoluer vers le management de projet digital ou le conseil en transformation numérique — en combinant mon background technique concret avec des compétences stratégiques et managériales."
       },
-      "tags": ["background", "career-change", "law", "tech", "pivot", "alx", "reconversion"]
-    },
-    {
-      "id": "motivation-01",
-      "topic": "motivation",
-      "question": {
-        "en": "What motivates you?",
-        "fr": "Qu'est-ce qui vous motive ?"
-      },
-      "answer": {
-        "en": "I am motivated by seeing how technology concretely transforms organizations. At Beewant, building AI systems and automation tools showed me the real operational impact this work has. I now want to develop the strategic and management dimension of this — which is why I am applying to the Master MIT at IAE Clermont Auvergne.",
-        "fr": "Je suis motivé par la manière dont la technologie transforme concrètement les organisations. Chez Beewant, la construction de systèmes IA et d'outils d'automatisation m'a montré l'impact opérationnel réel de ce travail. Je souhaite maintenant développer la dimension stratégique et managériale — c'est pourquoi je suis candidat au Master MIT à l'IAE Clermont Auvergne."
-      },
-      "tags": ["motivation", "values", "transformation", "master", "impact"]
+      "tags": ["goals", "career", "master", "transformation", "consultant", "project-manager"]
     },
     {
       "id": "contact-01",
@@ -179,10 +179,23 @@
         "fr": "Comment vous contacter ?"
       },
       "answer": {
-        "en": "You can reach me by email at abdennasser.bedroune@gmail.com or find my projects on GitHub at github.com/Abdennasserbedroune.",
-        "fr": "Vous pouvez me contacter par email à abdennasser.bedroune@gmail.com ou retrouver mes projets sur GitHub à github.com/Abdennasserbedroune."
+        "en": "Email: abdennasser.bedroune@gmail.com | Phone: +212 6 08 06 48 15 | Portfolio: v2-eight-orpin.vercel.app/portfolio | GitHub: github.com/Abdennasserbedroune",
+        "fr": "Email : abdennasser.bedroune@gmail.com | Téléphone : +212 6 08 06 48 15 | Portfolio : v2-eight-orpin.vercel.app/portfolio | GitHub : github.com/Abdennasserbedroune"
       },
-      "tags": ["contact", "email", "github", "reach"]
+      "tags": ["contact", "email", "phone", "github", "portfolio"]
+    },
+    {
+      "id": "background-01",
+      "topic": "background",
+      "question": {
+        "en": "Why did you switch from law to tech?",
+        "fr": "Pourquoi êtes-vous passé du droit à la tech ?"
+      },
+      "answer": {
+        "en": "After studying private law, I wanted to work on concrete, tangible problems and build things that have a visible impact. Tech gave me that. Through ALX Africa's Software Engineering program I found a real professional fit — combining analytical thinking from my law background with the creativity and precision of building software.",
+        "fr": "Après le droit privé, je voulais travailler sur des problèmes concrets et construire des choses avec un impact visible. La tech m'a offert ça. Via le programme Software Engineering d'ALX Africa, j'ai trouvé une vraie cohérence professionnelle — alliant la rigueur analytique du droit à la créativité et à la précision du développement."
+      },
+      "tags": ["background", "reconversion", "law", "pivot", "alx"]
     }
   ]
 }
