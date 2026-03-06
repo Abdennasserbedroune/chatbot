@@ -5,7 +5,7 @@
  *
  * NOTE: reasoning_effort is NOT supported by qwen/qwen3-32b on Groq's API.
  * Passing it (even as 'none') causes a 400 invalid_request_error.
- * It has been removed entirely. The model responds normally without it.
+ * It has been removed entirely.
  */
 
 import Groq from 'groq-sdk';
@@ -117,7 +117,8 @@ async function streamWithRetry(
       top_p: 0.95,
     });
 
-    return (async function* (): AsyncGenerator<StreamChunk, void, unknown>) {
+    // NOTE: the closing ) goes AFTER the function body, not before the {
+    return (async function* (): AsyncGenerator<StreamChunk, void, unknown> {
       for await (const chunk of stream) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const delta = chunk.choices[0]?.delta as any;
@@ -166,7 +167,7 @@ async function streamWithRetry(
         errorCode = 'API_ERROR';
         message = 'Groq API error: ' + error.message;
       }
-      } else if (error instanceof Error) {
+    } else if (error instanceof Error) {
       if (error.message.includes('timeout')) {
         errorCode = 'TIMEOUT';
         message = 'Request to Groq API timed out. Please try again.';
