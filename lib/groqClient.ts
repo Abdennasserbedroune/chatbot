@@ -3,15 +3,10 @@
  * Handles Groq API communication with streaming support
  *
  * MODEL: llama-3.3-70b-versatile
- * Why: qwen/qwen3-32b is a reasoning/thinking model built for math and code.
- * It does NOT follow persona system prompts reliably and had multiple API issues
- * (reasoning_effort parameter, thinking token budget conflicts).
- * llama-3.3-70b-versatile is:
  * - Best instruction-following model on Groq
  * - Excellent EN/FR multilingual support
  * - 128k context window
- * - Zero quirky API parameters
- * - Fast inference on Groq hardware
+ * - No quirky API parameters
  */
 
 import Groq from 'groq-sdk';
@@ -22,7 +17,8 @@ const GROQ_TIMEOUT = parseInt(process.env.GROQ_TIMEOUT || '30000', 10);
 const GROQ_MAX_RETRIES = parseInt(process.env.GROQ_MAX_RETRIES || '3', 10);
 const GROQ_INITIAL_RETRY_DELAY = parseInt(process.env.GROQ_INITIAL_RETRY_DELAY || '1000', 10);
 
-const MAX_MESSAGE_LENGTH = 4096;
+// Only applied to user/assistant messages — system prompt is internal and can be large
+const MAX_USER_MESSAGE_LENGTH = 4096;
 const MIN_MESSAGE_LENGTH = 1;
 
 export type StreamChunk = { type: 'thinking' | 'content'; data: string };
@@ -74,6 +70,9 @@ function validateMessages(messages: ChatMessage[]): void {
   }
 
   for (const message of messages) {
+    // System prompt is internal — skip length check, it is intentionally large
+    if (message.role === 'system') continue;
+
     if (message.content.length < MIN_MESSAGE_LENGTH) {
       throw new GroqClientError(
         `Message content must be at least ${MIN_MESSAGE_LENGTH} character`,
@@ -82,9 +81,9 @@ function validateMessages(messages: ChatMessage[]): void {
         false
       );
     }
-    if (message.content.length > MAX_MESSAGE_LENGTH) {
+    if (message.content.length > MAX_USER_MESSAGE_LENGTH) {
       throw new GroqClientError(
-        `Message content must not exceed ${MAX_MESSAGE_LENGTH} characters`,
+        `Message content must not exceed ${MAX_USER_MESSAGE_LENGTH} characters`,
         'INVALID_INPUT',
         400,
         false
