@@ -1,15 +1,11 @@
 /**
  * Groq AI client wrapper
  * Handles Groq API communication with streaming support
- * Uses groq-sdk for proper integration with free tier limits
  * Model: qwen/qwen3-32b
  *
- * FIX: reasoning_effort was 'default' with max_tokens: 2048.
- * qwen3-32b emits thinking tokens BEFORE content tokens, so with only 2048 tokens
- * the entire budget was consumed by internal reasoning and no content was ever produced.
- * Solution: set reasoning_effort to 'none' (fast, no thinking overhead) and keep
- * max_tokens at 2048 for output. If thinking is desired in the future, raise
- * max_tokens to at least 16384 AND keep reasoning_effort: 'default'.
+ * NOTE: reasoning_effort is NOT supported by qwen/qwen3-32b on Groq's API.
+ * Passing it (even as 'none') causes a 400 invalid_request_error.
+ * It has been removed entirely. The model responds normally without it.
  */
 
 import Groq from 'groq-sdk';
@@ -117,20 +113,11 @@ async function streamWithRetry(
       messages: groqMessages as Parameters<typeof client.chat.completions.create>[0]['messages'],
       stream: true,
       temperature: 0.6,
-      // max_tokens applies to the content portion of the output.
-      // For qwen3-32b with reasoning_effort 'none', 2048 is plenty.
-      // If you re-enable thinking (reasoning_effort: 'default'), raise this to
-      // at least 16384 — otherwise the thinking phase consumes all tokens
-      // and the model produces no visible reply.
       max_tokens: 2048,
       top_p: 0.95,
-      // @ts-ignore - Groq supports reasoning_effort for Qwen3
-      // 'none' = no thinking tokens, direct response (fast + quota-friendly).
-      // 'default' = model thinks first (needs max_tokens >= 16384 to work).
-      reasoning_effort: 'none',
     });
 
-    return (async function* (): AsyncGenerator<StreamChunk, void, unknown> {
+    return (async function* (): AsyncGenerator<StreamChunk, void, unknown>) {
       for await (const chunk of stream) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const delta = chunk.choices[0]?.delta as any;
@@ -179,7 +166,7 @@ async function streamWithRetry(
         errorCode = 'API_ERROR';
         message = 'Groq API error: ' + error.message;
       }
-    } else if (error instanceof Error) {
+      } else if (error instanceof Error) {
       if (error.message.includes('timeout')) {
         errorCode = 'TIMEOUT';
         message = 'Request to Groq API timed out. Please try again.';
