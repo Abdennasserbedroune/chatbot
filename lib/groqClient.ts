@@ -1,23 +1,27 @@
 /**
  * Groq AI client wrapper
  * Handles Groq API communication with streaming support
- * Model: qwen/qwen3-32b
  *
- * NOTE: reasoning_effort is NOT supported by qwen/qwen3-32b on Groq's API.
- * Passing it (even as 'none') causes a 400 invalid_request_error.
- * It has been removed entirely.
+ * MODEL: llama-3.3-70b-versatile
+ * Why: qwen/qwen3-32b is a reasoning/thinking model built for math and code.
+ * It does NOT follow persona system prompts reliably and had multiple API issues
+ * (reasoning_effort parameter, thinking token budget conflicts).
+ * llama-3.3-70b-versatile is:
+ * - Best instruction-following model on Groq
+ * - Excellent EN/FR multilingual support
+ * - 128k context window
+ * - Zero quirky API parameters
+ * - Fast inference on Groq hardware
  */
 
 import Groq from 'groq-sdk';
 import type { ChatMessage } from '@/types/chat';
 
-// Configuration constants
-const GROQ_MODEL = process.env.GROQ_MODEL || 'qwen/qwen3-32b';
+const GROQ_MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const GROQ_TIMEOUT = parseInt(process.env.GROQ_TIMEOUT || '30000', 10);
 const GROQ_MAX_RETRIES = parseInt(process.env.GROQ_MAX_RETRIES || '3', 10);
 const GROQ_INITIAL_RETRY_DELAY = parseInt(process.env.GROQ_INITIAL_RETRY_DELAY || '1000', 10);
 
-// Validation constants
 const MAX_MESSAGE_LENGTH = 4096;
 const MIN_MESSAGE_LENGTH = 1;
 
@@ -46,7 +50,7 @@ async function createGroqClient(options?: GroqClientOptions): Promise<Groq> {
 
   if (!apiKey) {
     throw new GroqClientError(
-      'GROQ_API_KEY environment variable is not set. Please configure it to use Groq API.',
+      'GROQ_API_KEY environment variable is not set.',
       'MISSING_API_KEY',
       undefined,
       false
@@ -90,11 +94,13 @@ function validateMessages(messages: ChatMessage[]): void {
 }
 
 function sanitizeMessageContent(content: string): string {
-  const charCodes = Array.from(content).filter((char) => {
-    const code = char.charCodeAt(0);
-    return code >= 0x20 && code !== 0x7f;
-  });
-  return charCodes.join('').trim();
+  return Array.from(content)
+    .filter((char) => {
+      const code = char.charCodeAt(0);
+      return code >= 0x20 && code !== 0x7f;
+    })
+    .join('')
+    .trim();
 }
 
 async function streamWithRetry(
@@ -112,19 +118,15 @@ async function streamWithRetry(
       model: GROQ_MODEL,
       messages: groqMessages as Parameters<typeof client.chat.completions.create>[0]['messages'],
       stream: true,
-      temperature: 0.6,
-      max_tokens: 2048,
-      top_p: 0.95,
+      temperature: 0.7,
+      max_tokens: 1024,
+      top_p: 0.9,
     });
 
-    // NOTE: the closing ) goes AFTER the function body, not before the {
     return (async function* (): AsyncGenerator<StreamChunk, void, unknown> {
       for await (const chunk of stream) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const delta = chunk.choices[0]?.delta as any;
-        if (delta?.reasoning_content) {
-          yield { type: 'thinking', data: delta.reasoning_content };
-        }
         if (delta?.content) {
           yield { type: 'content', data: delta.content };
         }
@@ -133,11 +135,11 @@ async function streamWithRetry(
   } catch (error) {
     const isRetryable =
       error instanceof Error &&
-      ((error.message.includes('timeout') ||
+      (error.message.includes('timeout') ||
         error.message.includes('ECONNREFUSED') ||
         error.message.includes('429') ||
         error.message.includes('500') ||
-        error.message.includes('503')) as boolean);
+        error.message.includes('503'));
 
     if (isRetryable && retryCount < GROQ_MAX_RETRIES) {
       const delayMs = GROQ_INITIAL_RETRY_DELAY * Math.pow(2, retryCount);
@@ -162,7 +164,7 @@ async function streamWithRetry(
         message = 'Invalid request to Groq API: ' + error.message;
       } else if (error.status && error.status >= 500) {
         errorCode = 'SERVICE_ERROR';
-        message = 'Groq service is temporarily unavailable. Please try again later.';
+        message = 'Groq service is temporarily unavailable.';
       } else {
         errorCode = 'API_ERROR';
         message = 'Groq API error: ' + error.message;
@@ -170,7 +172,7 @@ async function streamWithRetry(
     } else if (error instanceof Error) {
       if (error.message.includes('timeout')) {
         errorCode = 'TIMEOUT';
-        message = 'Request to Groq API timed out. Please try again.';
+        message = 'Request timed out. Please try again.';
       } else if (error.message.includes('ECONNREFUSED')) {
         errorCode = 'CONNECTION_ERROR';
         message = 'Failed to connect to Groq API.';
