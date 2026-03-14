@@ -14,10 +14,10 @@ interface MessageListProps {
 }
 
 const suggestionPrompts = [
-  "What projects have you worked on?",
-  "Tell me about your background",
-  "What are your hobbies?",
-  "How can you help me today?",
+  "Quels projets avez-vous réalisés ?",
+  "Parlez-moi de votre parcours",
+  "Quelles sont vos compétences techniques ?",
+  "Pourquoi vous reconvertir vers la tech ?",
 ]
 
 export function MessageList({ messages, isLoading, streamingText = '', streamingThinking = '' }: MessageListProps) {
@@ -47,7 +47,6 @@ export function MessageList({ messages, isLoading, streamingText = '', streaming
     if (messageCountIncreased && shouldAutoScroll) scrollToBottom()
   }, [messages, shouldAutoScroll])
 
-  // Auto-scroll while thinking or streaming content arrives
   useEffect(() => {
     if ((streamingThinking || streamingText) && shouldAutoScroll) scrollToBottom()
   }, [streamingThinking, streamingText, shouldAutoScroll])
@@ -70,10 +69,10 @@ export function MessageList({ messages, isLoading, streamingText = '', streaming
         <div className="flex flex-col items-center justify-center h-full text-center space-y-8">
           <div className="space-y-4">
             <h2 className="text-3xl font-bold text-foreground dark:text-dark-foreground">
-              Welcome to Abdennasser AI
+              Bienvenue sur Abdennasser AI
             </h2>
             <p className="text-lg text-muted-foreground dark:text-dark-muted-foreground max-w-md">
-              I&apos;m here to help you with questions about my background, projects, and interests. Feel free to ask me anything!
+              Je suis ici pour répondre à vos questions sur mon parcours, mes projets et mes compétences. N&apos;hésitez pas à me poser n&apos;importe quelle question !
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl w-full">
@@ -102,14 +101,12 @@ export function MessageList({ messages, isLoading, streamingText = '', streaming
             />
           ))}
 
-          {/* Live thinking bubble — visible while model is reasoning, before content starts */}
           {isLoading && streamingThinking && !streamingText && (
             <div className="flex justify-start">
               <ThinkingBubble content={streamingThinking} isStreaming={true} />
             </div>
           )}
 
-          {/* Typing dots — only while waiting for the very first token */}
           {isLoading && !streamingThinking && !streamingText && (
             <div className="flex justify-start">
               <div className="max-w-3xl">
@@ -118,7 +115,6 @@ export function MessageList({ messages, isLoading, streamingText = '', streaming
             </div>
           )}
 
-          {/* Streaming content bubble — appears as content arrives */}
           {streamingText && (
             <div className="flex justify-start">
               <div className="max-w-3xl px-4 py-3 rounded-2xl bg-card dark:bg-dark-card border border-border dark:border-dark-border rounded-bl-sm">

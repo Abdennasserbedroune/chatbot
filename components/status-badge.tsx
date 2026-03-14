@@ -9,37 +9,37 @@ interface StatusBadgeProps {
 
 const statusConfig = {
   typing: {
-    text: 'Typing...',
+    text: 'En train d\'écrire...',
     color: 'text-blue-600 dark:text-blue-400',
     bgColor: 'bg-blue-100 dark:bg-blue-900/30',
     emoji: null,
   },
   thinking: {
-    text: 'Thinking...',
+    text: 'En train de réfléchir...',
     color: 'text-purple-600 dark:text-purple-400',
     bgColor: 'bg-purple-100 dark:bg-purple-900/30',
     emoji: null,
   },
   inspired: {
-    text: 'Inspired',
+    text: 'Inspiré',
     color: 'text-amber-600 dark:text-amber-400',
     bgColor: 'bg-amber-100 dark:bg-amber-900/30',
     emoji: '✨',
   },
   thoughtful: {
-    text: 'Thoughtful',
+    text: 'Réflexif',
     color: 'text-indigo-600 dark:text-indigo-400',
     bgColor: 'bg-indigo-100 dark:bg-indigo-900/30',
     emoji: '🤔',
   },
   amused: {
-    text: 'Amused',
+    text: 'Amusé',
     color: 'text-green-600 dark:text-green-400',
     bgColor: 'bg-green-100 dark:bg-green-900/30',
     emoji: '😄',
   },
   engaged: {
-    text: 'Engaged',
+    text: 'Impliqué',
     color: 'text-pink-600 dark:text-pink-400',
     bgColor: 'bg-pink-100 dark:bg-pink-900/30',
     emoji: '💡',

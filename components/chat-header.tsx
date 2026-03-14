@@ -14,7 +14,6 @@ export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
   const [isDark, setIsDark] = useState(false)
 
   useEffect(() => {
-    // Check for saved preference or default to light mode
     const saved = localStorage.getItem('theme')
     if (saved === 'dark') {
       setIsDark(true)
@@ -25,7 +24,6 @@ export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
   const toggleTheme = () => {
     const newTheme = !isDark
     setIsDark(newTheme)
-    
     if (newTheme) {
       document.documentElement.classList.add('dark')
       localStorage.setItem('theme', 'dark')
@@ -44,7 +42,7 @@ export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
               Abdennasser AI
             </h1>
             <p className="text-sm text-muted-foreground dark:text-dark-muted-foreground">
-              Your personal assistant
+              Votre assistant personnel
             </p>
             {(isLoading || status !== 'idle') && (
               <div className="mt-1">
@@ -57,7 +55,7 @@ export function ChatHeader({ status, isLoading }: ChatHeaderProps) {
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-200"
-              aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={isDark ? 'Passer en mode clair' : 'Passer en mode sombre'}
             >
               {isDark ? (
                 <Sun className="h-5 w-5" />

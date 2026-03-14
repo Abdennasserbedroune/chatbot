@@ -12,12 +12,11 @@ interface ChatComposerProps {
 export function ChatComposer({ input, handleInputChange, isLoading }: ChatComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Auto-resize textarea
   useEffect(() => {
     const textarea = textareaRef.current
     if (textarea) {
       textarea.style.height = 'auto'
-      const scrollHeight = Math.min(textarea.scrollHeight, 5 * 24) // 5 lines max
+      const scrollHeight = Math.min(textarea.scrollHeight, 5 * 24)
       textarea.style.height = `${scrollHeight}px`
     }
   }, [input])
@@ -41,29 +40,29 @@ export function ChatComposer({ input, handleInputChange, isLoading }: ChatCompos
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask me anything..."
+            placeholder="Posez-moi une question..."
             disabled={isLoading}
             rows={1}
             className="flex-1 px-4 py-3 bg-transparent border-0 resize-none focus:outline-none focus:ring-0 text-foreground dark:text-dark-foreground placeholder-muted-foreground dark:placeholder-dark-muted-foreground disabled:opacity-50"
             style={{
               minHeight: '56px',
-              maxHeight: '120px', // 5 lines at 24px each
+              maxHeight: '120px',
             }}
-            aria-label="Message input"
+            aria-label="Saisie du message"
           />
           
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
             className="m-2 p-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
-            aria-label="Send message"
+            aria-label="Envoyer le message"
           >
             <Send className="h-4 w-4" />
           </button>
         </div>
         
         <div className="mt-2 text-xs text-muted-foreground dark:text-dark-muted-foreground text-center">
-          Press Enter to send, Shift+Enter for new line
+          Appuyez sur Entrée pour envoyer, Maj+Entrée pour un saut de ligne
         </div>
       </div>
     </div>
